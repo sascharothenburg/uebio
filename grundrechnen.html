@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mathe-Aufgaben">
+<meta name="theme-color" content="#0369a1">
+<title>Mathe-Aufgaben · Sascha Rothenburg</title>
+<style>
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#f0f9ff;color:#1e1b4b;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+input{-webkit-user-select:text;user-select:text}
+.app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1)}
+.hdr{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));flex-shrink:0}
+.hdr h1{font-size:1.15rem;font-weight:900}
+.hdr p{font-size:.68rem;opacity:.85;margin-top:1px}
+.hdr-btns{display:flex;gap:8px;margin-top:6px;align-items:center}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(255,255,255,.25);border-radius:20px;color:#fff;font-family:Nunito,sans-serif;font-size:.72rem;font-weight:800;text-decoration:none;cursor:pointer;border:none}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e2e8f0;flex-shrink:0}
+.tab{flex:1;padding:10px 4px 8px;text-align:center;font-size:.65rem;font-weight:800;color:#6b7280;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.active{color:#0369a1;border-bottom-color:#0369a1}
+.ti{display:block;font-size:1.1rem;margin-bottom:1px}
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(80px + env(safe-area-inset-bottom,0px));display:none}
+.screen.active{display:block}
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:14px;margin-bottom:10px;border:1px solid #e2e8f0}
+.card h2{font-size:.72rem;font-weight:800;color:#0369a1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer}
+.bp{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff}
+.bs{background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0}
+.btn-sm{padding:8px;font-size:.82rem}
+.tgl{position:relative;width:44px;height:24px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl-s{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.2s}
+.tgl-s::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.tgl input:checked+.tgl-s{background:#0369a1}
+.tgl input:checked+.tgl-s::before{transform:translateX(20px)}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0}
+.sr:last-child{border-bottom:none}
+.sl{font-size:.88rem;font-weight:600}
+.ss{font-size:.73rem;color:#6b7280;margin-top:1px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{flex:1;min-width:60px;padding:9px 4px;border-radius:10px;border:2px solid #e2e8f0;background:#f8fafc;font-family:Nunito,sans-serif;font-size:.8rem;font-weight:800;color:#1e1b4b;cursor:pointer}
+.chip.sel{background:#0369a1;color:#fff;border-color:#0369a1}
+.ni{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:9px;font-family:Nunito,sans-serif;font-size:.9rem;font-weight:600;color:#1e1b4b;background:#f0f9ff;outline:none}
+.ni:focus{border-color:#0369a1}
+.sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;z-index:100}
+@media print{.app,.sbar{display:none!important}.printarea{display:block!important}body{background:#fff}html,body{height:auto;overflow:visible}@page{size:A4 portrait;margin:12mm 14mm}}
+.printarea{display:none}
+/* Mathe-spezifisch */
+.hint-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:10px 12px;font-size:.78rem;color:#6b7280;line-height:1.7;margin-bottom:10px}
+.hint-box code{background:#f0f9ff;color:#0369a1;padding:1px 6px;border-radius:5px;font-weight:700;font-family:monospace}
+.prob-list{display:flex;flex-direction:column;gap:7px}
+.prob-row{display:flex;align-items:center;gap:8px}
+.prob-row span{font-size:.8rem;font-weight:800;color:#0369a1;min-width:18px}
+.prob-row input{flex:1;padding:7px 10px;border:2px solid #e2e8f0;border-radius:8px;font-family:Nunito,monospace;font-size:.9rem;font-weight:600;color:#1e1b4b;background:#f0f9ff;outline:none}
+.prob-row input:focus{border-color:#0369a1}
+.prob-row .del{width:30px;height:30px;flex-shrink:0;border:none;border-radius:8px;background:#fef2f2;color:#ef4444;font-size:.9rem;font-weight:800;cursor:pointer}
+.blk{display:block}
+.ws-title{font-size:14pt;font-weight:900;font-family:Nunito,sans-serif;color:#0369a1}
+.ws-sub{font-size:8pt;color:#555;margin-top:1pt;font-family:Nunito,sans-serif}
+.ws-foot{margin-top:5mm;text-align:center;font-family:Nunito,sans-serif;font-size:7pt;color:#bbb;border-top:1px solid #eee;padding-top:2mm}
+</style>
+<script src="pdf-lib.min.js"></script>
+<script src="fontkit.umd.min.js"></script>
+<script src="pdf.min.js"></script>
+<script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
+<script src="grundrechnen-pdf.js"></script>
+<script src="print-bridge.js"></script>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <h1>&#x1F522; Mathe-Aufgaben</h1>
+  <p>&#169; 2026 Sascha Rothenburg</p>
+  <div class="hdr-btns">
+    <a href="mathe.html#acc-grundrechnen" class="hdr-btn">&#x2190; Zur&uuml;ck</a>
+    <a href="index.html" class="hdr-btn">&#x1F3E0; Hauptmen&uuml;</a>
+  </div>
+</div>
+<div class="tabs">
+  <button class="tab active" id="t-gen"><span class="ti">&#x26A1;</span>Generator</button>
+  <button class="tab" id="t-tasks"><span class="ti">&#x2795;</span>Aufgaben</button>
+  <button class="tab" id="t-set"><span class="ti">&#x2699;</span>Einst.</button>
+  <button class="tab" id="t-pre"><span class="ti">&#x1F441;</span>Vorschau</button>
+</div>
+<div class="screens">
+<div class="screen" id="s-tasks">
+  <div class="card">
+    <h2>&#x270F;&#xFE0F; Aufgaben eingeben</h2>
+    <div class="hint-box">
+      Schreibe Aufgaben wie: <code>5 + 12 = &#167;</code><br>
+      <code>&#167;</code> = langer Unterstrich &nbsp;|&nbsp; <code>#</code> = kurzer Unterstrich<br>
+      Beispiele: <code>17 - 9 = &#167;</code> &nbsp; <code>2 + &#167; = 14</code>
+    </div>
+    <div class="prob-list" id="probList"></div>
+    <button class="btn bs btn-sm" onclick="addEmptyProb()" style="margin-top:8px">+ Aufgabe hinzuf&#252;gen</button>
+  </div>
+</div>
+<div class="screen active" id="s-gen">
+  <div class="card">
+    <h2>&#x26A1; Automatisch generieren</h2>
+    <div class="chips" id="genChips"></div>
+    <div style="margin-top:14px">
+      <label class="blk" style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;margin-bottom:6px;display:block">K&#228;stchen f&#252;r</label>
+      <div style="display:flex;gap:8px">
+        <label style="display:flex;align-items:center;gap:5px;font-size:.85rem;font-weight:600;cursor:pointer"><input type="radio" name="boxPos" value="result" checked style="accent-color:#0369a1"> Ergebnis</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:.85rem;font-weight:600;cursor:pointer"><input type="radio" name="boxPos" value="mixed" style="accent-color:#0369a1"> Gemischt</label>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <label class="blk" style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;margin-bottom:6px;display:block">Seitenzahl</label>
+      <div class="chips" id="pageChips"></div>
+      <p style="font-size:.7rem;color:#6b7280;margin-top:6px">Die Aufgabenzahl f&#252;llt die gew&#228;hlten Seiten automatisch.</p>
+    </div>
+    <p style="font-size:.72rem;color:#6b7280;margin-top:16px;line-height:1.5">Die Aufgaben werden beim &#214;ffnen der Vorschau automatisch erstellt.</p>
+  </div>
+</div>
+<div class="screen" id="s-set">
+  <div class="card">
+    <h2>&#x1F4D0; Kopfzeile</h2>
+    <div class="sr"><div class="sl">Name-Feld</div><label class="tgl"><input type="checkbox" id="showName"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Datum-Feld</div><label class="tgl"><input type="checkbox" id="showDate"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Klasse-Feld</div><label class="tgl"><input type="checkbox" id="showKl"><span class="tgl-s"></span></label></div>
+  </div>
+</div>
+<div class="screen" id="s-pre"><div id="previewContent"></div></div>
+</div>
+</div>
+<div class="printarea" id="printArea"></div>
+<div class="sbar" id="sbar">
+  <button class="btn bp" id="btnGoPre">&#x1F441; Vorschau &amp; Drucken</button>
+</div>
+<script>
+
+
+
+
+// Problem parsing
+function parseProb(text){
+  if(!text||!text.trim())return null;
+  const t=text.trim();
+  const m=t.match(/^(\S+)\s*([\+\-])\s*(\S+)\s*=\s*(\S+)$/);
+  if(!m)return null;
+  return {left:m[1],op:m[2],right:m[3],result:m[4]};
+}
+function isBox(s){return s==='\u00a7'||s==='#';}
+function numDigits(s){return isBox(s)?0:String(s).replace('-','').length;}
+
+
+// Kopfzeile (Uhr-Stil: Name/Datum/Klasse Schalter)
+
+
+// Problem management
+let customProbs=[];
+let manualEdited=false;  // true, sobald Nutzer im Aufgaben-Tab selbst editiert hat
+function getProblems(){
+  return customProbs.map((_,i)=>{ const el=document.getElementById('p'+i); return el?el.value.trim():''; }).filter(Boolean);
+}
+function syncProbs(){
+  customProbs=customProbs.map((_,i)=>{ const el=document.getElementById('p'+i); return el?el.value.trim():''; });
+}
+function renderProbList(){
+  const list=document.getElementById('probList'); list.innerHTML='';
+  customProbs.forEach((val,i)=>{
+    const row=document.createElement('div'); row.className='prob-row';
+    row.innerHTML='<span>'+(i+1)+'.</span><input type="text" id="p'+i+'" value="'+esc(val)+'" placeholder="z.B. 5 + 12 = \u00a7" maxlength="30" oninput="manualEdited=true"><button class="del" onclick="removeProb('+i+')">\u2715</button>';
+    list.appendChild(row);
+  });
+}
+function addEmptyProb(){
+  manualEdited=true;
+  customProbs.push(''); renderProbList();
+  setTimeout(()=>{ const inputs=document.querySelectorAll('#probList input'); if(inputs.length)inputs[inputs.length-1].focus(); },50);
+}
+function removeProb(i){ manualEdited=true; syncProbs(); customProbs.splice(i,1); renderProbList(); }
+
+// Generator
+/* ===== Seitenzahl-Steuerung (feste Aufgabenzahl pro Seite, druckgetestet) =====
+   p1 = Seite 1 (mit Header), p2 = GESAMTzahl bei 2 Seiten (NICHT Inkrement).
+   Lookup nach Zahlenraum (max).
+   p2-Werte sind Startwerte (~2,3x p1) und werden am iPad nachjustiert. */
+var numPages=1;
+var PER_PAGE={
+  '10':  {p1:30,p2:64},
+  '20':  {p1:30,p2:64},
+  '100': {p1:30,p2:64}
+};
+function pageCfg(){
+  var mx=String(selectedGenType.max);
+  return PER_PAGE[mx]||PER_PAGE['20'];
+}
+function totalCount(){
+  var c=pageCfg();
+  if(numPages<=1)return c.p1;
+  return (c.p2!=null)?c.p2:(c.p1*2);
+}
+function pageSplits(){
+  var c=pageCfg();
+  if(numPages<=1)return [c.p1];
+  var total=(c.p2!=null)?c.p2:(c.p1*2);
+  return [c.p1, total-c.p1];
+}
+function initPageChips(){
+  var pc=document.getElementById('pageChips'); if(!pc)return; pc.innerHTML='';
+  [{n:1,l:'1 Seite'},{n:2,l:'2 Seiten'}].forEach(function(o){
+    var el=document.createElement('div');
+    el.className='chip'+(o.n===numPages?' sel':'');
+    el.textContent=o.l;
+    el.onclick=function(){
+      numPages=o.n; manualEdited=false;
+      document.querySelectorAll('#pageChips .chip').forEach(function(x){x.classList.remove('sel');});
+      el.classList.add('sel');
+    };
+    pc.appendChild(el);
+  });
+}
+const GEN_TYPES=[
+  {label:'+ bis 10',id:'add10',op:'+',max:10},
+  {label:'- bis 10',id:'sub10',op:'-',max:10},
+  {label:'+ bis 20',id:'add20',op:'+',max:20},
+  {label:'- bis 20',id:'sub20',op:'-',max:20},
+  {label:'+ bis 100',id:'add100',op:'+',max:100},
+  {label:'- bis 100',id:'sub100',op:'-',max:100},
+  {label:'Gemischt \u00b120',id:'mix20',op:'mix',max:20},
+  {label:'Gemischt \u00b1100',id:'mix100',op:'mix',max:100}
+];
+let selectedGenType=GEN_TYPES[2];
+function initGenChips(){
+  const c=document.getElementById('genChips'); c.innerHTML='';
+  GEN_TYPES.forEach(gt=>{
+    const el=document.createElement('div');
+    el.className='chip'+(gt.id===selectedGenType.id?' sel':'');
+    el.textContent=gt.label;
+    el.onclick=()=>{ selectedGenType=gt; manualEdited=false; document.querySelectorAll('#genChips .chip').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); };
+    c.appendChild(el);
+  });
+}
+function generateProblems(){
+  const gt=selectedGenType;
+  // Anzahl aus der echten Seitenkapazität des PDF-Moduls (statt fester Tabelle)
+  const count=(window.GrundrechnenPDF&&GrundrechnenPDF.capacityForPages)
+    ? GrundrechnenPDF.capacityForPages(numPages)
+    : totalCount();
+  const boxPos=document.querySelector('input[name=boxPos]:checked').value;
+  const max=gt.max;
+
+  // 1) Pool aller verschiedenen Aufgaben aufbauen (ohne Lücken-Position)
+  var pool=[]; var seen=new Set();
+  function addUnique(a,b,op){ var key=a+op+b; if(seen.has(key))return; seen.add(key); pool.push({a:a,b:b,op:op}); }
+  if(gt.op==='mix'){
+    for(var a=1;a<max;a++){for(var b=1;a+b<=max;b++)addUnique(a,b,'+');}
+    for(var a2=2;a2<=max;a2++){for(var b2=1;b2<a2;b2++)addUnique(a2,b2,'-');}
+  }else if(gt.op==='+'){
+    for(var a3=1;a3<max;a3++){for(var b3=1;a3+b3<=max;b3++)addUnique(a3,b3,'+');}
+  }else{
+    for(var a4=2;a4<=max;a4++){for(var b4=1;b4<a4;b4++)addUnique(a4,b4,'-');}
+  }
+  // mischen
+  for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
+
+  // 2) count Aufgaben ziehen – Vielfalt maximieren
+  // Lücken-Varianten einer Grundaufgabe (didaktisch verschiedene Aufgaben)
+  function boxVariant(a,b,op,variant){
+    var result=op==='+'?a+b:a-b;
+    // variant 0 = Ergebnis, 1 = linker Summand/Minuend, 2 = rechter Summand/Subtrahend
+    if(variant===1) return '\u00a7 '+op+' '+b+' = '+result;
+    if(variant===2) return a+' '+op+' \u00a7 = '+result;
+    return a+' '+op+' '+b+' = \u00a7';
+  }
+  var problems=[];
+  if(pool.length===0){ customProbs=[]; renderProbList(); manualEdited=false; return; }
+
+  if(boxPos==='result'){
+    // Lücke immer beim Ergebnis. Bei count>pool wird wiederholt, aber jede
+    // Pool-Runde neu durchmischt -> Wiederholungen verteilen sich, statt dass
+    // Seite 2 die Reihenfolge von Seite 1 kopiert.
+    var idx=0, work=pool.slice();
+    for(var k=0;k<count;k++){
+      if(idx>=work.length){
+        // neue Runde: neu mischen
+        for(var s=work.length-1;s>0;s--){var sj=Math.floor(Math.random()*(s+1));var st=work[s];work[s]=work[sj];work[sj]=st;}
+        idx=0;
+      }
+      var p=work[idx++];
+      problems.push(boxVariant(p.a,p.b,p.op,0));
+    }
+  }else{
+    // Gemischte Lücken: jede Grundaufgabe kann in 3 Varianten erscheinen.
+    // -> effektiver Pool = pool.length * 3. Wir erzeugen alle (Aufgabe,Variante)-
+    //    Kombinationen, mischen und ziehen. Erst wenn auch die erschöpft sind,
+    //    wird (mit Neumischung) wiederholt.
+    var combos=[];
+    for(var pi=0;pi<pool.length;pi++){
+      combos.push({p:pool[pi],v:0});
+      combos.push({p:pool[pi],v:1});
+      combos.push({p:pool[pi],v:2});
+    }
+    for(var ci=combos.length-1;ci>0;ci--){var cj=Math.floor(Math.random()*(ci+1));var ct=combos[ci];combos[ci]=combos[cj];combos[cj]=ct;}
+    var cidx=0;
+    for(var k2=0;k2<count;k2++){
+      if(cidx>=combos.length){
+        for(var s2=combos.length-1;s2>0;s2--){var sj2=Math.floor(Math.random()*(s2+1));var st2=combos[s2];combos[s2]=combos[sj2];combos[sj2]=st2;}
+        cidx=0;
+      }
+      var c=combos[cidx++];
+      problems.push(boxVariant(c.p.a,c.p.b,c.p.op,c.v));
+    }
+  }
+
+  customProbs=problems;
+  renderProbList();
+  manualEdited=false;
+}
+
+// UI helpers
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// Tabs + Sbar (Uhr-Stil)
+var sbar=document.getElementById('sbar');
+function showTab(n){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('s-'+n).classList.add('active');
+  document.getElementById('t-'+n).classList.add('active');
+  if(n==='pre'){
+    // Auto-Generierung: solange der Nutzer nicht selbst Aufgaben eingegeben hat,
+    // werden die Aufgaben beim Öffnen der Vorschau aus dem Generator frisch erzeugt.
+    if(!manualEdited){ generateProblems(); }
+    syncProbs();
+    sbar.innerHTML='';
+    var b1=document.createElement('button'),b2=document.createElement('button');
+    b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
+    b2.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;border:none';
+    b1.textContent='\u2190 Zur\u00fcck'; b2.textContent='Drucken / PDF';
+    b1.onclick=function(){showTab('tasks');}; b2.onclick=doPrint;
+    sbar.appendChild(b1); sbar.appendChild(b2);
+    setTimeout(buildPreview,50);
+  }else{
+    sbar.innerHTML='';
+    var btn=document.createElement('button');
+    btn.className='btn bp'; btn.textContent='\ud83d\udc41 Vorschau & Drucken';
+    btn.onclick=function(){showTab('pre');};
+    sbar.appendChild(btn);
+  }
+}
+/* ===== Spec für das PDF-Modul einsammeln ===== */
+function pdfSpec(){
+  syncProbs();
+  var tasks=getProblems().map(parseProb).filter(Boolean);
+  return {
+    tasks: tasks,
+    numPages: numPages,
+    showSol: (document.getElementById('showSol') ? document.getElementById('showSol').checked : false)
+  };
+}
+function pdfHeaderOpts(){
+  return {
+    showName:document.getElementById('showName').checked,
+    showDate:document.getElementById('showDate').checked,
+    showKl:document.getElementById('showKl').checked
+  };
+}
+async function makePDFBytes(){
+  if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
+  return await GrundrechnenPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
+}
+function buildPreview(){
+  var wrap=document.getElementById('previewContent');
+  wrap.innerHTML='<p style="color:#6b7280;padding:16px;font-size:.8rem">Vorschau wird erstellt &hellip;</p>';
+  (async function(){
+    try{
+      syncProbs();
+      var tasks=getProblems().map(parseProb).filter(Boolean);
+      if(tasks.length===0){
+        wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Keine Aufgaben eingegeben.</p>';
+        return;
+      }
+      var bytes=await makePDFBytes();
+      if(window.pdfjsLib){
+        var pdf=await window.pdfjsLib.getDocument({data:bytes}).promise;
+        wrap.innerHTML='';
+        var sw=Math.min(window.innerWidth,480)-28;
+        for(var p=1;p<=pdf.numPages;p++){
+          var page=await pdf.getPage(p);
+          var vp1=page.getViewport({scale:1});
+          var scale=sw/vp1.width;
+          var vp=page.getViewport({scale:scale*2});
+          var canvas=document.createElement('canvas');
+          canvas.style.cssText='display:block;width:'+sw+'px;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:10px;background:#fff';
+          canvas.width=vp.width;canvas.height=vp.height;
+          await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+          wrap.appendChild(canvas);
+        }
+      }else{
+        var blob=new Blob([bytes],{type:'application/pdf'});
+        wrap.innerHTML='<embed src="'+URL.createObjectURL(blob)+'" type="application/pdf" style="width:100%;height:70vh;border:1px solid #e2e8f0;border-radius:6px">';
+      }
+    }catch(e){
+      wrap.innerHTML='<p style="color:red;padding:20px">'+(e.message||String(e))+'</p>';
+      console.error(e);
+    }
+  })();
+}
+async function doPrint(){
+  try{
+    syncProbs();
+    var tasks=getProblems().map(parseProb).filter(Boolean);
+    if(tasks.length===0){alert('Keine Aufgaben eingegeben.');return;}
+    var bytes=await makePDFBytes();
+    await PrintBridge.printPDF(bytes,'Mathe-Aufgaben.pdf');
+  }catch(e){
+    alert('Druck fehlgeschlagen: '+(e.message||e));
+    console.error(e);
+  }
+}
+
+document.getElementById('t-tasks').onclick=function(){showTab('tasks');};
+document.getElementById('t-gen').onclick=function(){showTab('gen');};
+document.getElementById('t-set').onclick=function(){showTab('set');};
+document.getElementById('t-pre').onclick=function(){showTab('pre');};
+document.getElementById('btnGoPre').onclick=function(){showTab('pre');};
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('selectstart',function(e){if(e.target.tagName==='INPUT')return;e.preventDefault();});
+
+// Init
+initGenChips();
+initPageChips();
+document.querySelectorAll('input[name=boxPos]').forEach(function(r){
+  r.addEventListener('change',function(){ manualEdited=false; });
+});
+generateProblems();   // Aufgaben-Tab beim Start vorbefüllen
+renderProbList();
+
+// PWA manifest
+var manifest={name:'Mathe-Aufgaben Generator',short_name:'Mathe',start_url:'.',display:'standalone',background_color:'#f0f9ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='300' font-family='sans-serif'%3E\ud83d\udd22%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
+
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

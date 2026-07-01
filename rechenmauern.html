@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rechenmauern">
+<meta name="theme-color" content="#0369a1">
+<title>Rechenmauern · Sascha Rothenburg</title>
+<style>
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#f0f9ff;color:#1e1b4b;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+input{-webkit-user-select:text;user-select:text}
+.app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1)}
+.hdr{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));flex-shrink:0}
+.hdr h1{font-size:1.15rem;font-weight:900}
+.hdr p{font-size:.68rem;opacity:.85;margin-top:1px}
+.hdr-btns{display:flex;gap:8px;margin-top:6px;align-items:center}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(255,255,255,.25);border-radius:20px;color:#fff;font-family:Nunito,sans-serif;font-size:.72rem;font-weight:800;text-decoration:none;cursor:pointer;border:none}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e2e8f0;flex-shrink:0}
+.tab{flex:1;padding:10px 4px 8px;text-align:center;font-size:.65rem;font-weight:800;color:#6b7280;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.active{color:#0369a1;border-bottom-color:#0369a1}
+.ti{display:block;font-size:1.1rem;margin-bottom:1px}
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(80px + env(safe-area-inset-bottom,0px));display:none}
+.screen.active{display:block}
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:14px;margin-bottom:10px;border:1px solid #e2e8f0}
+.card h2{font-size:.72rem;font-weight:800;color:#0369a1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer}
+.bp{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff}
+.bs{background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0}
+.tgl{position:relative;width:44px;height:24px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl-s{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.2s}
+.tgl-s::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.tgl input:checked+.tgl-s{background:#0369a1}
+.tgl input:checked+.tgl-s::before{transform:translateX(20px)}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0}
+.sr:last-child{border-bottom:none}
+.sl{font-size:.88rem;font-weight:600}
+.ss{font-size:.73rem;color:#6b7280;margin-top:1px}
+.ni{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:9px;font-family:Nunito,sans-serif;font-size:.9rem;font-weight:600;color:#1e1b4b;background:#f0f9ff;outline:none}
+.ni:focus{border-color:#0369a1}
+.sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;z-index:100}
+@media print{
+  .app,.sbar{display:none!important}
+  .printarea{display:block!important;width:100%!important;margin:0!important;padding:0!important}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{height:auto;overflow:visible;-webkit-text-size-adjust:100%}
+  @page{size:A4 portrait;margin:12mm 14mm}
+}
+.printarea{display:none}
+/* Rechenmauern-spezifisch */
+.opt-row{display:flex;gap:6px;flex-wrap:wrap}
+.opt-btn.disabled{opacity:.38;cursor:not-allowed;pointer-events:auto}
+.opt-btn{flex:1;min-width:60px;padding:9px 4px;border-radius:10px;border:2px solid #e2e8f0;background:#f8fafc;font-family:Nunito,sans-serif;font-size:.8rem;font-weight:800;color:#1e1b4b;cursor:pointer}
+.opt-btn.sel{background:#0369a1;color:#fff;border-color:#0369a1}
+.mw-list{display:flex;flex-direction:column;gap:12px}
+.mw-item{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:12px;position:relative}
+.mw-item .del{position:absolute;top:8px;right:8px;background:none;border:none;color:#7dd3fc;font-size:1rem;cursor:pointer;padding:0}
+.mw-pyr{display:flex;flex-direction:column;align-items:center;gap:4px}
+.mw-pyr-row{display:flex;gap:4px;justify-content:center}
+.mw-brick{width:42px;height:30px;border:2px solid #0369a1;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;background:#fff;color:#1e1b4b}
+.mw-brick.gap{background:#fef9c3;border-color:#eab308;color:#a16207}
+</style>
+<script src="pdf-lib.min.js"></script>
+<script src="fontkit.umd.min.js"></script>
+<script src="pdf.min.js"></script>
+<script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
+<script src="rechenmauern-pdf.js"></script>
+<script src="print-bridge.js"></script>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <h1>&#x1F9F1; Rechenmauern</h1>
+  <p>&#169; 2026 Sascha Rothenburg</p>
+  <div class="hdr-btns">
+    <a href="mathe.html#acc-grundrechnen" class="hdr-btn">&#x2190; Zur&uuml;ck</a>
+    <a href="index.html" class="hdr-btn">&#x1F3E0; Hauptmen&uuml;</a>
+  </div>
+</div>
+<div class="tabs">
+  <button class="tab active" id="t-gen"><span class="ti">&#x26A1;</span>Generator</button>
+  <button class="tab" id="t-list"><span class="ti">&#x1F9F1;</span>Mauern</button>
+  <button class="tab" id="t-set"><span class="ti">&#x2699;</span>Einst.</button>
+  <button class="tab" id="t-pre"><span class="ti">&#x1F441;</span>Vorschau</button>
+</div>
+<div class="screens">
+<div class="screen active" id="s-gen">
+  <div class="card">
+    <h2>Einstellungen</h2>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Gr&ouml;&szlig;e (Steine unten)</label>
+      <div class="opt-row" id="sizeOpts">
+        <button class="opt-btn sel" data-v="3">3 Steine</button>
+        <button class="opt-btn sel" data-v="4">4 Steine</button>
+        <button class="opt-btn" data-v="5">5 Steine</button>
+      </div>
+      <div class="ss" style="margin-top:6px">Es werden zuf&auml;llig Mauern aus den gew&auml;hlten Gr&ouml;&szlig;en gemischt.</div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Zahlenraum (Deckstein bis max.)</label>
+      <div class="opt-row" id="rangeOpts">
+        <button class="opt-btn" data-v="20">bis 20</button>
+        <button class="opt-btn sel" data-v="100">bis 100</button>
+        <button class="opt-btn" data-v="1000">bis 1000</button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Aufgabentyp</label>
+      <div class="opt-row" id="typeOpts">
+        <button class="opt-btn sel" data-v="add">Nur addieren<br><span style="font-weight:600;font-size:.66rem">L&uuml;cken oben</span></button>
+        <button class="opt-btn sel" data-v="sub">Addieren + Subtrahieren<br><span style="font-weight:600;font-size:.66rem">L&uuml;cken unten/mitte</span></button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Seitenzahl</label>
+      <div class="opt-row" id="pageChips"></div>
+      <p style="font-size:.7rem;color:#6b7280;margin-top:6px">Die Anzahl der Mauern pro Seite ist passend zu Steinzahl und Zahlenraum festgelegt.</p>
+    </div>
+    <p style="font-size:.72rem;color:#6b7280;margin-top:8px;line-height:1.5">Die Mauern werden beim &#214;ffnen der Vorschau automatisch erstellt.</p>
+  </div>
+</div>
+<div class="screen" id="s-list">
+  <div class="card">
+    <h2>Generierte Mauern</h2>
+    <div class="mw-list" id="mwList"><p style="color:#6b7280;font-size:.85rem">Die Mauern werden beim &Ouml;ffnen der Vorschau erstellt.</p></div>
+  </div>
+</div>
+<div class="screen" id="s-set">
+  <div class="card">
+    <h2>Layout</h2>
+    <div class="sr"><div class="sl">Mauer-Nummer</div><label class="tgl"><input type="checkbox" id="showNr" checked><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">L&ouml;sungsblatt anh&auml;ngen</div><div class="ss" style="position:absolute"></div><label class="tgl"><input type="checkbox" id="showSol"><span class="tgl-s"></span></label></div>
+  </div>
+  <div class="card">
+    <h2>&#x1F4D0; Kopfzeile</h2>
+    <div class="sr"><div class="sl">Name-Feld</div><label class="tgl"><input type="checkbox" id="showName"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Datum-Feld</div><label class="tgl"><input type="checkbox" id="showDate"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Klasse-Feld</div><label class="tgl"><input type="checkbox" id="showKl"><span class="tgl-s"></span></label></div>
+  </div>
+</div>
+<div class="screen" id="s-pre"><div id="previewContent"></div></div>
+</div>
+</div>
+<div class="printarea" id="printArea"></div>
+<div class="sbar" id="sbar">
+  <button class="btn bp" id="btnGoPre">&#x1F441; Vorschau &amp; Drucken</button>
+</div>
+<script>
+/* ===== Plattform-Erkennung (iOS/Safari Druck-Eigenheiten) ===== */
+var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+var IS_SAFARI = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+
+
+/* ===== Multi-Select Optionen ===== */
+function setupMulti(id){
+  document.querySelectorAll('#'+id+' .opt-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      b.classList.toggle('sel');
+      if(!document.querySelectorAll('#'+id+' .opt-btn.sel').length) b.classList.add('sel');
+      optsDirty=true;
+    });
+  });
+}
+function setupSingle(id){
+  document.querySelectorAll('#'+id+' .opt-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#'+id+' .opt-btn').forEach(function(x){x.classList.remove('sel');});
+      b.classList.add('sel');
+      optsDirty=true;
+    });
+  });
+}
+function getMulti(id){return Array.from(document.querySelectorAll('#'+id+' .opt-btn.sel')).map(function(b){return parseInt(b.dataset.v);});}
+function getMultiStr(id){return Array.from(document.querySelectorAll('#'+id+' .opt-btn.sel')).map(function(b){return b.dataset.v;});}
+function getSingle(id){var b=document.querySelector('#'+id+' .opt-btn.sel');return b?parseInt(b.dataset.v):null;}
+setupMulti('sizeOpts');setupSingle('rangeOpts');setupMulti('typeOpts');
+
+/* ===== Sonderregel: 5 Steine + Zahlenraum bis 1000 steht immer allein =====
+   Sobald diese Kombination aktiv ist, werden 3- und 4-Steine-Buttons deaktiviert
+   (und ihre Auswahl entfernt). Wird die Kombination aufgeloest, sind sie wieder waehlbar. */
+function enforceExclusive(){
+  var sizeBtns=document.querySelectorAll('#sizeOpts .opt-btn');
+  var range=getSingle('rangeOpts');
+  var five=document.querySelector('#sizeOpts .opt-btn[data-v="5"]');
+  var fiveSel=five&&five.classList.contains('sel');
+  var lock=(fiveSel && range===1000);
+  sizeBtns.forEach(function(b){
+    if(b.dataset.v==='5') return;
+    if(lock){
+      b.classList.remove('sel');
+      b.classList.add('disabled');
+      b.setAttribute('aria-disabled','true');
+    } else {
+      b.classList.remove('disabled');
+      b.removeAttribute('aria-disabled');
+    }
+  });
+  // Sicherstellen, dass mindestens ein Stein gewaehlt ist
+  if(!document.querySelectorAll('#sizeOpts .opt-btn.sel').length && five){ five.classList.add('sel'); }
+}
+// Klicks auf deaktivierte Stein-Buttons abfangen (capture-phase, vor setupMulti-Handler)
+document.querySelectorAll('#sizeOpts .opt-btn').forEach(function(b){
+  b.addEventListener('click',function(e){
+    if(b.classList.contains('disabled')){ e.stopImmediatePropagation(); e.preventDefault(); return; }
+  }, true);
+});
+// Nach jeder Auswahl in sizeOpts/rangeOpts die Regel anwenden
+['sizeOpts','rangeOpts'].forEach(function(id){
+  document.querySelectorAll('#'+id+' .opt-btn').forEach(function(b){
+    b.addEventListener('click',function(){ setTimeout(enforceExclusive,0); });
+  });
+});
+enforceExclusive();
+
+/* ===== Automatische Anzahl (seitenfüllend) =====
+   Indexiert nach [größte gewählte Steinanzahl][Zahlenraum].
+   Werte = ideale Mauer-Anzahl, damit eine A4-Seite gut gefüllt ist.
+   Diese Werte sind durch Drucktest ermittelt und können hier justiert werden. */
+/* ===== Seitenzahl-Steuerung (feste Anzahl Mauern pro Seite, druckgetestet) =====
+   Indexiert nach [groesste Steinanzahl][Zahlenraum].
+   p1 = Seite 1 (mit Header), p2 = GESAMTzahl bei 2 Seiten.
+   p2-Werte sind Startwerte und werden am iPad nachjustiert. */
+var PER_PAGE={
+  3:{ 20:{p1:20,p2:44}, 100:{p1:20,p2:44}, 1000:{p1:12,p2:24} },
+  4:{ 20:{p1:12,p2:24}, 100:{p1:12,p2:24}, 1000:{p1:12,p2:24} },
+  5:{ 20:{p1:12,p2:24}, 100:{p1:12,p2:24}, 1000:{p1:6, p2:12} }
+};
+var numPages=1;
+function pageCfg(){
+  var sizes=getMulti('sizeOpts'); if(!sizes.length)sizes=[3];
+  var maxSize=Math.max.apply(null,sizes);
+  var range=getSingle('rangeOpts')||100;
+  var row=PER_PAGE[maxSize]||PER_PAGE[3];
+  return row[range]||row[100]||{p1:8,p2:18};
+}
+function totalCount(){ var c=pageCfg(); return numPages<=1?c.p1:(c.p2!=null?c.p2:c.p1*2); }
+function pageSplits(){ var c=pageCfg(); if(numPages<=1)return [c.p1]; var t=(c.p2!=null?c.p2:c.p1*2); return [c.p1,t-c.p1]; }
+function initPageChips(){
+  var pc=document.getElementById('pageChips'); if(!pc)return; pc.innerHTML='';
+  [{n:1,l:'1 Seite'},{n:2,l:'2 Seiten'}].forEach(function(o){
+    var el=document.createElement('div');
+    el.className='opt-btn'+(o.n===numPages?' sel':'');
+    el.textContent=o.l;
+    el.onclick=function(){ numPages=o.n; optsDirty=true; document.querySelectorAll('#pageChips .opt-btn').forEach(function(x){x.classList.remove('sel');}); el.classList.add('sel'); };
+    pc.appendChild(el);
+  });
+}
+initPageChips();
+
+/* ===== Generator-Logik ===== */
+var walls=[];
+var optsDirty=true;   // true -> Vorschau generiert neu; nach Generierung false
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+// Baut eine Mauer: base = unterste Reihe (n Steine). rows[0]=unten ... rows[top]=Deckstein
+function buildPyramid(n,maxTop){
+  for(var attempt=0;attempt<400;attempt++){
+    var base=[];
+    // Basissteine klein halten, damit Deckstein <= maxTop
+    var div = n===3?3: n===4?7:14;
+    var hi=Math.max(Math.floor(maxTop/div),2);
+    if(maxTop<=20){hi=n===3?9:n===4?5:3;}
+    for(var i=0;i<n;i++) base.push(ri(1,hi));
+    var rows=[base];
+    var ok=true;
+    while(rows[rows.length-1].length>1){
+      var cur=rows[rows.length-1],nx=[];
+      for(var j=0;j<cur.length-1;j++) nx.push(cur[j]+cur[j+1]);
+      rows.push(nx);
+    }
+    if(rows[rows.length-1][0]<=maxTop) return rows;
+  }
+  return null;
+}
+
+// Lücken setzen. type 'add' => nur Deckstein/obere Reihen frei (Kind addiert).
+// type 'sub' => einige Basis-/mittlere Steine frei lassen, Deckstein/obere gegeben => Rückwärts.
+function makeGaps(rows,type){
+  var totalRows=rows.length;
+  var gaps={}; // "r_c" => true
+  if(type==='add'){
+    // Deckstein immer frei, evtl. eine Stelle in vorletzter Reihe
+    gaps[(totalRows-1)+'_0']=true;
+    if(totalRows>=3 && Math.random()<0.6){
+      var r=totalRows-2, c=ri(0,rows[r].length-1);
+      gaps[r+'_'+c]=true;
+    }
+  } else {
+    // sub: Deckstein gegeben, einige untere/mittlere frei
+    var nGaps = totalRows>=4?ri(2,3):2;
+    var candidates=[];
+    for(var rr=0;rr<totalRows-1;rr++) for(var cc=0;cc<rows[rr].length;cc++) candidates.push(rr+'_'+cc);
+    // mische
+    for(var k=candidates.length-1;k>0;k--){var t=ri(0,k);var tmp=candidates[k];candidates[k]=candidates[t];candidates[t]=tmp;}
+    for(var g=0;g<Math.min(nGaps,candidates.length);g++) gaps[candidates[g]]=true;
+  }
+  return gaps;
+}
+
+function generate(){
+  var cnt=totalCount();
+  var sizes=getMulti('sizeOpts'); if(!sizes.length)sizes=[3];
+  var maxTop=getSingle('rangeOpts')||100;
+  var types=getMultiStr('typeOpts'); if(!types.length)types=['add'];
+  walls=[];
+  var tries=0;
+  while(walls.length<cnt && tries<cnt*30){
+    tries++;
+    var n=sizes[ri(0,sizes.length-1)];
+    var type=types[ri(0,types.length-1)];
+    var rows=buildPyramid(n,maxTop);
+    if(!rows)continue;
+    var gaps=makeGaps(rows,type);
+    walls.push({rows:rows,gaps:gaps,type:type});
+  }
+  renderList();
+  optsDirty=false;
+}
+
+/* ===== Mini-Pyramide für Listenansicht ===== */
+function pyramidHTML(w,showSolution){
+  var h='<div class="mw-pyr">';
+  for(var r=w.rows.length-1;r>=0;r--){
+    h+='<div class="mw-pyr-row">';
+    for(var c=0;c<w.rows[r].length;c++){
+      var isGap=w.gaps[r+'_'+c];
+      var val=w.rows[r][c];
+      if(isGap && !showSolution) h+='<div class="mw-brick gap"></div>';
+      else h+='<div class="mw-brick'+(isGap?' gap':'')+'">'+val+'</div>';
+    }
+    h+='</div>';
+  }
+  h+='</div>';
+  return h;
+}
+
+function renderList(){
+  var el=document.getElementById('mwList');
+  el.innerHTML='';
+  if(!walls.length){el.innerHTML='<p style="color:#6b7280;font-size:.85rem">Noch keine Mauern.</p>';return;}
+  walls.forEach(function(w,i){
+    var d=document.createElement('div');d.className='mw-item';
+    var typeLbl=w.type==='add'?'addieren':'+ / \u2212';
+    d.innerHTML='<div style="font-size:.7rem;font-weight:800;color:#0369a1;margin-bottom:6px">Mauer '+(i+1)+' &middot; '+w.rows[0].length+' Steine &middot; '+typeLbl+'</div>'+pyramidHTML(w,false);
+    var b=document.createElement('button');b.className='del';b.textContent='\u2715';
+    b.addEventListener('click',(function(idx){return function(){walls.splice(idx,1);renderList();};})(i));
+    d.appendChild(b);
+    el.appendChild(d);
+  });
+}
+
+/* ===== Druck-Arbeitsblatt (A4) ===== */
+// nutzbare Druckbreite ca. 515pt (A4 - Ränder - Innenpadding berücksichtigt separat)
+function maxDigitsIn(wallList){
+  var md=1;
+  wallList.forEach(function(w){
+    w.rows.forEach(function(row){
+      row.forEach(function(v){ var d=String(v).length; if(d>md)md=d; });
+    });
+  });
+  return md;
+}
+// Liefert Steindimensionen so, dass die breiteste Mauer (maxBase Steine) in eine Spalte passt
+// und die größte Zahl (digits) bequem hineinpasst.
+function dimFor(cols,digits,maxBase,pageInner){
+  // verfügbare Spaltenbreite in pt, minus Innenpadding 2*3mm (~17pt)
+  var colInner=((pageInner||515)/cols)-17;
+  // Mindestbreite je Zahl: ~7.5pt pro Ziffer + Polster
+  var needPerBrick=digits*8+12;
+  // verfügbare Breite je Stein in breitester Reihe (inkl. 2*margin)
+  var avail=colInner/maxBase;
+  var margin=cols===4?1:cols===2?2:1.5;
+  var w=Math.min(avail-2*margin, 64); // nicht unnötig riesig
+  w=Math.max(w, 14);                  // Untergrenze
+  // wenn Wunschbreite kleiner als nötig, bleibt w (Zahl wird per Schriftgröße angepasst)
+  var fs=Math.max(7, Math.min(w*0.42, 15));
+  // Höhe proportional, etwas flacher als breit
+  var h=Math.max(15, Math.round(w*0.72));
+  var br=cols===4?2.5:cols===2?4:3;
+  var bw=cols===4?1.1:cols===2?1.6:1.4;
+  return {w:Math.round(w*10)/10,h:h,fs:Math.round(fs*10)/10,m:margin,br:br,bw:bw};
+}
+function brickPrint(val,isGap,showSol,d){
+  var base='display:inline-flex;align-items:center;justify-content:center;width:'+d.w+'pt;height:'+d.h+'pt;border:'+d.bw+'pt solid #0369a1;border-radius:'+d.br+'pt;font-family:Nunito,sans-serif;font-weight:800;font-size:'+d.fs+'pt;margin:'+d.m+'pt;box-sizing:border-box;flex:0 0 auto;';
+  if(isGap && !showSol) return '<div style="'+base+'background:#fffbeb;border-color:#d97706;color:#fff"></div>';
+  if(isGap && showSol) return '<div style="'+base+'background:#fffbeb;border-color:#d97706;color:#a16207">'+val+'</div>';
+  return '<div style="'+base+'background:#fff;color:#1e1b4b">'+val+'</div>';
+}
+
+
+/* ===== Kopfzeile ===== */
+
+/* ===== Tabs + Sbar ===== */
+var sbar=document.getElementById('sbar');
+function showTab(name){
+  var map={gen:'s-gen',list:'s-list',set:'s-set',pre:'s-pre'};
+  var tmap={gen:'t-gen',list:'t-list',set:'t-set',pre:'t-pre'};
+  document.querySelectorAll('.screen').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active');});
+  document.getElementById(map[name]).classList.add('active');
+  document.getElementById(tmap[name]).classList.add('active');
+  if(name==='pre'){
+    // Auto-Generierung: bei geänderten Optionen (oder noch leer) frische Mauern erzeugen
+    if(optsDirty || !walls.length){ generate(); }
+    sbar.innerHTML='';
+    var b1=document.createElement('button'),b2=document.createElement('button');
+    b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
+    b2.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;border:none';
+    b1.textContent='\u2190 Zur\u00fcck';b2.textContent='Drucken / PDF';
+    b1.onclick=function(){showTab('list');};b2.onclick=doPrint;
+    sbar.appendChild(b1);sbar.appendChild(b2);
+    setTimeout(buildPreview,50);
+  }else{
+    sbar.innerHTML='';
+    var btn=document.createElement('button');
+    btn.className='btn bp';btn.textContent='\ud83d\udc41 Vorschau & Drucken';
+    btn.onclick=function(){showTab('pre');};
+    sbar.appendChild(btn);
+  }
+}
+
+function pdfSpec(){
+  return {
+    walls: walls,
+    numPages: numPages,
+    showSol: document.getElementById('showSol').checked,
+    showNr: document.getElementById('showNr').checked
+  };
+}
+function pdfHeaderOpts(){
+  return {
+    showName:document.getElementById('showName').checked,
+    showDate:document.getElementById('showDate').checked,
+    showKl:document.getElementById('showKl').checked
+  };
+}
+async function makePDFBytes(){
+  if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
+  return await RechenmauernPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
+}
+function buildPreview(){
+  var wrap=document.getElementById('previewContent');
+  wrap.innerHTML='<p style="color:#6b7280;padding:16px;font-size:.8rem">Vorschau wird erstellt &hellip;</p>';
+  (async function(){
+    try{
+      if(!walls.length){
+        wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Keine Mauern erstellt &ndash; bitte Einstellungen pr&uuml;fen.</p>';
+        return;
+      }
+      var bytes=await makePDFBytes();
+      if(window.pdfjsLib){
+        var pdf=await window.pdfjsLib.getDocument({data:bytes}).promise;
+        wrap.innerHTML='';
+        var sw=Math.min(window.innerWidth,480)-28;
+        for(var p=1;p<=pdf.numPages;p++){
+          var page=await pdf.getPage(p);
+          var vp1=page.getViewport({scale:1});
+          var scale=sw/vp1.width;
+          var vp=page.getViewport({scale:scale*2});
+          var canvas=document.createElement('canvas');
+          canvas.style.cssText='display:block;width:'+sw+'px;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:10px;background:#fff';
+          canvas.width=vp.width;canvas.height=vp.height;
+          await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+          wrap.appendChild(canvas);
+        }
+      }else{
+        var blob=new Blob([bytes],{type:'application/pdf'});
+        wrap.innerHTML='<embed src="'+URL.createObjectURL(blob)+'" type="application/pdf" style="width:100%;height:70vh;border:1px solid #e2e8f0;border-radius:6px">';
+      }
+    }catch(e){
+      wrap.innerHTML='<p style="color:red;padding:20px">'+(e.message||String(e))+'</p>';
+      console.error(e);
+    }
+  })();
+}
+async function doPrint(){
+  try{
+    if(!walls.length){ generate(); }
+    if(!walls.length){alert('Keine Mauern erstellt \u2013 bitte Einstellungen pr\u00fcfen.');return;}
+    var bytes=await makePDFBytes();
+    await PrintBridge.printPDF(bytes,'Rechenmauern.pdf');
+  }catch(e){
+    alert('Druck fehlgeschlagen: '+(e.message||e));
+    console.error(e);
+  }
+}
+
+/* ===== Tab buttons ===== */
+document.getElementById('t-gen').addEventListener('click',function(){showTab('gen');});
+document.getElementById('t-list').addEventListener('click',function(){showTab('list');});
+document.getElementById('t-set').addEventListener('click',function(){showTab('set');});
+document.getElementById('t-pre').addEventListener('click',function(){showTab('pre');});
+
+/* ===== Sliders / Buttons ===== */
+
+document.getElementById('btnGoPre').addEventListener('click',function(){showTab('pre');});
+
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('selectstart',function(e){if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;e.preventDefault();});
+
+/* ===== PWA Manifest ===== */
+var manifest={name:'Rechenmauern Generator',short_name:'Rechenmauern',start_url:'.',display:'standalone',background_color:'#f0f9ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='300' font-family='sans-serif'%3E\ud83e\uddf1%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

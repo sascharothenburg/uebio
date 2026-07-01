@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Geometrie – Formen & Symmetrien">
+<meta name="theme-color" content="#0369a1">
+<title>Geometrie &ndash; Formen &amp; Symmetrien · Sascha Rothenburg</title>
+<style>
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#f0f9ff;color:#1e1b4b;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+input{-webkit-user-select:text;user-select:text}
+.app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1)}
+.hdr{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));flex-shrink:0}
+.hdr h1{font-size:1.15rem;font-weight:900}
+.hdr p{font-size:.68rem;opacity:.85;margin-top:1px}
+.hdr-btns{display:flex;gap:8px;margin-top:6px;align-items:center}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(255,255,255,.25);border-radius:20px;color:#fff;font-family:Nunito,sans-serif;font-size:.72rem;font-weight:800;text-decoration:none;cursor:pointer;border:none}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e2e8f0;flex-shrink:0}
+.tab{flex:1;padding:10px 4px 8px;text-align:center;font-size:.65rem;font-weight:800;color:#6b7280;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.active{color:#0369a1;border-bottom-color:#0369a1}
+.ti{display:block;font-size:1.1rem;margin-bottom:1px}
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(80px + env(safe-area-inset-bottom,0px));display:none}
+.screen.active{display:block}
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:14px;margin-bottom:10px;border:1px solid #e2e8f0}
+.card h2{font-size:.72rem;font-weight:800;color:#0369a1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer}
+.bp{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff}
+.bs{background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0}
+.tgl{position:relative;width:44px;height:24px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl-s{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.2s}
+.tgl-s::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.tgl input:checked+.tgl-s{background:#0369a1}
+.tgl input:checked+.tgl-s::before{transform:translateX(20px)}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0}
+.sr:last-child{border-bottom:none}
+.sl{font-size:.88rem;font-weight:600}
+.ss{font-size:.73rem;color:#6b7280;margin-top:1px}
+.ni{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:9px;font-family:Nunito,sans-serif;font-size:.9rem;font-weight:600;color:#1e1b4b;background:#f0f9ff;outline:none}
+.ni:focus{border-color:#0369a1}
+.sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;z-index:100}
+@media print{
+  .app,.sbar{display:none!important}
+  .printarea{display:block!important;width:100%!important;margin:0!important;padding:0!important}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{height:auto;overflow:visible;-webkit-text-size-adjust:100%}
+  @page{size:A4 portrait;margin:12mm 14mm}
+}
+.printarea{display:none}
+/* App-spezifisch */
+.opt-row{display:flex;gap:6px;flex-wrap:wrap}
+.opt-btn{flex:1;min-width:60px;padding:9px 4px;border-radius:10px;border:2px solid #e2e8f0;background:#f8fafc;font-family:Nunito,sans-serif;font-size:.8rem;font-weight:800;color:#1e1b4b;cursor:pointer}
+.opt-btn.sel{background:#0369a1;color:#fff;border-color:#0369a1}
+.ge-list{display:flex;flex-direction:column;gap:12px}
+.ge-item{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:12px;position:relative}
+.ge-item .del{position:absolute;top:8px;right:8px;background:none;border:none;color:#7dd3fc;font-size:1rem;cursor:pointer;padding:0}
+.ge-cap{font-size:.7rem;font-weight:800;color:#0369a1;margin-bottom:6px}
+.ge-q{font-size:.82rem;font-weight:700;color:#1e1b4b;margin-bottom:6px}
+</style>
+<script src="pdf-lib.min.js"></script>
+<script src="fontkit.umd.min.js"></script>
+<script src="pdf.min.js"></script>
+<script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
+<script src="geometrie-pdf.js"></script>
+<script src="print-bridge.js"></script>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <h1>&#x1F4D0; Geometrie &ndash; Formen &amp; Symmetrien</h1>
+  <p>&#169; 2026 Sascha Rothenburg</p>
+  <div class="hdr-btns">
+    <a href="mathe.html#acc-groessen-und-geometrie" class="hdr-btn">&#x2190; Zur&uuml;ck</a>
+    <a href="index.html" class="hdr-btn">&#x1F3E0; Hauptmen&uuml;</a>
+  </div>
+</div>
+<div class="tabs">
+  <button class="tab active" id="t-gen"><span class="ti">&#x26A1;</span>Generator</button>
+  <button class="tab" id="t-list"><span class="ti">&#x1F4D0;</span>Aufgaben</button>
+  <button class="tab" id="t-set"><span class="ti">&#x2699;</span>Einst.</button>
+  <button class="tab" id="t-pre"><span class="ti">&#x1F441;</span>Vorschau</button>
+</div>
+<div class="screens">
+<div class="screen active" id="s-gen">
+  <div class="card">
+    <h2>Einstellungen</h2>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Bereich</label>
+      <div class="opt-row" id="areaOpts">
+        <button class="opt-btn sel" data-v="shape">Formen<br><span style="font-weight:600;font-size:.66rem">erkennen</span></button>
+        <button class="opt-btn sel" data-v="sym">Symmetrie<br><span style="font-weight:600;font-size:.66rem">Achsen</span></button>
+      </div>
+      <div class="ss" style="margin-top:6px">Beide w&auml;hlbar &ndash; wird gemischt.</div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Formen-Aufgabe</label>
+      <div class="opt-row" id="shapeTypeOpts">
+        <button class="opt-btn sel" data-v="pickShape">Wort &rarr; Form<br><span style="font-weight:600;font-size:.66rem">Form ankreuzen</span></button>
+        <button class="opt-btn sel" data-v="pickName">Form &rarr; Wort<br><span style="font-weight:600;font-size:.66rem">Wort ankreuzen</span></button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Formenauswahl</label>
+      <div class="opt-row" id="setOpts">
+        <button class="opt-btn" data-v="basic">Grundformen</button>
+        <button class="opt-btn sel" data-v="ext">+ erweitert</button>
+      </div>
+      <div class="ss" style="margin-top:6px">Erweitert: Trapez, Raute, F&uuml;nf-/Sechseck, Oval.</div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Seitenzahl</label>
+      <div class="opt-row" id="pageChips"></div>
+      <p style="font-size:.7rem;color:#6b7280;margin-top:6px">Die Aufgabenzahl pro Seite ist passend zum Aufgabentyp festgelegt.</p>
+    </div>
+    <p style="font-size:.72rem;color:#6b7280;margin-top:8px;line-height:1.5">Die Aufgaben werden beim &#214;ffnen der Vorschau automatisch erstellt.</p>
+  </div>
+</div>
+<div class="screen" id="s-list">
+  <div class="card">
+    <h2>Generierte Aufgaben</h2>
+    <div class="ge-list" id="geList"><p style="color:#6b7280;font-size:.85rem">Die Aufgaben werden beim &Ouml;ffnen der Vorschau erstellt.</p></div>
+  </div>
+</div>
+<div class="screen" id="s-set">
+  <div class="card">
+    <h2>Layout</h2>
+    <div class="sr"><div class="sl">Aufgaben-Nummer</div><label class="tgl"><input type="checkbox" id="showNr" checked><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">L&ouml;sungsblatt anh&auml;ngen</div><label class="tgl"><input type="checkbox" id="showSol"><span class="tgl-s"></span></label></div>
+  </div>
+  <div class="card">
+    <h2>&#x1F4D0; Kopfzeile</h2>
+    <div class="sr"><div class="sl">Name-Feld</div><label class="tgl"><input type="checkbox" id="showName"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Datum-Feld</div><label class="tgl"><input type="checkbox" id="showDate"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Klasse-Feld</div><label class="tgl"><input type="checkbox" id="showKl"><span class="tgl-s"></span></label></div>
+  </div>
+</div>
+<div class="screen" id="s-pre"><div id="previewContent"></div></div>
+</div>
+</div>
+<div class="printarea" id="printArea"></div>
+<div class="sbar" id="sbar">
+  <button class="btn bp" id="btnGoPre">&#x1F441; Vorschau &amp; Drucken</button>
+</div>
+<script>
+/* ===== Plattform-Erkennung ===== */
+var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+var IS_SAFARI = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+
+
+/* ===== Multi/Single-Select ===== */
+function setupMulti(id){
+  document.querySelectorAll('#'+id+' .opt-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      b.classList.toggle('sel');
+      if(!document.querySelectorAll('#'+id+' .opt-btn.sel').length) b.classList.add('sel');
+      optsDirty=true;
+    });
+  });
+}
+function setupSingle(id){
+  document.querySelectorAll('#'+id+' .opt-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#'+id+' .opt-btn').forEach(function(x){x.classList.remove('sel');});
+      b.classList.add('sel');
+      optsDirty=true;
+    });
+  });
+}
+function getMultiStr(id){return Array.from(document.querySelectorAll('#'+id+' .opt-btn.sel')).map(function(b){return b.dataset.v;});}
+function getSingleStr(id){var b=document.querySelector('#'+id+' .opt-btn.sel');return b?b.dataset.v:null;}
+setupMulti('areaOpts');setupMulti('shapeTypeOpts');setupSingle('setOpts');
+
+/* ===== Automatische Aufgabenanzahl (seitenfüllend A4) =====
+   - Bereich = nur Symmetrie -> 12
+   - Bereich = nur Formen UND Aufgabe = nur Wort->Form -> 14
+   - sonst (Formen dabei / gemischt) -> 8 */
+/* ===== Seitenzahl-Steuerung (feste Aufgabenzahl pro Seite, druckgetestet) =====
+   p1 = Seite 1 (mit Header), p2 = GESAMTzahl bei 2 Seiten. Lookup nach Aufgabentyp:
+   - nur Symmetrie -> mehr; nur Formen+Wort->Form -> mehr; gemischt -> weniger.
+   p2-Werte sind Startwerte und werden am iPad nachjustiert. */
+var numPages=1;
+function pageCfg(){
+  var areas=getMultiStr('areaOpts'); if(!areas.length)areas=['shape'];
+  var types=getMultiStr('shapeTypeOpts'); if(!types.length)types=['pickShape'];
+  var hasShape=areas.indexOf('shape')>=0;
+  var hasSym=areas.indexOf('sym')>=0;
+  if(!hasShape && hasSym) return {p1:14,p2:30};                                   // nur Symmetrie
+  if(hasShape && !hasSym && types.length===1 && types[0]==='pickShape') return {p1:14,p2:30}; // nur Formen + Wort->Form
+  return {p1:14,p2:28};                                                           // gemischt
+}
+function totalCount(){ var c=pageCfg(); return numPages<=1?c.p1:(c.p2!=null?c.p2:c.p1*2); }
+function pageSplits(){ var c=pageCfg(); if(numPages<=1)return [c.p1]; var t=(c.p2!=null?c.p2:c.p1*2); return [c.p1,t-c.p1]; }
+function initPageChips(){
+  var pc=document.getElementById('pageChips'); if(!pc)return; pc.innerHTML='';
+  [{n:1,l:'1 Seite'},{n:2,l:'2 Seiten'}].forEach(function(o){
+    var el=document.createElement('div');
+    el.className='opt-btn'+(o.n===numPages?' sel':'');
+    el.textContent=o.l;
+    el.onclick=function(){ numPages=o.n; optsDirty=true; document.querySelectorAll('#pageChips .opt-btn').forEach(function(x){x.classList.remove('sel');}); el.classList.add('sel'); };
+    pc.appendChild(el);
+  });
+}
+
+/* ===== Formen-Bibliothek =====
+   Jede Form: name, draw(size)->svg-inhalt (zentriert in viewBox sizeXsize), axes: Anzahl Symmetrieachsen,
+   axisLines(size): Linien für Lösung (Symmetrieachsen einzeichnen)
+   set: 'basic' | 'ext'
+*/
+var LINE='#0369a1', FILL='#e0f2fe';
+function poly(points){ return '<polygon points="'+points.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ')+'" fill="'+FILL+'" stroke="'+LINE+'" stroke-width="2.4" stroke-linejoin="round"/>'; }
+
+var SHAPES={
+  quadrat:{name:'Quadrat',set:'basic',axes:4,draw:function(s){var m=s*0.18,a=s-2*m;return '<rect x="'+m+'" y="'+m+'" width="'+a+'" height="'+a+'" fill="'+FILL+'" stroke="'+LINE+'" stroke-width="2.4"/>';},
+    axisLines:function(s){var c=s/2,m=s*0.1;return [[c,m,c,s-m],[m,c,s-m,c],[m,m,s-m,s-m],[s-m,m,m,s-m]];}},
+  rechteck:{name:'Rechteck',set:'basic',axes:2,draw:function(s){var mx=s*0.1,my=s*0.26,w=s-2*mx,h=s-2*my;return '<rect x="'+mx+'" y="'+my+'" width="'+w+'" height="'+h+'" fill="'+FILL+'" stroke="'+LINE+'" stroke-width="2.4"/>';},
+    axisLines:function(s){var c=s/2,mx=s*0.04,my=s*0.2;return [[c,my,c,s-my],[mx,c,s-mx,c]];}},
+  dreieck:{name:'Dreieck',set:'basic',axes:1,draw:function(s){var m=s*0.12;return poly([[s/2,m],[s-m,s-m],[m,s-m]]);},
+    axisLines:function(s){var m=s*0.12;return [[s/2,m*0.6,s/2,s-m*0.85]];}}, // gleichschenklig: 1 Achse (vertikal)
+  kreis:{name:'Kreis',set:'basic',axes:99,draw:function(s){var r=s/2-s*0.12;return '<circle cx="'+(s/2)+'" cy="'+(s/2)+'" r="'+r+'" fill="'+FILL+'" stroke="'+LINE+'" stroke-width="2.4"/>';},
+    axisLines:function(s){var c=s/2,m=s*0.06;return [[c,m,c,s-m],[m,c,s-m,c]];}}, // unendlich viele, wir zeigen 2 Beispiele
+  trapez:{name:'Trapez',set:'ext',axes:1,draw:function(s){var m=s*0.12;return poly([[s*0.3,m],[s*0.7,m],[s-m,s-m],[m,s-m]]);},
+    axisLines:function(s){return [[s/2,s*0.06,s/2,s-s*0.06]];}},
+  raute:{name:'Raute',set:'ext',axes:2,draw:function(s){var my=s*0.08,mx=s*0.26;return poly([[s/2,my],[s-mx,s/2],[s/2,s-my],[mx,s/2]]);},
+    axisLines:function(s){var c=s/2,my=s*0.07,mx=s*0.22;return [[c,my,c,s-my],[mx,c,s-mx,c]];}},
+  fuenfeck:{name:'F\u00fcnfeck',set:'ext',axes:5,draw:function(s){return poly(regPoly(s,5,-90));},
+    axisLines:function(s){return regPolyAxes(s,5,-90);}},
+  sechseck:{name:'Sechseck',set:'ext',axes:6,draw:function(s){return poly(regPoly(s,6,-90));},
+    axisLines:function(s){return regPolyAxes(s,6,-90);}},
+  oval:{name:'Oval',set:'ext',axes:2,draw:function(s){var rx=s/2-s*0.08,ry=s/2-s*0.2;return '<ellipse cx="'+(s/2)+'" cy="'+(s/2)+'" rx="'+rx+'" ry="'+ry+'" fill="'+FILL+'" stroke="'+LINE+'" stroke-width="2.4"/>';},
+    axisLines:function(s){var c=s/2,mx=s*0.04,my=s*0.16;return [[c,my,c,s-my],[mx,c,s-mx,c]];}}
+};
+function regPoly(s,n,startDeg){
+  var c=s/2,r=s/2-s*0.1,pts=[];
+  for(var i=0;i<n;i++){var a=(startDeg+i*360/n)*Math.PI/180;pts.push([c+r*Math.cos(a),c+r*Math.sin(a)]);}
+  return pts;
+}
+function regPolyAxes(s,n,startDeg){
+  // n Symmetrieachsen durch den Mittelpunkt; jede Achse als Durchmesser-Linie
+  var c=s/2, R=s/2-s*0.04, lines=[];
+  // Achsenwinkel: alle 180/n Grad, beginnend an der ersten Ecke
+  for(var i=0;i<n;i++){
+    var a=(startDeg + i*180/n)*Math.PI/180;
+    var dx=R*Math.cos(a), dy=R*Math.sin(a);
+    lines.push([c-dx, c-dy, c+dx, c+dy]);
+  }
+  return lines;
+}
+
+/* ===== Generator ===== */
+var tasks=[];
+var optsDirty=true;   // true -> Vorschau generiert neu; Loeschen einzelner Aufgaben setzt das NICHT
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=ri(0,i);var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr;}
+function shapeKeys(set){
+  return Object.keys(SHAPES).filter(function(k){return set==='ext'?true:SHAPES[k].set==='basic';});
+}
+
+function generate(){
+  var cnt=totalCount();
+  var areas=getMultiStr('areaOpts'); if(!areas.length)areas=['shape'];
+  var shapeTypes=getMultiStr('shapeTypeOpts'); if(!shapeTypes.length)shapeTypes=['pickShape'];
+  var set=getSingleStr('setOpts')||'ext';
+  var keys=shapeKeys(set);
+
+  function makeShapeTask(stype,key){
+    // richtige Antwort + bis zu 3 andere, eindeutige Distraktoren
+    var others=shuffle(keys.filter(function(k){return k!==key;})).slice(0,3);
+    var opts=shuffle([key].concat(others));
+    return {area:'shape',sub:stype,shape:key,options:opts};
+  }
+
+  // ----- 1) Sorten = aktive (area, subtyp)-Kombinationen -----
+  var kinds=[];
+  if(areas.indexOf('shape')>=0){
+    shapeTypes.forEach(function(st){ kinds.push({area:'shape',sub:st}); });
+  }
+  if(areas.indexOf('sym')>=0){
+    kinds.push({area:'sym',sub:'draw'});
+  }
+  if(!kinds.length) kinds=[{area:'shape',sub:'pickShape'}];
+
+  // ----- 2) Gesamtzahl gleichmäßig auf Sorten verteilen -----
+  var per=Math.floor(cnt/kinds.length), rest=cnt-per*kinds.length;
+  var restOrder=shuffle(kinds.map(function(_,i){return i;}));
+  var counts=kinds.map(function(){return per;});
+  for(var r=0;r<rest;r++){ counts[restOrder[r]]++; }
+
+  // ----- 3) Aufgaben je Sorte erzeugen, Dubletten je Sorte vermeiden -----
+  function buildBucket(kind, want){
+    var arr=[], seen={}, guard=0;
+    // zuerst eindeutige Kombinationen
+    while(arr.length<want && guard<want*40 && arr.length<keys.length){
+      guard++;
+      var key=keys[ri(0,keys.length-1)];
+      if(seen[key]) continue;
+      seen[key]=true;
+      arr.push(kind.area==='shape'?makeShapeTask(kind.sub,key):{area:'sym',sub:'draw',shape:key});
+    }
+    // auffüllen mit Wiederholung, falls mehr gewünscht als eindeutige Formen
+    while(arr.length<want){
+      var k2=keys[ri(0,keys.length-1)];
+      arr.push(kind.area==='shape'?makeShapeTask(kind.sub,k2):{area:'sym',sub:'draw',shape:k2});
+    }
+    return arr;
+  }
+  var buckets=kinds.map(function(kind,i){ return buildBucket(kind, counts[i]); });
+
+  // ----- 4) Round-Robin-Interleaving: Sorten abwechseln -----
+  tasks=[];
+  var order=shuffle(kinds.map(function(_,i){return i;}));
+  var more=true;
+  while(more){
+    more=false;
+    for(var oi=0;oi<order.length;oi++){
+      var b=buckets[order[oi]];
+      if(b.length){ tasks.push(b.shift()); more=true; }
+    }
+  }
+
+  renderList();
+  optsDirty=false;
+}
+
+/* ===== SVG-Rendering ===== */
+function shapeSVG(key,size){
+  size=size||90;
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg">'+SHAPES[key].draw(size)+'</svg>';
+}
+function shapeSVGwithAxes(key,size){
+  size=size||90;
+  var lines=SHAPES[key].axisLines(size);
+  var inner=SHAPES[key].draw(size);
+  // Es soll nur EINE Symmetrieachse eingezeichnet werden
+  if(lines.length){
+    var l=lines[0];
+    inner+='<line x1="'+l[0]+'" y1="'+l[1]+'" x2="'+l[2]+'" y2="'+l[3]+'" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3"/>';
+  }
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg">'+inner+'</svg>';
+}
+
+function questionText(t){
+  if(t.area==='shape'){
+    if(t.sub==='pickName') return 'Wie hei&szlig;t diese Form? Kreuze an.';
+    return 'Kreuze die Form an: <b>'+SHAPES[t.shape].name+'</b>';
+  }else{
+    return 'Zeichne eine Symmetrieachse ein.';
+  }
+}
+
+/* ===== Listenansicht (Bildschirm) ===== */
+function taskInline(t,showSol,sz){
+  sz=sz||86;
+  var h='';
+  if(t.area==='shape' && t.sub==='pickShape'){ // Name vorgegeben, richtige Form ankreuzen
+    h+='<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
+    t.options.forEach(function(o){
+      var correct=showSol && o===t.shape;
+      h+='<div style="text-align:center">'+shapeSVG(o,sz*0.7)
+        +'<div style="margin-top:2px"><span style="display:inline-block;width:16px;height:16px;border:2px solid '+(correct?'#16a34a':'#94a3b8')+';border-radius:3px;background:'+(correct?'#16a34a':'#fff')+';color:#fff;font-size:11px;line-height:13px;font-weight:900">'+(correct?'\u2713':'')+'</span></div></div>';
+    });
+    h+='</div>';
+  }else if(t.area==='shape' && t.sub==='pickName'){ // Form gezeigt, richtigen Namen ankreuzen
+    h+='<div style="display:flex;flex-direction:column;align-items:center;gap:8px">';
+    h+=shapeSVG(t.shape,sz);
+    h+='<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">';
+    t.options.forEach(function(o){
+      var correct=showSol && o===t.shape;
+      h+='<span style="display:inline-flex;align-items:center;gap:4px;font-weight:700;font-size:.82rem"><span style="display:inline-block;width:15px;height:15px;border:2px solid '+(correct?'#16a34a':'#94a3b8')+';border-radius:3px;background:'+(correct?'#16a34a':'#fff')+';color:#fff;font-size:10px;line-height:12px;text-align:center;font-weight:900">'+(correct?'\u2713':'')+'</span>'+SHAPES[o].name+'</span>';
+    });
+    h+='</div></div>';
+  }else{ // sym draw: eine Symmetrieachse einzeichnen
+    h+='<div style="display:flex;justify-content:center">'+(showSol?shapeSVGwithAxes(t.shape,sz):shapeSVG(t.shape,sz))+'</div>';
+  }
+  return h;
+}
+function renderList(){
+  var el=document.getElementById('geList');el.innerHTML='';
+  if(!tasks.length){el.innerHTML='<p style="color:#6b7280;font-size:.85rem">Noch keine Aufgaben.</p>';return;}
+  tasks.forEach(function(t,i){
+    var d=document.createElement('div');d.className='ge-item';
+    var lbl=t.area==='shape'?(t.sub==='pickName'?'Wort ankreuzen':'Form ankreuzen'):'Symmetrieachse';
+    d.innerHTML='<div class="ge-cap">Aufgabe '+(i+1)+' &middot; '+lbl+'</div><div class="ge-q">'+questionText(t)+'</div>'+taskInline(t,false,86);
+    var b=document.createElement('button');b.className='del';b.textContent='\u2715';
+    b.addEventListener('click',(function(idx){return function(){tasks.splice(idx,1);renderList();};})(i));
+    d.appendChild(b);el.appendChild(d);
+  });
+}
+
+/* ===== Druck (A4, 2 Spalten) ===== */
+
+/* ===== Kopfzeile ===== */
+
+/* ===== Tabs + Sbar ===== */
+var sbar=document.getElementById('sbar');
+function showTab(name){
+  var map={gen:'s-gen',list:'s-list',set:'s-set',pre:'s-pre'};
+  var tmap={gen:'t-gen',list:'t-list',set:'t-set',pre:'t-pre'};
+  document.querySelectorAll('.screen').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active');});
+  document.getElementById(map[name]).classList.add('active');
+  document.getElementById(tmap[name]).classList.add('active');
+  if(name==='pre'){
+    // Auto-Generierung: bei geaenderten Optionen (oder noch leer) frische Aufgaben erzeugen
+    if(optsDirty || !tasks.length){ generate(); }
+    sbar.innerHTML='';
+    var b1=document.createElement('button'),b2=document.createElement('button');
+    b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
+    b2.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;border:none';
+    b1.textContent='\u2190 Zur\u00fcck';b2.textContent='Drucken / PDF';
+    b1.onclick=function(){showTab('list');};b2.onclick=doPrint;
+    sbar.appendChild(b1);sbar.appendChild(b2);
+    setTimeout(buildPreview,50);
+  }else{
+    sbar.innerHTML='';
+    var btn=document.createElement('button');
+    btn.className='btn bp';btn.textContent='\ud83d\udc41 Vorschau & Drucken';
+    btn.onclick=function(){showTab('pre');};
+    sbar.appendChild(btn);
+  }
+}
+function pdfSpec(){
+  return {
+    tasks: tasks,
+    numPages: numPages,
+    showSol: document.getElementById('showSol').checked,
+    showNr: document.getElementById('showNr').checked
+  };
+}
+function pdfHeaderOpts(){
+  return {
+    showName:document.getElementById('showName').checked,
+    showDate:document.getElementById('showDate').checked,
+    showKl:document.getElementById('showKl').checked
+  };
+}
+async function makePDFBytes(){
+  if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
+  return await GeometriePDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
+}
+function buildPreview(){
+  var wrap=document.getElementById('previewContent');
+  wrap.innerHTML='<p style="color:#6b7280;padding:16px;font-size:.8rem">Vorschau wird erstellt &hellip;</p>';
+  (async function(){
+    try{
+      if(!tasks.length){
+        wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Keine Aufgaben erstellt &ndash; bitte Einstellungen pr&uuml;fen.</p>';
+        return;
+      }
+      var bytes=await makePDFBytes();
+      if(window.pdfjsLib){
+        var pdf=await window.pdfjsLib.getDocument({data:bytes}).promise;
+        wrap.innerHTML='';
+        var sw=Math.min(window.innerWidth,480)-28;
+        for(var p=1;p<=pdf.numPages;p++){
+          var page=await pdf.getPage(p);
+          var vp1=page.getViewport({scale:1});
+          var scale=sw/vp1.width;
+          var vp=page.getViewport({scale:scale*2});
+          var canvas=document.createElement('canvas');
+          canvas.style.cssText='display:block;width:'+sw+'px;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:10px;background:#fff';
+          canvas.width=vp.width;canvas.height=vp.height;
+          await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+          wrap.appendChild(canvas);
+        }
+      }else{
+        var blob=new Blob([bytes],{type:'application/pdf'});
+        wrap.innerHTML='<embed src="'+URL.createObjectURL(blob)+'" type="application/pdf" style="width:100%;height:70vh;border:1px solid #e2e8f0;border-radius:6px">';
+      }
+    }catch(e){
+      wrap.innerHTML='<p style="color:red;padding:20px">'+(e.message||String(e))+'</p>';
+      console.error(e);
+    }
+  })();
+}
+async function doPrint(){
+  try{
+    if(!tasks.length){ generate(); }
+    if(!tasks.length){alert('Keine Aufgaben erstellt \u2013 bitte Einstellungen pr\u00fcfen.');return;}
+    var bytes=await makePDFBytes();
+    await PrintBridge.printPDF(bytes,'Geometrie.pdf');
+  }catch(e){
+    alert('Druck fehlgeschlagen: '+(e.message||e));
+    console.error(e);
+  }
+}
+
+document.getElementById('t-gen').addEventListener('click',function(){showTab('gen');});
+document.getElementById('t-list').addEventListener('click',function(){showTab('list');});
+document.getElementById('t-set').addEventListener('click',function(){showTab('set');});
+document.getElementById('t-pre').addEventListener('click',function(){showTab('pre');});
+initPageChips();
+document.getElementById('btnGoPre').addEventListener('click',function(){showTab('pre');});
+
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('selectstart',function(e){if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;e.preventDefault();});
+
+/* ===== PWA Manifest ===== */
+var manifest={name:'Geometrie \u2013 Formen & Symmetrien',short_name:'Geometrie',start_url:'.',display:'standalone',background_color:'#f0f9ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Cpolygon points='256,110 410,400 102,400' fill='none' stroke='white' stroke-width='20' stroke-linejoin='round'/%3E%3Cline x1='256' y1='110' x2='256' y2='400' stroke='white' stroke-width='12' stroke-dasharray='18 12'/%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

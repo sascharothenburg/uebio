@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datenschutzerkl&auml;rung</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"Datenschutz","short_name":"Datenschutz","start_url":".","display":"standalone","background_color":"%23f5f5f5","theme_color":"%23737373","icons":[]}'>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
+
+:root{
+  --accent:#737373;
+  --accent-d:#525252;
+  --accent-l:#a3a3a3;
+  --bg:#fafafa;
+  --card:#ffffff;
+  --line:#e5e5e5;
+  --ink:#2b2b2b;
+  --muted:#6b6b6b;
+  --soft:#f3f3f3;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Kopfzeile (Schema-Standard) ---------- */
+header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-d) 100%);
+  color:#fff;
+  padding:14px 20px;
+  padding-top:calc(14px + var(--ad-top,0px));
+  box-shadow:0 2px 12px rgba(0,0,0,.12);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+header .h-title{
+  font-weight:800;font-size:1.25rem;letter-spacing:.2px;
+  display:flex;align-items:center;gap:10px;
+}
+header .h-title svg{flex:none}
+.h-spacer{flex:1 1 auto}
+.h-back{
+  color:#fff;text-decoration:none;font-weight:700;font-size:.95rem;
+  padding:7px 14px;border-radius:9px;
+  background:rgba(255,255,255,.16);
+  transition:background .15s;
+  white-space:nowrap;
+}
+.h-back:hover{background:rgba(255,255,255,.28)}
+
+/* ---------- Inhalt ---------- */
+.wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+
+.intro{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:26px 28px;
+  margin-bottom:26px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.intro h1{
+  font-size:1.6rem;font-weight:800;color:var(--accent-d);
+  margin-bottom:8px;
+}
+.intro p{color:var(--muted);font-size:1.02rem}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:24px 28px;
+  margin-bottom:20px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.card h2{
+  font-size:1.15rem;font-weight:800;color:var(--accent-d);
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.card h2 .dot{
+  width:11px;height:11px;border-radius:50%;
+  background:var(--accent);flex:none;
+}
+.card h3{
+  font-size:1rem;font-weight:800;color:var(--ink);
+  margin:16px 0 6px;
+}
+.card p{color:var(--muted);font-size:.97rem;margin-bottom:10px}
+.card p:last-child{margin-bottom:0}
+.card ul{margin:6px 0 10px 20px;color:var(--muted);font-size:.97rem}
+.card ul li{margin-bottom:5px}
+.card a{color:var(--accent-d);font-weight:700;word-break:break-word}
+.card b{color:var(--ink)}
+
+.ph{
+  background:#fff6d6;
+  border:1px dashed #d8b400;
+  border-radius:6px;
+  padding:1px 7px;
+  font-weight:700;color:#7a5c00;
+  font-size:.93rem;
+}
+
+.note{
+  background:var(--soft);
+  border-left:4px solid var(--accent-l);
+  border-radius:8px;
+  padding:13px 16px;margin-top:14px;
+  font-size:.95rem;color:var(--muted);
+}
+.note b{color:var(--accent-d)}
+
+.toc{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px 26px;margin-bottom:20px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.toc h2{font-size:1rem;font-weight:800;color:var(--accent-d);margin-bottom:10px}
+.toc ol{margin-left:20px;color:var(--muted);font-size:.96rem}
+.toc ol li{margin-bottom:4px}
+.toc a{color:var(--accent-d);font-weight:700;text-decoration:none}
+.toc a:hover{text-decoration:underline}
+
+footer{
+  text-align:center;color:var(--muted);
+  font-size:.88rem;padding:0 20px 40px;
+}
+footer a{color:var(--accent-d);font-weight:700}
+
+@media(max-width:560px){
+  .wrap{padding:22px 14px 60px}
+  .card,.intro,.toc{padding:20px 18px}
+  header{padding:12px 16px;padding-top:calc(12px + var(--ad-top,0px));gap:10px}
+  header .h-title{font-size:1.1rem}
+  .h-back{font-size:.88rem;padding:7px 11px}
+}
+
+/* ---------- Druck ---------- */
+@media print{
+  @page{size:A4;margin:16mm}
+  header{position:static;background:none;color:#000;box-shadow:none;padding:0 0 10px;border-bottom:2px solid #999}
+  .h-back{display:none}
+  header .h-title{color:#000}
+  body{background:#fff;color:#000}
+  .wrap{max-width:none;padding:0}
+  .toc{display:none}
+  .card,.intro{box-shadow:none;border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid}
+  .card h2,.card h3,.intro h1,.card h2 .dot{color:#000}
+  .ph{background:none;border:none;padding:0;color:#000}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-title">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+    </svg>
+    Datenschutz
+  </div>
+  <div class="h-spacer"></div>
+  <a class="h-back" href="index.html">&larr; Startseite</a>
+</header>
+
+<div class="wrap">
+
+  <section class="intro">
+    <h1>Datenschutzerkl&auml;rung</h1>
+    <p>Diese Erkl&auml;rung informiert dar&uuml;ber, welche Daten bei der Nutzung dieser Lern-App verarbeitet werden. Der Schutz der Daten von Kindern hat dabei besondere Priorit&auml;t.</p>
+  </section>
+
+  <nav class="toc">
+    <h2>Inhalt</h2>
+    <ol>
+      <li><a href="#verantwortlich">Verantwortlicher</a></li>
+      <li><a href="#grundsatz">Grundsatz: lokale Verarbeitung</a></li>
+      <li><a href="#werbung">Werbung (Google AdMob)</a></li>
+      <li><a href="#speicher">Lokale Speicherung auf dem Ger&auml;t</a></li>
+      <li><a href="#spende">Freiwillige Unterst&uuml;tzung (PayPal)</a></li>
+      <li><a href="#kinder">Datenschutz f&uuml;r Kinder</a></li>
+      <li><a href="#rechte">Deine Rechte</a></li>
+      <li><a href="#aenderung">&Auml;nderungen</a></li>
+    </ol>
+  </nav>
+
+  <section class="card" id="verantwortlich">
+    <h2><span class="dot"></span>1. Verantwortlicher</h2>
+    <p>Verantwortlich f&uuml;r die Datenverarbeitung im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:</p>
+    <p>
+      Sascha Rothenburg<br>
+      c/o MediaMinds360<br>
+      Lothringer Str. 17<br>
+      63450 Hanau, Deutschland<br>
+      E-Mail: <a href="mailto:sascha-rothenburg@web.de">sascha-rothenburg@web.de</a>
+    </p>
+    <p>Die vollst&auml;ndigen Kontaktdaten findest du auch im <a href="impressum.html">Impressum</a>.</p>
+  </section>
+
+  <section class="card" id="grundsatz">
+    <h2><span class="dot"></span>2. Grundsatz: lokale Verarbeitung</h2>
+    <p>Diese App ist so gestaltet, dass m&ouml;glichst wenige Daten verarbeitet werden (Grundsatz der Datenminimierung, Art.&nbsp;5 DSGVO).</p>
+    <p>Alle Lerninhalte und Arbeitsbl&auml;tter werden <b>direkt auf dem Ger&auml;t</b> erzeugt. Eingaben, ausgew&auml;hlte Aufgaben, Einstellungen oder eingetippte W&ouml;rter werden <b>nicht an einen Server &uuml;bertragen</b>, nicht gespeichert und nicht ausgewertet.</p>
+    <p>Es gibt keine Nutzerkonten, keine Registrierung und keine Anmeldung.</p>
+  </section>
+
+  <section class="card" id="werbung">
+    <h2><span class="dot"></span>3. Werbung (Google AdMob)</h2>
+    <p>Zur Finanzierung der kostenlosen App wird Werbung &uuml;ber den Dienst <b>Google AdMob</b> eingeblendet. Anbieter ist Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland.</p>
+
+    <h3>Nur nicht-personalisierte Werbung</h3>
+    <p>Da sich die App auch an Kinder richtet, wird ausschlie&szlig;lich <b>nicht-personalisierte Werbung</b> ausgeliefert. Das bedeutet:</p>
+    <ul>
+      <li>Es wird <b>kein Werbeprofil</b> erstellt und keine personalisierte Werbung angezeigt.</li>
+      <li>Die <b>Werbe-ID des Ger&auml;ts wird nicht zu Werbezwecken &uuml;bertragen</b> (Kennzeichnung der Anfragen als an Kinder gerichtet, &bdquo;TFUA&ldquo; / Child-Directed-Treatment).</li>
+      <li>Es findet <b>kein ger&auml;te&uuml;bergreifendes Tracking</b> und kein Remarketing statt.</li>
+    </ul>
+    <p>Zur reinen Auslieferung der Werbung verarbeitet Google technisch notwendige Daten wie die IP-Adresse (gek&uuml;rzt/zur Auslieferung) und allgemeine Ger&auml;teinformationen. Auch bei nicht-personalisierter Werbung kann Google begrenzte Daten zur Betrugsvermeidung, H&auml;ufigkeitsbegrenzung und Abrechnung verarbeiten.</p>
+
+    <h3>Rechtsgrundlage</h3>
+    <p>Rechtsgrundlage ist unser berechtigtes Interesse an der Finanzierung der kostenlosen App (Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO). Da keine Werbe-ID zu Werbezwecken ausgelesen wird und kein Tracking stattfindet, ist hierf&uuml;r keine gesonderte Einwilligung erforderlich.</p>
+
+    <h3>Weitere Informationen</h3>
+    <p>Details zur Datenverarbeitung durch Google findest du in der Datenschutzerkl&auml;rung von Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
+
+    <div class="note"><b>Hinweis f&uuml;r dich (vor Ver&ouml;ffentlichung pr&uuml;fen):</b> Diese Erkl&auml;rung geht davon aus, dass du AdMob im Kinder-Modus betreibst (nicht-personalisiert, Child-Directed-Treatment bzw. TFUA aktiv, Zielgruppe in der Play Console entsprechend gesetzt). Falls du sp&auml;ter eine neutrale Altersabfrage einbaust und Erwachsenen personalisierte Werbung zeigst, muss dieser Abschnitt um einen Einwilligungs-Mechanismus (Consent / UMP-SDK) erg&auml;nzt werden.</div>
+  </section>
+
+  <section class="card" id="speicher">
+    <h2><span class="dot"></span>4. Lokale Speicherung auf dem Ger&auml;t</h2>
+    <p>Die App kann technisch notwendige Informationen <b>lokal auf dem Ger&auml;t</b> ablegen (z.&nbsp;B. zuletzt gew&auml;hlte Einstellungen oder den Einwilligungs-Status der Werbung). Diese Daten verbleiben auf dem Ger&auml;t und werden nicht &uuml;bertragen.</p>
+    <p>Sie lassen sich jederzeit l&ouml;schen, indem die App-Daten in den Ger&auml;te-Einstellungen geleert oder die App deinstalliert wird.</p>
+  </section>
+
+  <section class="card" id="spende">
+    <h2><span class="dot"></span>5. Freiwillige Unterst&uuml;tzung (PayPal)</h2>
+    <p>In der App gibt es einen freiwilligen Spenden-Link (&bdquo;Kaffee spendieren&ldquo;). Erst <b>wenn du diesen Link aktiv anklickst</b>, wirst du auf die externe Seite von PayPal weitergeleitet.</p>
+    <p>Ab diesem Zeitpunkt gilt die Datenschutzerkl&auml;rung von PayPal (PayPal (Europe) S.&agrave;&nbsp;r.l. et Cie, S.C.A., Luxemburg): <a href="https://www.paypal.com/de/legalhub/privacy-full" target="_blank" rel="noopener">paypal.com/de/legalhub/privacy-full</a>. Wir selbst erhalten dabei keine Zahlungsdaten von dir.</p>
+  </section>
+
+  <section class="card" id="kinder">
+    <h2><span class="dot"></span>6. Datenschutz f&uuml;r Kinder</h2>
+    <p>Diese App richtet sich auch an Kinder. Der Schutz ihrer Daten ist uns besonders wichtig.</p>
+    <ul>
+      <li>Es werden <b>keine personenbezogenen Daten von Kindern</b> erhoben, gespeichert oder &uuml;bertragen.</li>
+      <li>Es wird ausschlie&szlig;lich <b>nicht-personalisierte, kindgerechte Werbung</b> ausgeliefert (siehe Abschnitt&nbsp;3).</li>
+      <li>Es gibt keine Chat-, Kontakt- oder Upload-Funktionen, &uuml;ber die Kinder Daten preisgeben k&ouml;nnten.</li>
+    </ul>
+    <p>Die App orientiert sich an den Anforderungen der Google-Play-Richtlinien f&uuml;r familienfreundliche Inhalte sowie an Art.&nbsp;8 DSGVO zum Schutz von Kindern.</p>
+  </section>
+
+  <section class="card" id="rechte">
+    <h2><span class="dot"></span>7. Deine Rechte</h2>
+    <p>Dir stehen nach der DSGVO folgende Rechte zu: Auskunft (Art.&nbsp;15), Berichtigung (Art.&nbsp;16), L&ouml;schung (Art.&nbsp;17), Einschr&auml;nkung der Verarbeitung (Art.&nbsp;18), Daten&uuml;bertragbarkeit (Art.&nbsp;20) sowie Widerspruch gegen die Verarbeitung (Art.&nbsp;21).</p>
+    <p>Da wir selbst keine personenbezogenen Daten von dir speichern, k&ouml;nnen wir zu deiner Person in der Regel keine gespeicherten Daten herausgeben &ndash; es sind schlicht keine vorhanden. F&uuml;r Anliegen erreichst du uns &uuml;ber die im <a href="impressum.html">Impressum</a> genannte E-Mail-Adresse.</p>
+    <p>Du hast au&szlig;erdem das Recht, dich bei einer Datenschutz-Aufsichtsbeh&ouml;rde zu beschweren. F&uuml;r uns zust&auml;ndig ist:</p>
+    <p>
+      Der Hessische Beauftragte f&uuml;r Datenschutz und Informationsfreiheit<br>
+      Postfach 3163, 65021 Wiesbaden<br>
+      Telefon: 0611 1408-0<br>
+      <a href="https://datenschutz.hessen.de" target="_blank" rel="noopener">datenschutz.hessen.de</a>
+    </p>
+  </section>
+
+  <section class="card" id="aenderung">
+    <h2><span class="dot"></span>8. &Auml;nderungen dieser Erkl&auml;rung</h2>
+    <p>Wir passen diese Datenschutzerkl&auml;rung an, wenn sich die App oder die rechtlichen Anforderungen &auml;ndern. Es gilt die jeweils in der App abrufbare Fassung.</p>
+    <p>Stand: Juni 2026</p>
+  </section>
+
+  <footer>
+    Lern-Apps von Sascha Rothenburg &middot;
+    <a href="index.html">Startseite</a> &middot;
+    <a href="hilfe.html">Hilfe</a> &middot;
+    <a href="impressum.html">Impressum</a>
+  </footer>
+
+</div>
+
+<script src="ads.js"></script>
+
+</body>
+</html>

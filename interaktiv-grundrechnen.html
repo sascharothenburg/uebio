@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Plus &amp; Minus">
+<meta name="theme-color" content="#0369a1">
+<title>Plus &amp; Minus &middot; Interaktives &Uuml;ben &#183; Sascha Rothenburg</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#eff6ff;color:#0c2a43;-webkit-user-select:none;user-select:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+.app{display:flex;flex-direction:column;height:100%;max-width:560px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1);overflow:hidden}
+.hdr{background:linear-gradient(135deg,#075985,#0ea5e9);color:#fff;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));flex-shrink:0}
+.hdr h1{font-size:1.15rem;font-weight:900;display:flex;align-items:center;gap:8px}
+.hdr .sub{font-size:.66rem;opacity:.85;margin-top:1px;font-weight:600}
+.hdr-btns{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.hdr-btn{background:rgba(255,255,255,.22);border:none;color:#fff;font-family:Nunito,sans-serif;font-size:.78rem;font-weight:800;padding:7px 13px;border-radius:20px;cursor:pointer;text-decoration:none;white-space:nowrap;display:inline-block}
+.hdr-btn:hover{background:rgba(255,255,255,.32)}
+.main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column;animation:fade .25s ease}
+.screen.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Startbildschirm */
+.intro{font-size:.92rem;color:#5b7185;margin-bottom:18px;line-height:1.5;font-weight:600}
+.sect-label{font-size:.72rem;font-weight:900;color:#0369a1;text-transform:uppercase;letter-spacing:.6px;margin:14px 2px 9px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.choice{background:#f0f8ff;border:2px solid #dbeafe;border-radius:16px;padding:16px 12px;cursor:pointer;text-align:center;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:7px}
+.choice:hover{border-color:#7dd3fc;transform:translateY(-2px)}
+.choice.sel{border-color:#0ea5e9;background:#e0f2fe;box-shadow:0 4px 14px rgba(14,165,233,.18)}
+.choice .ico{font-size:1.9rem;line-height:1}
+.choice .nm{font-weight:800;font-size:.92rem}
+.choice .ds{font-size:.7rem;color:#6b8299;font-weight:600;line-height:1.25}
+.topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.topic-b{background:#f0f8ff;border:2px solid #dbeafe;border-radius:13px;padding:13px 8px;cursor:pointer;text-align:center;font-weight:800;font-size:.86rem;color:#0c2a43;transition:.15s}
+.topic-b:hover{border-color:#7dd3fc}
+.topic-b.sel{border-color:#0ea5e9;background:#e0f2fe;color:#075985}
+.topic-b .te{display:block;font-size:1.5rem;margin-bottom:3px}
+.topic-b .td{display:block;font-size:.66rem;color:#6b8299;font-weight:700;margin-top:2px}
+.start-btn{margin-top:16px;width:100%;padding:16px;border:none;border-radius:15px;background:linear-gradient(135deg,#075985,#0ea5e9);color:#fff;font-family:Nunito,sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;box-shadow:0 6px 18px rgba(14,165,233,.3)}
+.start-btn:disabled{background:#c3ddf0;box-shadow:none;cursor:not-allowed}
+
+/* Fortschrittsleiste */
+.progress-wrap{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.progress-bar{flex:1;height:10px;background:#dbeafe;border-radius:6px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#0ea5e9,#7dd3fc);border-radius:6px;transition:width .35s ease;width:0%}
+.progress-txt{font-size:.78rem;font-weight:800;color:#0369a1;white-space:nowrap}
+.score-pill{font-size:.78rem;font-weight:800;color:#16a34a;white-space:nowrap}
+
+/* Aufgaben-Karten */
+.q-card{flex:1;display:flex;flex-direction:column}
+.q-prompt{font-size:.82rem;font-weight:800;color:#6b8299;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+
+/* Großes Aufgabendisplay */
+.task-big{text-align:center;font-size:3.2rem;font-weight:900;color:#075985;margin:18px 0 4px;letter-spacing:1px}
+.task-sub{text-align:center;font-size:.9rem;color:#6b8299;font-weight:700;margin-bottom:8px}
+
+/* Quiz: Antwortoptionen */
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.quiz-opt{background:#f0f8ff;border:2.5px solid #dbeafe;border-radius:16px;padding:22px 12px;cursor:pointer;text-align:center;font-weight:900;font-size:1.7rem;color:#0c2a43;transition:.12s}
+.quiz-opt:hover{border-color:#7dd3fc}
+.quiz-opt.sel{border-color:#0ea5e9;background:#e0f2fe;transform:scale(1.03)}
+.quiz-opt.ok{border-color:#86efac;background:#f0fdf4;color:#16a34a}
+.quiz-opt.no{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+.quiz-opt.disabled{cursor:default;pointer-events:none}
+
+/* Zuordnen */
+.match-cols{display:flex;gap:14px;flex:1}
+.match-col{flex:1;display:flex;flex-direction:column;gap:7px}
+.match-item{background:#f0f8ff;border:2.5px solid #dbeafe;border-radius:13px;padding:7px 12px;cursor:pointer;font-weight:800;font-size:1.05rem;text-align:center;display:flex;align-items:center;justify-content:center;min-height:46px;transition:.12s}
+.match-item.sel{border-color:#0ea5e9;background:#e0f2fe;transform:scale(1.03)}
+.match-item.done{border-color:#86efac;background:#f0fdf4;color:#16a34a;cursor:default;opacity:.75}
+.match-item.wrong{border-color:#fca5a5;background:#fef2f2;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* Eintippen */
+.type-input{width:100%;padding:15px;border:2.5px solid #dbeafe;border-radius:14px;font-family:Nunito,sans-serif;font-size:1.6rem;font-weight:900;text-align:center;color:#0c2a43;background:#f0f8ff;outline:none;-webkit-user-select:text;user-select:text}
+.type-input:focus{border-color:#0ea5e9}
+.type-input.ok{border-color:#86efac;background:#f0fdf4;color:#16a34a}
+.type-input.no{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+
+/* Feedback + Buttons */
+.feedback{text-align:center;font-weight:900;font-size:1.15rem;min-height:30px;margin:14px 0 4px;opacity:0;transition:.2s}
+.feedback.show{opacity:1}
+.feedback.ok{color:#16a34a}
+.feedback.no{color:#dc2626}
+.q-actions{display:flex;gap:10px;margin-top:auto;padding-top:14px}
+.act-btn{flex:1;padding:15px;border:none;border-radius:14px;font-family:Nunito,sans-serif;font-size:1rem;font-weight:900;cursor:pointer}
+.act-primary{background:linear-gradient(135deg,#075985,#0ea5e9);color:#fff}
+.act-primary:disabled{background:#c3ddf0;cursor:not-allowed}
+.act-ghost{background:#e0f2fe;color:#0369a1;border:2px solid #dbeafe}
+
+/* Ergebnis */
+.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+.result .big{font-size:4.5rem;line-height:1}
+.result .rscore{font-size:2.2rem;font-weight:900;color:#0369a1}
+.result .rtxt{font-size:1.05rem;font-weight:700;color:#5b7185;max-width:300px;line-height:1.5}
+.result .rstars{font-size:2rem;letter-spacing:4px}
+.result-actions{display:flex;flex-direction:column;gap:10px;width:100%;margin-top:10px}
+
+.foot{text-align:center;font-size:.66rem;color:#9cc0db;padding:10px;font-weight:600}
+</style>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <h1>&#x2795; Plus &amp; Minus</h1>
+  <div class="sub">Interaktives &Uuml;ben &middot; &#169; 2026 Sascha Rothenburg</div>
+  <div class="hdr-btns">
+    <a class="hdr-btn" href="interaktiv.html#acc-mathe">&#x2190; Zur&uuml;ck</a>
+    <a class="hdr-btn" href="index.html">&#x1F3E0; Hauptmen&uuml;</a>
+  </div>
+</div>
+<div class="main">
+
+  <!-- START -->
+  <div class="screen active" id="scr-start">
+    <p class="intro">W&auml;hle eine &Uuml;bung und einen Zahlenraum. Du bekommst sofort R&uuml;ckmeldung, ob deine Antwort richtig ist. &#x1F31F;</p>
+    <div class="sect-label">&Uuml;bungsart</div>
+    <div class="cards" id="modeCards">
+      <div class="choice" data-mode="quiz"><span class="ico">&#x2714;&#xFE0F;</span><span class="nm">Antwort w&auml;hlen</span><span class="ds">Richtiges Ergebnis antippen</span></div>
+      <div class="choice" data-mode="type"><span class="ico">&#x270F;&#xFE0F;</span><span class="nm">Eintippen</span><span class="ds">Ergebnis selbst schreiben</span></div>
+      <div class="choice" data-mode="match"><span class="ico">&#x1F517;</span><span class="nm">Zuordnen</span><span class="ds">Aufgabe &amp; Ergebnis verbinden</span></div>
+      <div class="choice" data-mode="gap"><span class="ico">&#x1F50D;</span><span class="nm">Zahl finden</span><span class="ds">Fehlende Zahl bestimmen</span></div>
+    </div>
+    <div class="sect-label">Zahlenraum</div>
+    <div class="topic-grid" id="topicGrid"></div>
+    <button class="start-btn" id="startBtn" disabled>Los geht's!</button>
+  </div>
+
+  <!-- ÜBUNG -->
+  <div class="screen" id="scr-quiz">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+      <div class="progress-txt" id="progTxt">1/10</div>
+      <div class="score-pill" id="scorePill">&#x2713; 0</div>
+    </div>
+    <div class="q-card" id="qCard"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="q-actions" id="qActions"></div>
+  </div>
+
+  <!-- ERGEBNIS -->
+  <div class="screen" id="scr-result">
+    <div class="result">
+      <div class="big" id="rBig">&#x1F389;</div>
+      <div class="rstars" id="rStars"></div>
+      <div class="rscore" id="rScore">8 / 10</div>
+      <div class="rtxt" id="rTxt"></div>
+      <div class="result-actions">
+        <button class="act-btn act-primary" id="againBtn">Nochmal &uuml;ben</button>
+        <button class="act-btn act-ghost" id="menuBtn">Zur&uuml;ck zum Men&uuml;</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="foot">&#169; 2026 Sascha Rothenburg &middot; Plus &amp; Minus</div>
+</div>
+<script>
+
+/* ===== Hilfsfunktionen ===== */
+function shuffle(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+function ri(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+/* ===== Themen-Definitionen (Zahlenräume) ===== */
+/* op: 'add' | 'sub' | 'mix' ; max = obere Grenze des Zahlenraums */
+var TOPICS={
+  add10:{label:'Plus bis 10',emoji:'\u2795',op:'add',max:10,desc:'2 + 7 = ?'},
+  sub10:{label:'Minus bis 10',emoji:'\u2796',op:'sub',max:10,desc:'9 \u2212 4 = ?'},
+  add20:{label:'Plus bis 20',emoji:'\u2795',op:'add',max:20,desc:'8 + 9 = ?'},
+  sub20:{label:'Minus bis 20',emoji:'\u2796',op:'sub',max:20,desc:'17 \u2212 8 = ?'},
+  mix20:{label:'Gemischt bis 20',emoji:'\ud83c\udfb2',op:'mix',max:20,desc:'+ und \u2212'},
+  add100:{label:'Plus bis 100',emoji:'\u2795',op:'add',max:100,desc:'34 + 28 = ?'},
+  sub100:{label:'Minus bis 100',emoji:'\u2796',op:'sub',max:100,desc:'72 \u2212 35 = ?'},
+  mix100:{label:'Gemischt bis 100',emoji:'\ud83c\udfb2',op:'mix',max:100,desc:'+ und \u2212'}
+};
+var TOPIC_ORDER=['add10','sub10','add20','sub20','mix20','add100','sub100','mix100'];
+
+/* ===== Aufgaben-Erzeugung ===== */
+/* Eine Aufgabe = {a, b, op('+'/'\u2212'), res, q} ; b ist immer >=1, kein 0-Ergebnis bei Minus */
+function makeTask(topicKey){
+  var t=TOPICS[topicKey];
+  var op=t.op;
+  if(op==='mix'){ op=Math.random()<0.5?'add':'sub'; }
+  var max=t.max, a, b;
+  if(op==='add'){
+    a=ri(1,max-1);
+    b=ri(1,max-a);
+    return {a:a,b:b,op:'+',res:a+b,q:a+' + '+b};
+  } else {
+    a=ri(2,max);
+    b=ri(1,a-1);
+    return {a:a,b:b,op:'\u2212',res:a-b,q:a+' \u2212 '+b};
+  }
+}
+/* erzeuge n eindeutige Aufgaben (nach Aufgabentext) */
+function makeUnique(topicKey,n){
+  var out=[],seen={},guard=0;
+  while(out.length<n && guard<n*40){
+    guard++;
+    var task=makeTask(topicKey);
+    if(seen[task.q]) continue;
+    seen[task.q]=1; out.push(task);
+  }
+  return out;
+}
+/* erzeuge n Aufgaben mit eindeutigen ERGEBNISSEN (für Zuordnen) */
+function makeUniqueResults(topicKey,n){
+  var out=[],seenRes={},seenQ={},guard=0;
+  while(out.length<n && guard<n*120){
+    guard++;
+    var task=makeTask(topicKey);
+    if(seenRes[task.res]||seenQ[task.q]) continue;
+    seenRes[task.res]=1; seenQ[task.q]=1; out.push(task);
+  }
+  return out;
+}
+
+/* ===== Zustand ===== */
+var state={mode:null,topic:null,queue:[],idx:0,score:0,total:0,answered:false};
+
+/* ===== Startbildschirm ===== */
+function buildTopicGrid(){
+  var g=document.getElementById('topicGrid'); g.innerHTML='';
+  TOPIC_ORDER.forEach(function(k){
+    var m=TOPICS[k];
+    var b=document.createElement('div'); b.className='topic-b'; b.dataset.topic=k;
+    b.innerHTML='<span class="te">'+m.emoji+'</span>'+m.label+'<span class="td">'+m.desc+'</span>';
+    b.addEventListener('click',function(){ selTopic(b,k); });
+    g.appendChild(b);
+  });
+}
+function selTopic(el,topic){
+  document.querySelectorAll('#topicGrid .topic-b').forEach(function(x){x.classList.remove('sel');});
+  el.classList.add('sel'); state.topic=topic; checkStartReady();
+}
+document.querySelectorAll('#modeCards .choice').forEach(function(c){
+  c.addEventListener('click',function(){
+    document.querySelectorAll('#modeCards .choice').forEach(function(x){x.classList.remove('sel');});
+    c.classList.add('sel'); state.mode=c.dataset.mode; checkStartReady();
+  });
+});
+function checkStartReady(){
+  document.getElementById('startBtn').disabled=!(state.mode&&state.topic);
+}
+
+/* ===== Navigation ===== */
+function show(scr){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(scr).classList.add('active');
+}
+function toMenu(){ show('scr-start'); }
+document.getElementById('menuBtn').addEventListener('click',toMenu);
+
+/* ===== Übung starten ===== */
+document.getElementById('startBtn').addEventListener('click',startQuiz);
+document.getElementById('againBtn').addEventListener('click',function(){ startQuiz(); });
+
+function startQuiz(){
+  var n=(state.mode==='match')?8:10;
+  state.queue=(state.mode==='match')?makeUniqueResults(state.topic,n):makeUnique(state.topic,n);
+  state.idx=0; state.score=0; state.total=state.queue.length; state.answered=false;
+  show('scr-quiz');
+  renderQuestion();
+}
+
+function updateProgress(){
+  document.getElementById('progFill').style.width=Math.round(state.idx/state.total*100)+'%';
+  document.getElementById('progTxt').textContent=(state.idx+1)+'/'+state.total;
+  document.getElementById('scorePill').innerHTML='\u2713 '+state.score;
+}
+
+function setFeedback(ok,msg){
+  var f=document.getElementById('feedback');
+  f.className='feedback show '+(ok?'ok':'no');
+  f.textContent=msg||(ok?'\u2705 Richtig!':'\u274c Leider falsch');
+}
+function clearFeedback(){ var f=document.getElementById('feedback'); f.className='feedback'; f.textContent=''; }
+
+/* nächste Frage / Ende */
+function nextQuestion(){
+  state.idx++;
+  if(state.idx>=state.total){ showResult(); return; }
+  state.answered=false;
+  renderQuestion();
+}
+
+/* ===== Frage rendern (Dispatch) ===== */
+function renderQuestion(){
+  updateProgress();
+  clearFeedback();
+  var card=document.getElementById('qCard');
+  var actions=document.getElementById('qActions');
+  card.innerHTML=''; actions.innerHTML='';
+  if(state.mode==='quiz') renderQuiz(card,actions);
+  else if(state.mode==='type') renderType(card,actions);
+  else if(state.mode==='match') renderMatch(card,actions);
+  else if(state.mode==='gap') renderGap(card,actions);
+}
+
+/* ---------- 1) ANTWORT WÄHLEN (Quiz) ---------- */
+function distractors(res,want,max){
+  var set={}; set[res]=1; var out=[];
+  var cand=[res+1,res-1,res+2,res-2,res+10,res-10,res+5,res-5,res+3,res-3];
+  cand=shuffle(cand);
+  for(var i=0;i<cand.length && out.length<want;i++){
+    var v=cand[i];
+    if(v>=0 && v<=max && !set[v]){ set[v]=1; out.push(v); }
+  }
+  var k=2;
+  while(out.length<want){ var v=res+k; if(v>=0 && v<=max && !set[v]){ set[v]=1; out.push(v); } k=(k>0)?-k:(-k+1); if(Math.abs(k)>60) break; }
+  return out;
+}
+function renderQuiz(card,actions){
+  var t=state.queue[state.idx];
+  var max=TOPICS[state.topic].max;
+  var opts=shuffle(distractors(t.res,3,max).concat([t.res]));
+  var html='<div class="q-prompt">Welches Ergebnis ist richtig?</div>';
+  html+='<div class="task-big">'+t.q+' = ?</div>';
+  html+='<div class="quiz-opts" id="quizOpts"></div>';
+  card.innerHTML=html;
+  var box=card.querySelector('#quizOpts');
+  opts.forEach(function(v){
+    var d=document.createElement('div'); d.className='quiz-opt'; d.textContent=v;
+    d.addEventListener('click',function(){ checkQuiz(d,v,t); });
+    box.appendChild(d);
+  });
+}
+function checkQuiz(el,val,t){
+  if(state.answered) return;
+  state.answered=true;
+  var ok=(val===t.res);
+  if(ok) state.score++;
+  document.querySelectorAll('#quizOpts .quiz-opt').forEach(function(x){
+    x.classList.add('disabled');
+    if(parseInt(x.textContent,10)===t.res) x.classList.add('ok');
+  });
+  if(!ok) el.classList.add('no');
+  setFeedback(ok, ok?'\u2705 Richtig! '+t.q+' = '+t.res : '\u274c '+t.q+' = '+t.res);
+  var b=document.createElement('button'); b.className='act-btn act-primary';
+  b.textContent=(state.idx+1>=state.total)?'Ergebnis':'Weiter';
+  b.addEventListener('click',nextQuestion);
+  document.getElementById('qActions').innerHTML=''; document.getElementById('qActions').appendChild(b);
+}
+
+/* ---------- 2) EINTIPPEN ---------- */
+function renderType(card,actions){
+  var t=state.queue[state.idx];
+  var html='<div class="q-prompt">Tippe das Ergebnis ein</div>';
+  html+='<div class="task-big">'+t.q+' =</div>';
+  html+='<input class="type-input" id="typeInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="?">';
+  card.innerHTML=html;
+  var inp=card.querySelector('#typeInput');
+  setTimeout(function(){inp.focus();},100);
+  inp.addEventListener('input',function(){ inp.value=inp.value.replace(/[^0-9]/g,''); });
+  inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ checkType(t,inp); } });
+  var b=document.createElement('button'); b.className='act-btn act-primary'; b.id='typeCheck'; b.textContent='Pr\u00fcfen';
+  b.addEventListener('click',function(){ checkType(t,inp); });
+  actions.appendChild(b);
+}
+function checkType(t,inp){
+  if(state.answered) return;
+  var val=inp.value.trim();
+  if(!val) return;
+  var ok=(parseInt(val,10)===t.res);
+  state.answered=true;
+  if(ok){ state.score++; inp.className='type-input ok'; }
+  else{ inp.className='type-input no'; }
+  inp.blur();
+  setFeedback(ok, ok?'\u2705 Richtig!' : '\u274c '+t.q+' = '+t.res);
+  var b=document.getElementById('typeCheck');
+  b.textContent=(state.idx+1>=state.total)?'Ergebnis':'Weiter';
+  b.onclick=nextQuestion;
+}
+
+/* ---------- 3) ZUORDNEN ---------- */
+/* Eine "Runde" = bis zu 5 Aufgaben, deren Ergebnisse zugeordnet werden. */
+var matchState={};
+function renderMatch(card,actions){
+  // Ergebnisse sind durch makeUniqueResults bereits eindeutig
+  var set=state.queue.slice();
+  matchState={set:set, leftSel:null, pairs:set.length, found:0};
+  document.getElementById('progTxt').textContent='Paare: 0/'+set.length;
+  var lefts=set.map(function(o,i){return {o:o,key:i};});
+  var rights=shuffle(set.map(function(o,i){return {o:o,key:i};}));
+  var html='<div class="q-prompt">Verbinde Aufgabe und Ergebnis</div>';
+  html+='<div class="match-cols"><div class="match-col" id="mLeft"></div><div class="match-col" id="mRight"></div></div>';
+  card.innerHTML=html;
+  var L=card.querySelector('#mLeft'), R=card.querySelector('#mRight');
+  lefts.forEach(function(it){
+    var d=document.createElement('div'); d.className='match-item'; d.dataset.key=it.key; d.dataset.side='L';
+    d.textContent=it.o.q;
+    d.addEventListener('click',function(){matchClick(d,'L',it.key);});
+    L.appendChild(d);
+  });
+  rights.forEach(function(it){
+    var d=document.createElement('div'); d.className='match-item'; d.dataset.key=it.key; d.dataset.side='R';
+    d.textContent=it.o.res;
+    d.addEventListener('click',function(){matchClick(d,'R',it.key);});
+    R.appendChild(d);
+  });
+}
+function matchClick(el,side,key){
+  if(el.classList.contains('done')) return;
+  if(side==='L'){
+    document.querySelectorAll('#mLeft .match-item').forEach(function(x){x.classList.remove('sel');});
+    el.classList.add('sel'); matchState.leftSel={el:el,key:key};
+    return;
+  }
+  if(!matchState.leftSel){ return; }
+  var lk=matchState.leftSel.key;
+  if(lk===key){
+    matchState.leftSel.el.classList.remove('sel'); matchState.leftSel.el.classList.add('done');
+    el.classList.add('done');
+    matchState.leftSel=null; matchState.found++;
+    document.getElementById('progTxt').textContent='Paare: '+matchState.found+'/'+matchState.pairs;
+    if(matchState.found>=matchState.pairs){
+      state.score=matchState.pairs; state.total=matchState.pairs;
+      document.getElementById('scorePill').innerHTML='\u2713 '+state.score;
+      setFeedback(true,'\ud83c\udf89 Alle Paare gefunden!');
+      var b=document.createElement('button'); b.className='act-btn act-primary'; b.textContent='Weiter';
+      b.addEventListener('click',showResult);
+      document.getElementById('qActions').innerHTML=''; document.getElementById('qActions').appendChild(b);
+    }
+  } else {
+    el.classList.add('wrong');
+    var le=matchState.leftSel.el; le.classList.add('wrong');
+    setTimeout(function(){el.classList.remove('wrong'); le.classList.remove('wrong','sel'); matchState.leftSel=null;},450);
+  }
+}
+
+/* ---------- 4) ZAHL FINDEN (fehlende Zahl) ---------- */
+/* Aus a op b = res wird eine der drei Zahlen zur Lücke (Kästchen).
+   Ergebnis bleibt immer >=0, da Aufgaben so erzeugt werden. */
+var gapState={};
+function renderGap(card,actions){
+  var t=state.queue[state.idx];
+  var pos=ri(0,2); // 0=a, 1=b, 2=res
+  var answer, display, opSym=t.op;
+  if(pos===0){ answer=t.a; display='\u25A2 '+opSym+' '+t.b+' = '+t.res; }
+  else if(pos===1){ answer=t.b; display=t.a+' '+opSym+' \u25A2 = '+t.res; }
+  else { answer=t.res; display=t.a+' '+opSym+' '+t.b+' = \u25A2'; }
+  gapState={answer:answer};
+  var html='<div class="q-prompt">Welche Zahl fehlt im K\u00e4stchen?</div>';
+  html+='<div class="task-big">'+display+'</div>';
+  html+='<input class="type-input" id="gapInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="?">';
+  card.innerHTML=html;
+  var inp=card.querySelector('#gapInput');
+  setTimeout(function(){inp.focus();},100);
+  inp.addEventListener('input',function(){ inp.value=inp.value.replace(/[^0-9]/g,''); });
+  inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ checkGap(inp); } });
+  var b=document.createElement('button'); b.className='act-btn act-primary'; b.id='gapCheck'; b.textContent='Pr\u00fcfen';
+  b.addEventListener('click',function(){ checkGap(inp); });
+  actions.appendChild(b);
+}
+function checkGap(inp){
+  if(state.answered) return;
+  var val=inp.value.trim();
+  if(!val) return;
+  var ok=(parseInt(val,10)===gapState.answer);
+  state.answered=true;
+  if(ok){ state.score++; inp.className='type-input ok'; }
+  else{ inp.className='type-input no'; }
+  inp.blur();
+  setFeedback(ok, ok?'\u2705 Richtig!' : '\u274c Die richtige Zahl ist '+gapState.answer);
+  var b=document.getElementById('gapCheck');
+  b.textContent=(state.idx+1>=state.total)?'Ergebnis':'Weiter';
+  b.onclick=nextQuestion;
+}
+
+/* ===== Ergebnis ===== */
+function showResult(){
+  show('scr-result');
+  var pct=state.total?Math.round(state.score/state.total*100):0;
+  document.getElementById('rScore').textContent=state.score+' / '+state.total;
+  var stars = pct>=90?5 : pct>=75?4 : pct>=50?3 : pct>=30?2 : 1;
+  var s=''; for(var i=0;i<5;i++){ s+= i<stars?'\u2b50':'\u2606'; }
+  document.getElementById('rStars').textContent=s;
+  var big, txt;
+  if(pct>=90){ big='\ud83c\udf89'; txt='Super! Du rechnest richtig gut!'; }
+  else if(pct>=75){ big='\ud83d\ude04'; txt='Sehr gut! Fast alles richtig \u2013 weiter so!'; }
+  else if(pct>=50){ big='\ud83d\ude0a'; txt='Gut gemacht! &Uuml;be noch ein bisschen, dann sitzt es.'; }
+  else { big='\ud83d\udcaa'; txt='Weiter so! &Uuml;bung macht den Meister \u2013 versuch es nochmal.'; }
+  document.getElementById('rBig').textContent=big;
+  document.getElementById('rTxt').innerHTML=txt;
+}
+
+/* ===== Init ===== */
+buildTopicGrid();
+
+/* ===== PWA ===== */
+var manifest={name:'Plus & Minus',short_name:'Plus & Minus',start_url:'.',display:'standalone',background_color:'#eff6ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Ctext x='256' y='360' text-anchor='middle' font-size='300' font-family='sans-serif' fill='white'%3E%2B%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
+
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

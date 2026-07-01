@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Zeit rechnen · Sascha Rothenburg</title>
+<style>
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#f0f9ff;color:#1e1b4b;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+input{-webkit-user-select:text;user-select:text}
+.app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1)}
+.hdr{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));flex-shrink:0}
+.hdr h1{font-size:1.15rem;font-weight:900}
+.hdr p{font-size:.68rem;opacity:.85;margin-top:1px}
+.hdr-btns{display:flex;gap:8px;margin-top:6px;align-items:center}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(255,255,255,.25);border-radius:20px;color:#fff;font-family:Nunito,sans-serif;font-size:.72rem;font-weight:800;text-decoration:none;cursor:pointer;border:none}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e2e8f0;flex-shrink:0}
+.tab{flex:1;padding:10px 4px 8px;text-align:center;font-size:.65rem;font-weight:800;color:#6b7280;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.active{color:#0369a1;border-bottom-color:#0369a1}
+.ti{display:block;font-size:1.1rem;margin-bottom:1px}
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(80px + env(safe-area-inset-bottom,0px));display:none}
+.screen.active{display:block}
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:14px;margin-bottom:10px;border:1px solid #e2e8f0}
+.card h2{font-size:.72rem;font-weight:800;color:#0369a1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer}
+.bp{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff}
+.tgl{position:relative;width:44px;height:24px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl-s{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.2s}
+.tgl-s::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.tgl input:checked+.tgl-s{background:#0369a1}
+.tgl input:checked+.tgl-s::before{transform:translateX(20px)}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0}
+.sr:last-child{border-bottom:none}
+.sl{font-size:.88rem;font-weight:600}
+.ss{font-size:.73rem;color:#6b7280;margin-top:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:6px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:#f0f9ff;font-family:Nunito,sans-serif;font-size:.8rem;font-weight:700;color:#6b7280;cursor:pointer}
+#pageChips{width:100%}
+#pageChips .chip{flex:1;min-width:60px;padding:9px 4px;border-radius:10px;border:2px solid #e2e8f0;background:#f8fafc;font-weight:800;color:#1e1b4b;white-space:nowrap}
+#pageChips .chip.sel{background:#0369a1;color:#fff;border-color:#0369a1}
+.chip.sel{background:#0369a1;border-color:#0369a1;color:#fff}
+.ni{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:9px;font-family:Nunito,sans-serif;font-size:.9rem;font-weight:600;color:#1e1b4b;background:#f0f9ff;outline:none}
+.ni:focus{border-color:#0369a1}
+.sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;z-index:100}
+.srow{display:flex;align-items:center;gap:10px}
+.srow input[type=range]{flex:1;accent-color:#0369a1}
+input[type=range]{accent-color:#0369a1}
+@media print{.app,.sbar{display:none!important}.ws-foot{display:none!important}.printarea{display:block!important}body{background:#fff}html,body{height:auto;overflow:visible}@page{size:A4 portrait;margin:12mm 14mm}}
+.printarea{display:none}
+
+</style>
+<script src="pdf-lib.min.js"></script>
+<script src="fontkit.umd.min.js"></script>
+<script src="pdf.min.js"></script>
+<script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
+<script src="zeit-pdf.js"></script>
+<script src="print-bridge.js"></script>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <h1>&#x23F1; Zeit rechnen</h1>
+  <p>&#169; 2026 Sascha Rothenburg</p>
+  <div class="hdr-btns">
+    <a href="mathe.html#acc-sachrechnen" class="hdr-btn">&#x2190; Zur&uuml;ck</a>
+    <a href="index.html" class="hdr-btn">&#x1F3E0; Hauptmen&uuml;</a>
+  </div>
+</div>
+<div class="tabs">
+<button class="tab active" id="t-gen"><span class="ti">&#x2699;</span>Generator</button>
+  <button class="tab" id="t-set"><span class="ti">&#x1F464;</span>Einst.</button>
+  <button class="tab" id="t-pre"><span class="ti">&#x1F441;</span>Vorschau</button>
+</div>
+<div class="screens">
+<div class="screen active" id="s-gen">
+<div class="card">
+    <h2>&#x2699; Aufgabentypen</h2>
+    <div class="chips">
+      <div class="chip sel" id="zt-dauer" onclick="toggleZT('dauer',this)">Zeitdauer berechnen</div>
+      <div class="chip sel" id="zt-ende" onclick="toggleZT('ende',this)">Endzeit berechnen</div>
+      <div class="chip sel" id="zt-start" onclick="toggleZT('start',this)">Startzeit berechnen</div>
+      <div class="chip" id="zt-umrechnen" onclick="toggleZT('umrechnen',this)">Einheiten umrechnen</div>
+      <div class="chip" id="zt-kalender" onclick="toggleZT('kalender',this)">Kalender / Datum</div>
+    </div>
+    <div class="sr">
+      <div><div class="sl">Schwierigkeit</div></div>
+      <div class="chips" style="margin:0">
+        <div class="chip sel" id="zdiff1" onclick="setZDiff(1)">Volle Stunden</div>
+        <div class="chip" id="zdiff2" onclick="setZDiff(2)">Mit Minuten</div>
+        <div class="chip" id="zdiff3" onclick="setZDiff(3)">Komplexer</div>
+      </div>
+    </div>
+    <div class="sr" style="flex-direction:column;align-items:flex-start;gap:6px;border:none">
+      <div class="sl">Seitenzahl</div>
+      <div class="chips" id="pageChips" style="margin-top:4px"></div>
+      <p style="font-size:.7rem;color:#6b7280;margin-top:6px">Die Aufgabenzahl pro Seite ist festgelegt.</p>
+    </div>
+  </div>
+</div>
+<div class="screen" id="s-set">
+  <div class="card">
+    <h2>&#x1F4D0; Kopfzeile</h2>
+    <div class="sr"><div class="sl">Name-Feld</div><label class="tgl"><input type="checkbox" id="showName"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Datum-Feld</div><label class="tgl"><input type="checkbox" id="showDate"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Klasse-Feld</div><label class="tgl"><input type="checkbox" id="showKl"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Mit Lösungen</div><label class="tgl"><input type="checkbox" id="showSol"><span class="tgl-s"></span></label></div>
+  </div>
+</div>
+<div class="screen" id="s-pre"><div id="previewContent"></div></div>
+</div>
+</div>
+<div class="printarea" id="printArea"></div>
+<div class="sbar" id="sbar">
+  <button class="btn bp" id="btnGoPre">&#x1F441; Vorschau &amp; Drucken</button>
+</div>
+<script>
+
+function setZDiff(d){
+  zdiff=d;
+  [1,2,3].forEach(function(x){document.getElementById('zdiff'+x).classList.toggle('sel',x===d);});
+}
+/* ===== Seitenzahl-Steuerung (feste Aufgabenzahl pro Seite, druckgetestet) =====
+   p1 = Seite 1 (mit Header), p2 = GESAMTzahl bei 2 Seiten.
+   p2-Werte sind Startwerte und werden am iPad nachjustiert. */
+var numPages=1;
+var PER_PAGE={p1:12,p2:26};
+function totalCount(){ var c=PER_PAGE; return numPages<=1?c.p1:(c.p2!=null?c.p2:c.p1*2); }
+function pageSplits(){ var c=PER_PAGE; if(numPages<=1)return [c.p1]; var t=(c.p2!=null?c.p2:c.p1*2); return [c.p1,t-c.p1]; }
+function initPageChips(){
+  var pc=document.getElementById('pageChips'); if(!pc)return; pc.innerHTML='';
+  [{n:1,l:'1 Seite'},{n:2,l:'2 Seiten'}].forEach(function(o){
+    var el=document.createElement('div');
+    el.className='chip'+(o.n===numPages?' sel':'');
+    el.textContent=o.l;
+    el.onclick=function(){ numPages=o.n; document.querySelectorAll('#pageChips .chip').forEach(function(x){x.classList.remove('sel');}); el.classList.add('sel'); };
+    pc.appendChild(el);
+  });
+}
+initPageChips();
+
+var activeZT=['dauer','ende','start'];
+var zdiff=1;
+
+function toggleZT(t,el){
+  var idx=activeZT.indexOf(t);
+  if(idx===-1){activeZT.push(t);el.classList.add('sel');}
+  else if(activeZT.length>1){activeZT.splice(idx,1);el.classList.remove('sel');}
+}
+
+var BL='___';
+function rndHour(){return Math.floor(Math.random()*14)+7;}
+function rndMin(d){if(d===1)return 0;if(d===2)return[0,15,30,45][Math.floor(Math.random()*4)];return Math.floor(Math.random()*60/5)*5;}
+function fmtT(h,m){return h+':'+(m<10?'0'+m:m)+' Uhr';}
+function addMin(h,m,dm){var tot=h*60+m+dm;return[Math.floor(tot/60)%24,tot%60];}
+function fmtDur(min){if(min<60)return min+' Minuten';var h=Math.floor(min/60),m=min%60;return h+' Stunde'+(h!==1?'n':'')+(m>0?' '+m+' Minuten':'');}
+var MONTHS=['\u004a\u0061\u006e\u0075\u0061\u0072','\u0046\u0065\u0062\u0072\u0075\u0061\u0072','\u004d\u00e4\u0072\u007a','\u0041\u0070\u0072\u0069\u006c','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+var MDAYS=[31,28,31,30,31,30,31,31,30,31,30,31];
+
+function genZeit(){
+  var t=activeZT[Math.floor(Math.random()*activeZT.length)];
+  if(t==='dauer'){
+    var h1=rndHour(),m1=rndMin(zdiff);
+    var dur=(zdiff===1?[60,120,180]:[15,30,45,60,90,120])[Math.floor(Math.random()*(zdiff===1?3:6))];
+    var tm2=addMin(h1,m1,dur);
+    return{q:'Von '+fmtT(h1,m1)+' bis '+fmtT(tm2[0],tm2[1])+'\nZeitdauer: '+BL,s:fmtDur(dur),type:'Zeitdauer'};
+  } else if(t==='ende'){
+    var h1=rndHour(),m1=rndMin(zdiff);
+    var dur=(zdiff===1?[60,120,180]:[15,30,45,60,90])[Math.floor(Math.random()*(zdiff===1?3:5))];
+    var tm2=addMin(h1,m1,dur);
+    return{q:'Beginn: '+fmtT(h1,m1)+'\nDauer: '+fmtDur(dur)+'\nEnde: '+BL,s:fmtT(tm2[0],tm2[1]),type:'Endzeit'};
+  } else if(t==='start'){
+    var h2=rndHour()+2,m2=rndMin(zdiff);
+    var dur=(zdiff===1?[60,120,180]:[15,30,45,60,90])[Math.floor(Math.random()*(zdiff===1?3:5))];
+    var tm1=addMin(h2,m2,-dur);
+    return{q:'Ende: '+fmtT(h2,m2)+'\nDauer: '+fmtDur(dur)+'\nBeginn: '+BL,s:fmtT(tm1[0],tm1[1]),type:'Startzeit'};
+  } else if(t==='umrechnen'){
+    var pool=[
+      function(){var h=Math.floor(Math.random()*11)+1;return{q:h+' Stunde'+(h!==1?'n':'')+' = '+BL+' Minuten',s:String(h*60)+' Minuten'};},
+      function(){var m=[60,90,120,150,180][Math.floor(Math.random()*5)];return{q:m+' Minuten = '+BL+' h '+BL+' min',s:Math.floor(m/60)+'h '+(m%60>0?m%60+'min':'0min')};},
+      function(){var m=Math.floor(Math.random()*9)+1;return{q:m+' Minute'+(m!==1?'n':'')+' = '+BL+' Sekunden',s:String(m*60)+' Sekunden'};},
+      function(){return{q:'1 Tag = '+BL+' Stunden',s:'24 Stunden'};},
+      function(){return{q:'1 Woche = '+BL+' Tage',s:'7 Tage'};},
+      function(){return{q:'Wie viele Wochen hat ein Jahr? '+BL,s:'52 Wochen'};},
+      function(){var mo=Math.floor(Math.random()*12);return{q:'Wie viele Tage hat der '+MONTHS[mo]+'? '+BL,s:String(MDAYS[mo])+' Tage'};},
+    ];
+    return Object.assign(pool[Math.floor(Math.random()*pool.length)](),{type:'Umrechnen'});
+  } else {
+    var pool=[
+      function(){var mo=Math.floor(Math.random()*11);var d=Math.floor(Math.random()*(MDAYS[mo]-7))+1;return{q:'7 Tage nach dem '+d+'. '+MONTHS[mo]+': '+BL,s:String(d+7)+'. '+MONTHS[mo]};},
+      function(){var mo=Math.floor(Math.random()*12);return{q:'Nach dem '+MONTHS[mo]+' kommt: '+BL,s:MONTHS[(mo+1)%12]};},
+      function(){return{q:'Wie viele Monate hat ein Jahr? '+BL,s:'12 Monate'};},
+    ];
+    return Object.assign(pool[Math.floor(Math.random()*pool.length)](),{type:'Kalender'});
+  }
+}
+
+
+
+
+
+
+
+
+
+function makeTaskGen(){
+  if(activeZT.length===0) return null;
+  return function(i){ return genZeit(); };
+}
+function pdfSpec(){
+  return {
+    gen: makeTaskGen(),
+    numPages: numPages,
+    showSol: document.getElementById('showSol').checked
+  };
+}
+function pdfHeaderOpts(){
+  return {
+    showName:document.getElementById('showName').checked,
+    showDate:document.getElementById('showDate').checked,
+    showKl:document.getElementById('showKl').checked
+  };
+}
+async function makePDFBytes(){
+  if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
+  return await ZeitPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
+}
+function buildPreview(){
+  var wrap=document.getElementById('previewContent');
+  wrap.innerHTML='<p style="color:#6b7280;padding:16px;font-size:.8rem">Vorschau wird erstellt &hellip;</p>';
+  (async function(){
+    try{
+      if(activeZT.length===0){
+        wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Bitte mindestens einen Aufgabentyp ausw\u00e4hlen.</p>';
+        return;
+      }
+      var bytes=await makePDFBytes();
+      if(window.pdfjsLib){
+        var pdf=await window.pdfjsLib.getDocument({data:bytes}).promise;
+        wrap.innerHTML='';
+        var sw=Math.min(window.innerWidth,480)-28;
+        for(var p=1;p<=pdf.numPages;p++){
+          var page=await pdf.getPage(p);
+          var vp1=page.getViewport({scale:1});
+          var scale=sw/vp1.width;
+          var vp=page.getViewport({scale:scale*2});
+          var canvas=document.createElement('canvas');
+          canvas.style.cssText='display:block;width:'+sw+'px;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:10px;background:#fff';
+          canvas.width=vp.width;canvas.height=vp.height;
+          await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+          wrap.appendChild(canvas);
+        }
+      }else{
+        var blob=new Blob([bytes],{type:'application/pdf'});
+        wrap.innerHTML='<embed src="'+URL.createObjectURL(blob)+'" type="application/pdf" style="width:100%;height:70vh;border:1px solid #e2e8f0;border-radius:6px">';
+      }
+    }catch(e){
+      wrap.innerHTML='<p style="color:red;padding:20px">'+(e.message||String(e))+'</p>';
+      console.error(e);
+    }
+  })();
+}
+async function doPrint(){
+  try{
+    if(activeZT.length===0){alert('Bitte mindestens einen Aufgabentyp ausw\u00e4hlen.');return;}
+    var bytes=await makePDFBytes();
+    await PrintBridge.printPDF(bytes,'Zeit.pdf');
+  }catch(e){
+    alert('Druck fehlgeschlagen: '+(e.message||e));
+    console.error(e);
+  }
+}
+var sbar=document.getElementById('sbar');
+function showTab(n){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('s-'+n).classList.add('active');
+  var tEl=document.getElementById('t-'+n);if(tEl)tEl.classList.add('active');
+  if(n==='pre'){
+    sbar.innerHTML='';
+    var b1=document.createElement('button'),b2=document.createElement('button');
+    b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
+    b2.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;border:none';
+    b1.textContent='\u2190 Zur\u00fcck';b2.textContent='Drucken / PDF';
+    b1.onclick=function(){showTab('gen');};b2.onclick=doPrint;
+    sbar.appendChild(b1);sbar.appendChild(b2);
+    setTimeout(buildPreview,50);
+  }else{
+    sbar.innerHTML='';var btn=document.createElement('button');
+    btn.className='btn bp';btn.textContent='\uD83D\uDC41 Vorschau & Drucken';
+    btn.onclick=function(){showTab('pre');};sbar.appendChild(btn);
+  }
+}
+document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){showTab(this.id.replace('t-',''));});});
+document.getElementById('btnGoPre').onclick=function(){showTab('pre');};
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('selectstart',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;e.preventDefault();});
+
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

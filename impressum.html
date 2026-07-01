@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übio · Impressum</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"Impressum","short_name":"Impressum","start_url":".","display":"standalone","background_color":"%23f5f5f5","theme_color":"%23737373","icons":[]}'>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
+
+:root{
+  --accent:#737373;
+  --accent-d:#525252;
+  --accent-l:#a3a3a3;
+  --bg:#fafafa;
+  --card:#ffffff;
+  --line:#e5e5e5;
+  --ink:#2b2b2b;
+  --muted:#6b6b6b;
+  --soft:#f3f3f3;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Kopfzeile (Schema-Standard) ---------- */
+header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-d) 100%);
+  color:#fff;
+  padding:14px 20px;
+  padding-top:calc(14px + var(--ad-top,0px));
+  box-shadow:0 2px 12px rgba(0,0,0,.12);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+header .h-title{
+  font-weight:800;font-size:1.25rem;letter-spacing:.2px;
+  display:flex;align-items:center;gap:10px;
+}
+header .h-title svg{flex:none}
+.h-spacer{flex:1 1 auto}
+.h-back{
+  color:#fff;text-decoration:none;font-weight:700;font-size:.95rem;
+  padding:7px 14px;border-radius:9px;
+  background:rgba(255,255,255,.16);
+  transition:background .15s;
+  white-space:nowrap;
+}
+.h-back:hover{background:rgba(255,255,255,.28)}
+
+/* ---------- Inhalt ---------- */
+.wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+
+.intro{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:26px 28px;
+  margin-bottom:26px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.intro h1{
+  font-size:1.6rem;font-weight:800;color:var(--accent-d);
+  margin-bottom:8px;
+}
+.intro p{color:var(--muted);font-size:1.02rem}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:24px 28px;
+  margin-bottom:20px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.card h2{
+  font-size:1.15rem;font-weight:800;color:var(--accent-d);
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.card h2 .dot{
+  width:11px;height:11px;border-radius:50%;
+  background:var(--accent);flex:none;
+}
+
+dl{margin:0}
+dl .row{
+  padding:13px 0;
+  border-bottom:1px solid var(--soft);
+  display:grid;
+  grid-template-columns:200px 1fr;
+  gap:6px 18px;
+  align-items:start;
+}
+dl .row:last-child{border-bottom:none}
+dl dt{font-weight:800;color:var(--ink);font-size:.98rem}
+dl dd{color:var(--muted);font-size:.97rem}
+dl dd a{color:var(--accent-d);font-weight:700}
+
+/* Platzhalter, die noch ausgefuellt werden muessen */
+.ph{
+  background:#fff6d6;
+  border:1px dashed #d8b400;
+  border-radius:6px;
+  padding:1px 7px;
+  font-weight:700;color:#7a5c00;
+  font-size:.93rem;
+}
+
+.note{
+  background:var(--soft);
+  border-left:4px solid var(--accent-l);
+  border-radius:8px;
+  padding:13px 16px;margin-top:14px;
+  font-size:.95rem;color:var(--muted);
+}
+.note b{color:var(--accent-d)}
+
+footer{
+  text-align:center;color:var(--muted);
+  font-size:.88rem;padding:0 20px 40px;
+}
+footer a{color:var(--accent-d);font-weight:700}
+
+@media(max-width:560px){
+  dl .row{grid-template-columns:1fr;gap:2px}
+  .wrap{padding:22px 14px 60px}
+  .card,.intro{padding:20px 18px}
+  header{padding:12px 16px;padding-top:calc(12px + var(--ad-top,0px));gap:10px}
+  header .h-title{font-size:1.1rem}
+  .h-back{font-size:.88rem;padding:7px 11px}
+}
+
+/* ---------- Druck ---------- */
+@media print{
+  @page{size:A4;margin:16mm}
+  header{position:static;background:none;color:#000;box-shadow:none;padding:0 0 10px;border-bottom:2px solid #999}
+  .h-back{display:none}
+  header .h-title{color:#000}
+  body{background:#fff;color:#000}
+  .wrap{max-width:none;padding:0}
+  .card,.intro{box-shadow:none;border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid}
+  .card h2,.intro h1,.card h2 .dot{color:#000}
+  .ph{background:none;border:none;padding:0;color:#000}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-title">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+    Impressum
+  </div>
+  <div class="h-spacer"></div>
+  <a class="h-back" href="index.html">&larr; Startseite</a>
+</header>
+
+<div class="wrap">
+
+  <section class="intro">
+    <h1>Impressum</h1>
+    <p>Angaben gem&auml;&szlig; &sect;&nbsp;5 Digitale-Dienste-Gesetz (DDG).</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="dot"></span>Anbieter &amp; Verantwortlicher</h2>
+    <dl>
+      <div class="row"><dt>App</dt><dd>Übio &ndash; Grundschul&uuml;bungen</dd></div>
+      <div class="row"><dt>Name</dt><dd>Sascha Rothenburg</dd></div>
+      <div class="row"><dt>Anschrift</dt><dd>c/o MediaMinds360<br>Lothringer Str. 17<br>63450 Hanau<br>Deutschland</dd></div>
+      <div class="row"><dt>E-Mail</dt><dd><a href="mailto:sascha-rothenburg@web.de">sascha-rothenburg@web.de</a></dd></div>
+    </dl>
+    <p class="note" style="font-style:italic">Bitte versenden Sie keine Pakete an diese Adresse.</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="dot"></span>Verantwortlich f&uuml;r den Inhalt</h2>
+    <dl>
+      <div class="row"><dt>gem&auml;&szlig; &sect;&nbsp;18 Abs.&nbsp;2 MStV</dt><dd>Sascha Rothenburg<br>c/o MediaMinds360<br>Lothringer Str. 17<br>63450 Hanau</dd></div>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2><span class="dot"></span>Streitbeilegung</h2>
+    <p style="color:var(--muted);font-size:.97rem">
+      Zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle sind wir nicht verpflichtet und grunds&auml;tzlich nicht bereit.
+    </p>
+    <div class="note"><b>Hinweis:</b> Die fr&uuml;here EU-Plattform zur Online-Streitbeilegung (OS-Plattform) wurde 2025 eingestellt &ndash; ein Link dorthin ist nicht mehr erforderlich und sollte nicht mehr verwendet werden.</div>
+  </section>
+
+  <section class="card">
+    <h2><span class="dot"></span>Haftung &amp; Urheberrecht</h2>
+    <p style="color:var(--muted);font-size:.97rem;margin-bottom:10px">
+      Die Inhalte dieser App wurden mit gr&ouml;&szlig;ter Sorgfalt erstellt. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte kann jedoch keine Gew&auml;hr &uuml;bernommen werden.
+    </p>
+    <p style="color:var(--muted);font-size:.97rem">
+      Die erzeugten Arbeitsbl&auml;tter d&uuml;rfen f&uuml;r den eigenen Unterrichts- und Lerngebrauch frei genutzt und ausgedruckt werden. Die App selbst, ihr Aufbau und ihre Inhalte sind urheberrechtlich gesch&uuml;tzt. &copy; 2026 Sascha Rothenburg.
+    </p>
+    <p style="color:var(--muted);font-size:.97rem;margin-top:10px">
+      Verwendete Schriftart: <b>Grundschrift von Christian Urff</b> &ndash; verwendet gem&auml;&szlig; den Lizenzbedingungen des Erstellers.
+    </p>
+  </section>
+
+  <footer>
+    Übio &middot; Lern-Apps von Sascha Rothenburg &middot;
+    <a href="index.html">Startseite</a> &middot;
+    <a href="hilfe.html">Hilfe</a> &middot;
+    <a href="datenschutz.html">Datenschutz</a>
+  </footer>
+
+</div>
+
+<script src="ads.js"></script>
+
+</body>
+</html>

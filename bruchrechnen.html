@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Brüche">
+<meta name="theme-color" content="#0369a1">
+<title>Bruchrechnen · Sascha Rothenburg</title>
+<style>
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#f0f9ff;color:#1e1b4b;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+input{-webkit-user-select:text;user-select:text}
+.app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1)}
+.hdr{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));flex-shrink:0}
+.hdr h1{font-size:1.15rem;font-weight:900}
+.hdr p{font-size:.68rem;opacity:.85;margin-top:1px}
+.hdr-btns{display:flex;gap:8px;margin-top:6px;align-items:center}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(255,255,255,.25);border-radius:20px;color:#fff;font-family:Nunito,sans-serif;font-size:.72rem;font-weight:800;text-decoration:none;cursor:pointer;border:none}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e2e8f0;flex-shrink:0}
+.tab{flex:1;padding:10px 4px 8px;text-align:center;font-size:.65rem;font-weight:800;color:#6b7280;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.active{color:#0369a1;border-bottom-color:#0369a1}
+.ti{display:block;font-size:1.1rem;margin-bottom:1px}
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(80px + env(safe-area-inset-bottom,0px));display:none}
+.screen.active{display:block}
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:14px;margin-bottom:10px;border:1px solid #e2e8f0}
+.card h2{font-size:.72rem;font-weight:800;color:#0369a1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer}
+.bp{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff}
+.bs{background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0}
+.tgl{position:relative;width:44px;height:24px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl-s{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.2s}
+.tgl-s::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.tgl input:checked+.tgl-s{background:#0369a1}
+.tgl input:checked+.tgl-s::before{transform:translateX(20px)}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0}
+.sr:last-child{border-bottom:none}
+.sl{font-size:.88rem;font-weight:600}
+.ss{font-size:.73rem;color:#6b7280;margin-top:1px}
+.ni{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:9px;font-family:Nunito,sans-serif;font-size:.9rem;font-weight:600;color:#1e1b4b;background:#f0f9ff;outline:none}
+.ni:focus{border-color:#0369a1}
+.sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;z-index:100}
+@media print{
+  .app,.sbar{display:none!important}
+  .printarea{display:block!important;width:100%!important;margin:0!important;padding:0!important}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{height:auto;overflow:visible;-webkit-text-size-adjust:100%}
+  @page{size:A4 portrait;margin:12mm 14mm}
+}
+.printarea{display:none}
+/* App-spezifisch */
+.opt-row{display:flex;gap:6px;flex-wrap:wrap}
+.opt-btn{flex:1;min-width:60px;padding:9px 4px;border-radius:10px;border:2px solid #e2e8f0;background:#f8fafc;font-family:Nunito,sans-serif;font-size:.8rem;font-weight:800;color:#1e1b4b;cursor:pointer}
+.opt-btn.sel{background:#0369a1;color:#fff;border-color:#0369a1}
+.br-list{display:flex;flex-direction:column;gap:12px}
+.br-item{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:12px;position:relative}
+.br-item .del{position:absolute;top:8px;right:8px;background:none;border:none;color:#7dd3fc;font-size:1rem;cursor:pointer;padding:0}
+.br-cap{font-size:.7rem;font-weight:800;color:#0369a1;margin-bottom:6px}
+.br-row{display:flex;align-items:center;gap:14px;justify-content:center}
+.br-svg{display:block}
+.br-frac{display:inline-flex;flex-direction:column;align-items:center;font-weight:900;color:#1e1b4b;line-height:1}
+.br-frac .top{padding:0 4px}
+.br-frac .bar{border-top:2.5px solid #1e1b4b;width:100%;margin:2px 0}
+.br-frac .bot{padding:0 4px}
+.br-box{display:inline-flex;flex-direction:column;align-items:center;line-height:1}
+.br-box .cell{width:30px;height:24px;border:2px solid #dc2626;border-radius:4px;margin:2px 0;background:#fff}
+</style>
+<script src="pdf-lib.min.js"></script>
+<script src="fontkit.umd.min.js"></script>
+<script src="pdf.min.js"></script>
+<script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
+<script src="bruchrechnen-pdf.js"></script>
+<script src="print-bridge.js"></script>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <h1>&#x1F355; Bruchrechnen</h1>
+  <p>&#169; 2026 Sascha Rothenburg</p>
+  <div class="hdr-btns">
+    <a href="mathe.html#acc-zahlverstaendnis" class="hdr-btn">&#x2190; Zur&uuml;ck</a>
+    <a href="index.html" class="hdr-btn">&#x1F3E0; Hauptmen&uuml;</a>
+  </div>
+</div>
+<div class="tabs">
+  <button class="tab active" id="t-gen"><span class="ti">&#x26A1;</span>Generator</button>
+  <button class="tab" id="t-list"><span class="ti">&#x1F355;</span>Aufgaben</button>
+  <button class="tab" id="t-set"><span class="ti">&#x2699;</span>Einst.</button>
+  <button class="tab" id="t-pre"><span class="ti">&#x1F441;</span>Vorschau</button>
+</div>
+<div class="screens">
+<div class="screen active" id="s-gen">
+  <div class="card">
+    <h2>Einstellungen</h2>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Darstellung</label>
+      <div class="opt-row" id="shapeOpts">
+        <button class="opt-btn sel" data-v="circle">Kreis</button>
+        <button class="opt-btn sel" data-v="bar">Rechteck</button>
+      </div>
+      <div class="ss" style="margin-top:6px">Beide w&auml;hlbar &ndash; wird gemischt.</div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Aufgabentyp</label>
+      <div class="opt-row" id="typeOpts">
+        <button class="opt-btn sel" data-v="read">Bild &rarr; Bruch<br><span style="font-weight:600;font-size:.66rem">ablesen</span></button>
+        <button class="opt-btn sel" data-v="color">Bruch &rarr; Bild<br><span style="font-weight:600;font-size:.66rem">anmalen</span></button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Nenner (Teile)</label>
+      <div class="opt-row" id="denomOpts">
+        <button class="opt-btn" data-v="4">bis 4<br><span style="font-weight:600;font-size:.66rem">Halbe/Viertel</span></button>
+        <button class="opt-btn" data-v="8">bis 8<br><span style="font-weight:600;font-size:.66rem">Achtel</span></button>
+        <button class="opt-btn sel" data-v="12">bis 12<br><span style="font-weight:600;font-size:.66rem">Zw&ouml;lftel</span></button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Seitenzahl</label>
+      <div class="opt-row" id="pageChips"></div>
+      <p style="font-size:.7rem;color:#6b7280;margin-top:6px">Die Aufgabenzahl pro Seite ist festgelegt.</p>
+    </div>
+    <p style="font-size:.72rem;color:#6b7280;margin-top:8px;line-height:1.5">Die Aufgaben werden beim &#214;ffnen der Vorschau automatisch erstellt.</p>
+  </div>
+</div>
+<div class="screen" id="s-list">
+  <div class="card">
+    <h2>Generierte Aufgaben</h2>
+    <div class="br-list" id="brList"><p style="color:#6b7280;font-size:.85rem">Die Aufgaben werden beim &Ouml;ffnen der Vorschau erstellt.</p></div>
+  </div>
+</div>
+<div class="screen" id="s-set">
+  <div class="card">
+    <h2>Layout</h2>
+    <div class="sr"><div class="sl">Aufgaben-Nummer</div><label class="tgl"><input type="checkbox" id="showNr" checked><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">L&ouml;sungsblatt anh&auml;ngen</div><label class="tgl"><input type="checkbox" id="showSol"><span class="tgl-s"></span></label></div>
+  </div>
+  <div class="card">
+    <h2>&#x1F4D0; Kopfzeile</h2>
+    <div class="sr"><div class="sl">Name-Feld</div><label class="tgl"><input type="checkbox" id="showName"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Datum-Feld</div><label class="tgl"><input type="checkbox" id="showDate"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Klasse-Feld</div><label class="tgl"><input type="checkbox" id="showKl"><span class="tgl-s"></span></label></div>
+  </div>
+</div>
+<div class="screen" id="s-pre"><div id="previewContent"></div></div>
+</div>
+</div>
+<div class="printarea" id="printArea"></div>
+<div class="sbar" id="sbar">
+  <button class="btn bp" id="btnGoPre">&#x1F441; Vorschau &amp; Drucken</button>
+</div>
+<script>
+/* ===== Plattform-Erkennung (iOS/Safari Druck-Eigenheiten) ===== */
+var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+var IS_SAFARI = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+
+
+/* ===== Multi/Single-Select ===== */
+function setupMulti(id){
+  document.querySelectorAll('#'+id+' .opt-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      b.classList.toggle('sel');
+      if(!document.querySelectorAll('#'+id+' .opt-btn.sel').length) b.classList.add('sel');
+      optsDirty=true;
+    });
+  });
+}
+function setupSingle(id){
+  document.querySelectorAll('#'+id+' .opt-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#'+id+' .opt-btn').forEach(function(x){x.classList.remove('sel');});
+      b.classList.add('sel');
+      optsDirty=true;
+    });
+  });
+}
+function getMultiStr(id){return Array.from(document.querySelectorAll('#'+id+' .opt-btn.sel')).map(function(b){return b.dataset.v;});}
+function getSingle(id){var b=document.querySelector('#'+id+' .opt-btn.sel');return b?parseInt(b.dataset.v):null;}
+setupMulti('shapeOpts');setupMulti('typeOpts');setupSingle('denomOpts');
+
+/* ===== Generator =====
+   Aufgabe: {shape:'circle'|'bar', n:Nenner, k:Zähler, type:'read'|'color'}
+*/
+var tasks=[];
+var optsDirty=true;   // true -> Vorschau generiert neu; Loeschen einzelner Aufgaben setzt das NICHT
+/* ===== Seitenzahl-Steuerung (feste Aufgabenzahl pro Seite, druckgetestet) =====
+   p1 = Seite 1 (mit Header), p2 = GESAMTzahl bei 2 Seiten.
+   p2-Werte sind Startwerte und werden am iPad nachjustiert. */
+var numPages=1;
+var PER_PAGE={p1:12,p2:26};
+function totalCount(){ var c=PER_PAGE; return numPages<=1?c.p1:(c.p2!=null?c.p2:c.p1*2); }
+function pageSplits(){ var c=PER_PAGE; if(numPages<=1)return [c.p1]; var t=(c.p2!=null?c.p2:c.p1*2); return [c.p1,t-c.p1]; }
+function initPageChips(){
+  var pc=document.getElementById('pageChips'); if(!pc)return; pc.innerHTML='';
+  [{n:1,l:'1 Seite'},{n:2,l:'2 Seiten'}].forEach(function(o){
+    var el=document.createElement('div');
+    el.className='opt-btn'+(o.n===numPages?' sel':'');
+    el.textContent=o.l;
+    el.onclick=function(){ numPages=o.n; optsDirty=true; document.querySelectorAll('#pageChips .opt-btn').forEach(function(x){x.classList.remove('sel');}); el.classList.add('sel'); };
+    pc.appendChild(el);
+  });
+}
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+function generate(){
+  var cnt=totalCount();
+  var shapes=getMultiStr('shapeOpts'); if(!shapes.length)shapes=['circle'];
+  var types=getMultiStr('typeOpts'); if(!types.length)types=['read'];
+  var maxDen=getSingle('denomOpts')||12;
+  tasks=[];
+  for(var i=0;i<cnt;i++){
+    var shape=shapes[ri(0,shapes.length-1)];
+    var type=types[ri(0,types.length-1)];
+    var n=ri(2,maxDen);
+    var k=ri(1,n-1); // echter Bruch, mind. 1 Teil, nicht voll
+    tasks.push({shape:shape,n:n,k:k,type:type});
+  }
+  renderList();
+  optsDirty=false;
+}
+
+/* ===== SVG-Darstellung =====
+   filledCount: wie viele Teile gefärbt gezeigt werden (bei 'color'-Aufgabe im Aufgabenblatt = 0)
+*/
+var FILL='#0ea5e9', FILLSOL='#16a34a', LINE='#0369a1';
+function circleSVG(n,filled,size,col){
+  size=size||90; col=col||FILL;
+  var r=size/2-3, cx=size/2, cy=size/2;
+  var s='<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg">';
+  if(n===1){
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+(filled>=1?col:'#fff')+'" stroke="'+LINE+'" stroke-width="2"/>';
+    s+='</svg>';return s;
+  }
+  for(var i=0;i<n;i++){
+    var a0=(i/n)*2*Math.PI - Math.PI/2;
+    var a1=((i+1)/n)*2*Math.PI - Math.PI/2;
+    var x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0);
+    var x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+    var large=(a1-a0)>Math.PI?1:0;
+    var fillCol=(i<filled)?col:'#fff';
+    s+='<path d="M '+cx+' '+cy+' L '+x0.toFixed(2)+' '+y0.toFixed(2)+' A '+r+' '+r+' 0 '+large+' 1 '+x1.toFixed(2)+' '+y1.toFixed(2)+' Z" fill="'+fillCol+'" stroke="'+LINE+'" stroke-width="1.6"/>';
+  }
+  s+='</svg>';
+  return s;
+}
+function barSVG(n,filled,w,h,col){
+  w=w||150; h=h||44; col=col||FILL;
+  var s='<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg">';
+  var seg=w/n;
+  for(var i=0;i<n;i++){
+    var fillCol=(i<filled)?col:'#fff';
+    s+='<rect x="'+(i*seg).toFixed(2)+'" y="1" width="'+seg.toFixed(2)+'" height="'+(h-2)+'" fill="'+fillCol+'" stroke="'+LINE+'" stroke-width="1.6"/>';
+  }
+  s+='</svg>';
+  return s;
+}
+function shapeSVG(t,filled,opts){
+  opts=opts||{};
+  var col=opts.col||FILL;
+  if(t.shape==='circle') return circleSVG(t.n,filled,opts.size||90,col);
+  return barSVG(t.n,filled,opts.w||160,opts.h||44,col);
+}
+
+/* Bruch-Darstellung als HTML (Zähler/Nenner) */
+function fracHTML(k,n,size){
+  size=size||18;
+  return '<span class="br-frac" style="font-size:'+size+'px"><span class="top">'+k+'</span><span class="bar"></span><span class="bot">'+n+'</span></span>';
+}
+/* leeres Bruch-Feld zum Ausfüllen */
+function fracEmptyHTML(size){
+  size=size||18;
+  return '<span class="br-box"><span class="cell"></span><span class="cell"></span></span>';
+}
+
+function questionText(t){
+  if(t.type==='read') return 'Welcher Bruch ist gef&auml;rbt?';
+  return 'F&auml;rbe '+fracHTML(t.k,t.n,15)+' an.';
+}
+
+/* ===== Listenansicht (Bildschirm) ===== */
+function renderTaskInline(t,showSol,big){
+  // big: für Druck größere SVGs
+  var sz=big?{size:96,w:170,h:48}:{size:78,w:140,h:42};
+  var col=showSol?FILLSOL:FILL;
+  var h='<div class="br-row">';
+  if(t.type==='read'){
+    // Bild gefärbt zeigen, Bruchfeld dahinter
+    h+=shapeSVG(t,t.k,{size:sz.size,w:sz.w,h:sz.h,col:col});
+    h+='<span style="font-size:1.4rem;font-weight:800;color:#94a3b8">=</span>';
+    if(showSol) h+=fracHTML(t.k,t.n,22);
+    else h+=fracEmptyHTML(22);
+  }else{
+    // 'color': Bild leer (nur unterteilt) zum Anmalen; in Lösung k gefärbt
+    h+=shapeSVG(t, showSol?t.k:0, {size:sz.size,w:sz.w,h:sz.h,col:col});
+    h+='<span style="font-size:1.4rem;font-weight:800;color:#94a3b8">=</span>';
+    h+=fracHTML(t.k,t.n,22);
+  }
+  h+='</div>';
+  return h;
+}
+function renderList(){
+  var el=document.getElementById('brList');el.innerHTML='';
+  if(!tasks.length){el.innerHTML='<p style="color:#6b7280;font-size:.85rem">Noch keine Aufgaben.</p>';return;}
+  tasks.forEach(function(t,i){
+    var d=document.createElement('div');d.className='br-item';
+    var typeLbl=t.type==='read'?'Bild &rarr; Bruch':'Bruch &rarr; Bild';
+    var shapeLbl=t.shape==='circle'?'Kreis':'Rechteck';
+    d.innerHTML='<div class="br-cap">Aufgabe '+(i+1)+' &middot; '+typeLbl+' &middot; '+shapeLbl+'</div>'+renderTaskInline(t,false,false);
+    var b=document.createElement('button');b.className='del';b.textContent='\u2715';
+    b.addEventListener('click',(function(idx){return function(){tasks.splice(idx,1);renderList();};})(i));
+    d.appendChild(b);el.appendChild(d);
+  });
+}
+
+/* ===== Druck-Arbeitsblatt (A4) ===== */
+/* Bruch als SVG für sicheren Druck (statt HTML-Border) */
+
+
+/* ===== Kopfzeile ===== */
+
+/* ===== Tabs + Sbar ===== */
+var sbar=document.getElementById('sbar');
+function showTab(name){
+  var map={gen:'s-gen',list:'s-list',set:'s-set',pre:'s-pre'};
+  var tmap={gen:'t-gen',list:'t-list',set:'t-set',pre:'t-pre'};
+  document.querySelectorAll('.screen').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active');});
+  document.getElementById(map[name]).classList.add('active');
+  document.getElementById(tmap[name]).classList.add('active');
+  if(name==='pre'){
+    // Auto-Generierung: bei geaenderten Optionen (oder noch leer) frische Aufgaben erzeugen
+    if(optsDirty || !tasks.length){ generate(); }
+    sbar.innerHTML='';
+    var b1=document.createElement('button'),b2=document.createElement('button');
+    b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
+    b2.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;border:none';
+    b1.textContent='\u2190 Zur\u00fcck';b2.textContent='Drucken / PDF';
+    b1.onclick=function(){showTab('list');};b2.onclick=doPrint;
+    sbar.appendChild(b1);sbar.appendChild(b2);
+    setTimeout(buildPreview,50);
+  }else{
+    sbar.innerHTML='';
+    var btn=document.createElement('button');
+    btn.className='btn bp';btn.textContent='\ud83d\udc41 Vorschau & Drucken';
+    btn.onclick=function(){showTab('pre');};
+    sbar.appendChild(btn);
+  }
+}
+
+function pdfSpec(){
+  return {
+    tasks: tasks,
+    numPages: numPages,
+    showSol: document.getElementById('showSol').checked,
+    showNr: document.getElementById('showNr').checked
+  };
+}
+function pdfHeaderOpts(){
+  return {
+    showName:document.getElementById('showName').checked,
+    showDate:document.getElementById('showDate').checked,
+    showKl:document.getElementById('showKl').checked
+  };
+}
+async function makePDFBytes(){
+  if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
+  return await BruchrechnenPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
+}
+function buildPreview(){
+  var wrap=document.getElementById('previewContent');
+  wrap.innerHTML='<p style="color:#6b7280;padding:16px;font-size:.8rem">Vorschau wird erstellt &hellip;</p>';
+  (async function(){
+    try{
+      if(!tasks.length){
+        wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Keine Aufgaben erstellt &ndash; bitte Einstellungen pr&uuml;fen.</p>';
+        return;
+      }
+      var bytes=await makePDFBytes();
+      if(window.pdfjsLib){
+        var pdf=await window.pdfjsLib.getDocument({data:bytes}).promise;
+        wrap.innerHTML='';
+        var sw=Math.min(window.innerWidth,480)-28;
+        for(var p=1;p<=pdf.numPages;p++){
+          var page=await pdf.getPage(p);
+          var vp1=page.getViewport({scale:1});
+          var scale=sw/vp1.width;
+          var vp=page.getViewport({scale:scale*2});
+          var canvas=document.createElement('canvas');
+          canvas.style.cssText='display:block;width:'+sw+'px;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:10px;background:#fff';
+          canvas.width=vp.width;canvas.height=vp.height;
+          await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+          wrap.appendChild(canvas);
+        }
+      }else{
+        var blob=new Blob([bytes],{type:'application/pdf'});
+        wrap.innerHTML='<embed src="'+URL.createObjectURL(blob)+'" type="application/pdf" style="width:100%;height:70vh;border:1px solid #e2e8f0;border-radius:6px">';
+      }
+    }catch(e){
+      wrap.innerHTML='<p style="color:red;padding:20px">'+(e.message||String(e))+'</p>';
+      console.error(e);
+    }
+  })();
+}
+async function doPrint(){
+  try{
+    if(!tasks.length){ generate(); }
+    if(!tasks.length){alert('Keine Aufgaben erstellt \u2013 bitte Einstellungen pr\u00fcfen.');return;}
+    var bytes=await makePDFBytes();
+    await PrintBridge.printPDF(bytes,'Bruchrechnen.pdf');
+  }catch(e){
+    alert('Druck fehlgeschlagen: '+(e.message||e));
+    console.error(e);
+  }
+}
+
+/* ===== Tab buttons ===== */
+document.getElementById('t-gen').addEventListener('click',function(){showTab('gen');});
+document.getElementById('t-list').addEventListener('click',function(){showTab('list');});
+document.getElementById('t-set').addEventListener('click',function(){showTab('set');});
+document.getElementById('t-pre').addEventListener('click',function(){showTab('pre');});
+initPageChips();
+document.getElementById('btnGoPre').addEventListener('click',function(){showTab('pre');});
+
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('selectstart',function(e){if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;e.preventDefault();});
+
+/* ===== PWA Manifest ===== */
+var manifest={name:'Bruchrechnen Generator',short_name:'Br\u00fcche',start_url:'.',display:'standalone',background_color:'#f0f9ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Cpath d='M256 96 A160 160 0 0 1 416 256 L256 256 Z' fill='white'/%3E%3Ccircle cx='256' cy='256' r='160' fill='none' stroke='white' stroke-width='18'/%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bundesländer">
+<meta name="theme-color" content="#15803d">
+<title>Bundesländer &amp; Städte · Sascha Rothenburg</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"Bundesländer","short_name":"Bundesländer","start_url":".","display":"standalone","background_color":"%23f0fdf4","theme_color":"%2315803d"}'>
+<style>
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#f0fdf4;color:#14532d;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+input{-webkit-user-select:text;user-select:text}
+.app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1)}
+.hdr{background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));flex-shrink:0}
+.hdr h1{font-size:1.15rem;font-weight:900}
+.hdr p{font-size:.68rem;opacity:.85;margin-top:1px}
+.hdr-btns{display:flex;gap:8px;margin-top:6px;align-items:center}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(255,255,255,.25);border-radius:20px;color:#fff;font-family:Nunito,sans-serif;font-size:.72rem;font-weight:800;text-decoration:none;cursor:pointer;border:none}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e2e8f0;flex-shrink:0}
+.tab{flex:1;padding:10px 4px 8px;text-align:center;font-size:.65rem;font-weight:800;color:#6b7280;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.active{color:#15803d;border-bottom-color:#15803d}
+.ti{display:block;font-size:1.1rem;margin-bottom:1px}
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(80px + env(safe-area-inset-bottom,0px));display:none}
+.screen.active{display:block}
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:14px;margin-bottom:10px;border:1px solid #e2e8f0}
+.card h2{font-size:.72rem;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer}
+.bp{background:linear-gradient(135deg,#15803d,#22c55e);color:#fff}
+.tgl{position:relative;width:44px;height:24px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl-s{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.2s}
+.tgl-s::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.tgl input:checked+.tgl-s{background:#16a34a}
+.tgl input:checked+.tgl-s::before{transform:translateX(20px)}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0}
+.sr:last-child{border-bottom:none}
+.sl{font-size:.88rem;font-weight:600}
+.ss{font-size:.73rem;color:#6b7280;margin-top:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:6px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:#f0fdf4;font-family:Nunito,sans-serif;font-size:.8rem;font-weight:700;color:#6b7280;cursor:pointer}
+.chip.sel{background:#16a34a;border-color:#16a34a;color:#fff}
+.ni{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:9px;font-family:Nunito,sans-serif;font-size:.9rem;font-weight:600;color:#14532d;background:#f0fdf4;outline:none}
+.ni:focus{border-color:#16a34a}
+.sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;z-index:100}
+@media print{
+  .app,.sbar{display:none!important}
+  .printarea{display:block!important;width:100%!important;margin:0!important;padding:0!important}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{height:auto;overflow:visible;-webkit-text-size-adjust:100%}
+  @page{size:A4 portrait;margin:12mm 14mm}
+}
+.printarea{display:none}
+</style>
+<script src="pdf-lib.min.js"></script>
+<script src="fontkit.umd.min.js"></script>
+<script src="pdf.min.js"></script>
+<script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
+<script src="bundeslaender-data.js"></script>
+<script src="bundeslaender-pdf.js"></script>
+<script src="print-bridge.js"></script>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <h1>&#x1F5FA;&#xFE0F; Bundesl&auml;nder &amp; St&auml;dte</h1>
+  <p>&#169; 2026 Sascha Rothenburg</p>
+  <div class="hdr-btns">
+    <a href="sachkunde.html#acc-themen" class="hdr-btn">&#x2190; Zur&uuml;ck</a>
+    <a href="index.html" class="hdr-btn">&#x1F3E0; Hauptmen&uuml;</a>
+  </div>
+</div>
+<div class="tabs">
+  <button class="tab active" id="t-gen"><span class="ti">&#x2699;</span>Generator</button>
+  <button class="tab" id="t-set"><span class="ti">&#x1F464;</span>Einst.</button>
+  <button class="tab" id="t-pre"><span class="ti">&#x1F441;</span>Vorschau</button>
+</div>
+<div class="screens">
+<div class="screen active" id="s-gen">
+  <div class="card">
+    <h2>&#x1F4DA; Klassenstufe</h2>
+    <div class="chips">
+      <div class="chip sel" id="kl-3" onclick="setKlasse(3)">Klasse 3 (Grundlagen)</div>
+      <div class="chip" id="kl-4" onclick="setKlasse(4)">Klasse 4 (+ Nachbarn/Meere)</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>&#x1F4CB; Aufgabentypen</h2>
+    <div class="sr"><div><div class="sl">Land &#8594; Hauptstadt</div><div class="ss">Welche Stadt ist die Hauptstadt?</div></div><label class="tgl"><input type="checkbox" id="ty-lh" checked onclick="onTypeToggle(this)"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div><div class="sl">Hauptstadt &#8594; Land</div><div class="ss">Zu welchem Land geh&ouml;rt die Stadt?</div></div><label class="tgl"><input type="checkbox" id="ty-hl" onclick="onTypeToggle(this)"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div><div class="sl">Karte beschriften</div><div class="ss">Nummern auf der Karte zuordnen</div></div><label class="tgl"><input type="checkbox" id="ty-karte" onclick="onTypeToggle(this)"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div><div class="sl">Hauptst&auml;dte bestimmen</div><div class="ss">Hauptst&auml;dte zu den Punkten auf der Karte</div></div><label class="tgl"><input type="checkbox" id="ty-hauptstadt" onclick="onTypeToggle(this)"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div><div class="sl">Multiple Choice</div><div class="ss">Richtige Antwort ankreuzen</div></div><label class="tgl"><input type="checkbox" id="ty-mc" onclick="onTypeToggle(this)"><span class="tgl-s"></span></label></div>
+    <div class="sr" id="row-nachbar" style="display:none"><div><div class="sl">Nachbarl&auml;nder &amp; Meere</div><div class="ss">Welche L&auml;nder grenzen an Deutschland?</div></div><label class="tgl"><input type="checkbox" id="ty-nachbar" onclick="onTypeToggle(this)"><span class="tgl-s"></span></label></div>
+    <div id="typeHint" style="display:none;margin-top:8px;font-size:.72rem;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:7px 10px">Mehr passt nicht sauber auf das Blatt. W&auml;hle zuerst einen anderen Aufgabentyp ab.</div>
+  </div>
+  <div class="card">
+    <h2>&#x1F5FA;&#xFE0F; Karten-Optionen</h2>
+    <div class="sr"><div><div class="sl">Hauptst&auml;dte als Punkt zeigen</div><div class="ss">Stern markiert die Hauptstadt</div></div><label class="tgl"><input type="checkbox" id="opt-capdot"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div><div class="sl">L&auml;nder-K&uuml;rzel auf Karte</div><div class="ss">z.B. BY, NRW &#8211; als Lesehilfe</div></div><label class="tgl"><input type="checkbox" id="opt-kuerzel"><span class="tgl-s"></span></label></div>
+  </div>
+  <div class="card">
+    <h2>&#x1F4C4; Umfang</h2>
+    <div class="chips" id="pageChips">
+      <div class="chip sel" id="pg-1" onclick="setPages(1)">1 Seite</div>
+      <div class="chip" id="pg-2" onclick="setPages(2)">2 Seiten</div>
+    </div>
+    <div class="ss" style="margin-top:6px">&bdquo;2 Seiten&ldquo; gibt die gew&auml;hlten Aufgaben zweimal aus (neu gemischt). Bei &bdquo;Karte beschriften&ldquo; werden immer alle 16 L&auml;nder verwendet.</div>
+  </div>
+</div>
+<div class="screen" id="s-set">
+  <div class="card">
+    <h2>&#x1F4D0; Kopfzeile</h2>
+    <div class="sr"><div class="sl">Name-Feld</div><label class="tgl"><input type="checkbox" id="showName"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Datum-Feld</div><label class="tgl"><input type="checkbox" id="showDate"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Klasse-Feld</div><label class="tgl"><input type="checkbox" id="showKl"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Mit L&ouml;sungen</div><label class="tgl"><input type="checkbox" id="showSol"><span class="tgl-s"></span></label></div>
+  </div>
+  <div class="card">
+    <h2>&#x2139;&#xFE0F; Hinweis</h2>
+    <p style="font-size:.78rem;color:#6b7280;line-height:1.5">Die Karte ist eine vereinfachte, gut lesbare Schemakarte zum &Uuml;ben der Lage der Bundesl&auml;nder &#8211; nicht ma&szlig;stabsgetreu.</p>
+  </div>
+</div>
+<div class="screen" id="s-pre"><div id="previewContent"></div></div>
+</div>
+</div>
+<div class="printarea" id="printArea"></div>
+<div class="sbar" id="sbar">
+  <button class="btn bp" id="btnGoPre">&#x1F441; Vorschau &amp; Drucken</button>
+</div>
+
+<script>
+
+/* Kartendaten (LD, FLAECHEN, STADT, ALLKEYS, NACHBARN, MEERE) kommen aus bundeslaender-data.js */
+var LD=window.BL_DATA.LD, FLAECHEN=window.BL_DATA.FLAECHEN, STADT=window.BL_DATA.STADT;
+var ALLKEYS=window.BL_DATA.ALLKEYS, NACHBARN=window.BL_DATA.NACHBARN, MEERE=window.BL_DATA.MEERE;
+var klasse=3;
+var numPages=1;
+/* 1 Seite: moderate Anzahl pro Typ.
+   2 Seiten: alle 16 Länder pro Typ UND jeder Typ doppelt (im PDF-Modul) -> echte zwei Seiten. */
+var PER_PAGE={ p1:8, p2:16 };
+function countForPages(){ return numPages<=1 ? PER_PAGE.p1 : PER_PAGE.p2; }
+function setPages(n){ numPages=n; [1,2].forEach(function(x){ document.getElementById('pg-'+x).classList.toggle('sel',x===n); }); }
+
+/* ===== Aufgabentyp-Auswahl auf Seitenkapazität begrenzen =====
+   Platz-Gewicht je Typ = Anteil einer Seite (empirisch gemessen).
+   Die Summe der gewählten Typen darf eine Seite (Kapazität 1.0) nicht überschreiten;
+   bei "2 Seiten" wird jeder Typ im PDF-Modul verdoppelt -> dieselbe Auswahl füllt dann 2 Seiten. */
+var TYPE_W={ lh:0.22, hl:0.22, mc:0.40, karte:0.58, hauptstadt:0.58, nachbar:0.17 };
+var TYPE_IDS=['ty-lh','ty-hl','ty-karte','ty-hauptstadt','ty-mc','ty-nachbar'];
+var TYPE_KEY={ 'ty-lh':'lh','ty-hl':'hl','ty-karte':'karte','ty-hauptstadt':'hauptstadt','ty-mc':'mc','ty-nachbar':'nachbar' };
+var CAPACITY=0.95;
+function selectedWeight(){
+  var w=0;
+  TYPE_IDS.forEach(function(id){ var e=document.getElementById(id); if(e&&e.checked) w+=TYPE_W[TYPE_KEY[id]]; });
+  return w;
+}
+function flashTypeHint(){
+  var h=document.getElementById('typeHint'); if(!h)return;
+  h.style.display='block';
+  clearTimeout(window.__thT); window.__thT=setTimeout(function(){ h.style.display='none'; },2600);
+}
+function onTypeToggle(cb){
+  if(cb.checked && selectedWeight() > CAPACITY + 0.001){
+    cb.checked=false;        // Klick zurücknehmen – Seite ist voll
+    flashTypeHint();
+  }
+}
+
+function setKlasse(k){klasse=k;[3,4].forEach(function(x){document.getElementById('kl-'+x).classList.toggle('sel',x===k);});document.getElementById('row-nachbar').style.display=(k===4)?'flex':'none';if(k!==4)document.getElementById('ty-nachbar').checked=false;}
+
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+/* pathD/mapSVG/buildMeta entfallen - Kartenzeichnung + Header jetzt im PDF-Modul (bundeslaender-pdf.js) */
+function chosenTypes(){
+  var t=[];
+  if(document.getElementById('ty-lh').checked)t.push('lh');
+  if(document.getElementById('ty-hl').checked)t.push('hl');
+  if(document.getElementById('ty-karte').checked)t.push('karte');
+  if(document.getElementById('ty-hauptstadt').checked)t.push('hauptstadt');
+  if(document.getElementById('ty-mc').checked)t.push('mc');
+  if(klasse===4&&document.getElementById('ty-nachbar').checked)t.push('nachbar');
+  return t;
+}
+
+/* sectionTitle/buildWS entfallen - Arbeitsblatt wird jetzt im PDF-Modul erzeugt */
+
+var sbar=document.getElementById('sbar');
+function showTab(n){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('s-'+n).classList.add('active');
+  document.getElementById('t-'+n).classList.add('active');
+  if(n==='pre'){
+    sbar.innerHTML='';
+    var b1=document.createElement('button'),b2=document.createElement('button');
+    b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
+    b2.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;border:none';
+    b1.textContent='\u2190 Zur\u00fcck';b2.textContent='Drucken / PDF';
+    b1.onclick=function(){showTab('gen');};b2.onclick=doPrint;
+    sbar.appendChild(b1);sbar.appendChild(b2);
+    setTimeout(buildPreview,50);
+  } else {
+    sbar.innerHTML='';
+    var btn=document.createElement('button');
+    btn.className='btn bp';btn.textContent='\ud83d\udc41 Vorschau & Drucken';
+    btn.onclick=function(){showTab('pre');};
+    sbar.appendChild(btn);
+  }
+}
+/* ===== Spec aus den Steuerelementen einsammeln ===== */
+function pdfSpec(){
+  return {
+    types: chosenTypes(),
+    count: countForPages(),
+    numPages: numPages,
+    klasse: klasse,
+    showSol: document.getElementById('showSol').checked,
+    kuerzel: document.getElementById('opt-kuerzel').checked,
+    capdot: document.getElementById('opt-capdot').checked
+  };
+}
+function pdfHeaderOpts(){
+  return {
+    showName:document.getElementById('showName').checked,
+    showDate:document.getElementById('showDate').checked,
+    showKl:document.getElementById('showKl').checked
+  };
+}
+async function makePDFBytes(){
+  if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
+  return await BundeslaenderPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
+}
+
+/* ===== Vorschau: PDF -> Canvas ===== */
+async function buildPreview(){
+  var wrap=document.getElementById('previewContent');
+  wrap.innerHTML='<p style="color:#6b7280;padding:16px;font-size:.8rem">Vorschau wird erstellt &hellip;</p>';
+  try{
+    if(chosenTypes().length===0){
+      wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Bitte mindestens einen Aufgabentyp ausw\u00e4hlen.</p>';
+      return;
+    }
+    var bytes=await makePDFBytes();
+    if(window.pdfjsLib){
+      var pdf=await window.pdfjsLib.getDocument({data:bytes}).promise;
+      wrap.innerHTML='';
+      var sw=Math.min(window.innerWidth,480)-28;
+      for(var p=1;p<=pdf.numPages;p++){
+        var page=await pdf.getPage(p);
+        var vp1=page.getViewport({scale:1});
+        var scale=sw/vp1.width;
+        var vp=page.getViewport({scale:scale*2});
+        var canvas=document.createElement('canvas');
+        canvas.style.cssText='display:block;width:'+sw+'px;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:10px;background:#fff';
+        canvas.width=vp.width;canvas.height=vp.height;
+        await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+        wrap.appendChild(canvas);
+      }
+    }else{
+      var blob=new Blob([bytes],{type:'application/pdf'});
+      wrap.innerHTML='<embed src="'+URL.createObjectURL(blob)+'" type="application/pdf" style="width:100%;height:70vh;border:1px solid #e2e8f0;border-radius:6px">';
+    }
+  }catch(e){
+    wrap.innerHTML='<p style="color:red;padding:20px">'+(e.message||String(e))+'</p>';
+    console.error(e);
+  }
+}
+
+/* ===== Drucken: PDF an native Bridge ===== */
+async function doPrint(){
+  try{
+    if(chosenTypes().length===0){alert('Bitte mindestens einen Aufgabentyp ausw\u00e4hlen.');return;}
+    var bytes=await makePDFBytes();
+    await PrintBridge.printPDF(bytes,'Bundeslaender.pdf');
+  }catch(e){
+    alert('Druck fehlgeschlagen: '+(e.message||e));
+    console.error(e);
+  }
+}
+document.getElementById('t-gen').onclick=function(){showTab('gen');};
+document.getElementById('t-set').onclick=function(){showTab('set');};
+document.getElementById('t-pre').onclick=function(){showTab('pre');};
+document.getElementById('btnGoPre').onclick=function(){showTab('pre');};
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('selectstart',function(e){if(e.target.tagName==='INPUT')return;e.preventDefault();});
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

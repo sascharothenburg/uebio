@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übio · Hilfe & Anleitung</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"Hilfe","short_name":"Hilfe","start_url":".","display":"standalone","background_color":"%23f5f5f5","theme_color":"%23737373","icons":[]}'>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
+
+:root{
+  --accent:#737373;       /* hellgrau, Akzent */
+  --accent-d:#525252;     /* dunkler fuer Text/Hover */
+  --accent-l:#a3a3a3;     /* heller */
+  --bg:#fafafa;
+  --card:#ffffff;
+  --line:#e5e5e5;
+  --ink:#2b2b2b;
+  --muted:#6b6b6b;
+  --soft:#f3f3f3;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Kopfzeile (Schema-Standard) ---------- */
+header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-d) 100%);
+  color:#fff;
+  padding:14px 20px;
+  padding-top:calc(14px + var(--ad-top,0px));
+  box-shadow:0 2px 12px rgba(0,0,0,.12);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+header .h-title{
+  font-weight:800;font-size:1.25rem;letter-spacing:.2px;
+  display:flex;align-items:center;gap:10px;
+}
+header .h-title svg{flex:none}
+.h-spacer{flex:1 1 auto}
+.h-back{
+  color:#fff;text-decoration:none;font-weight:700;font-size:.95rem;
+  padding:7px 14px;border-radius:9px;
+  background:rgba(255,255,255,.16);
+  transition:background .15s;
+  white-space:nowrap;
+}
+.h-back:hover{background:rgba(255,255,255,.28)}
+
+/* ---------- Inhalt ---------- */
+.wrap{max-width:860px;margin:0 auto;padding:32px 20px 80px}
+
+.intro{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:26px 28px;
+  margin-bottom:26px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.intro h1{
+  font-size:1.6rem;font-weight:800;color:var(--accent-d);
+  margin-bottom:8px;
+}
+.intro p{color:var(--muted);font-size:1.02rem}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:24px 28px;
+  margin-bottom:20px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.card h2{
+  font-size:1.2rem;font-weight:800;color:var(--accent-d);
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.card h2 .dot{
+  width:11px;height:11px;border-radius:50%;
+  background:var(--accent);flex:none;
+}
+
+dl{margin:0}
+dl .row{
+  padding:13px 0;
+  border-bottom:1px solid var(--soft);
+  display:grid;
+  grid-template-columns:160px 1fr;
+  gap:6px 18px;
+  align-items:start;
+}
+dl .row:last-child{border-bottom:none}
+dl dt{
+  font-weight:800;color:var(--ink);
+  font-size:.98rem;
+}
+dl dd{color:var(--muted);font-size:.97rem}
+
+.steps{counter-reset:s;list-style:none}
+.steps li{
+  position:relative;
+  padding:10px 0 10px 44px;
+  border-bottom:1px solid var(--soft);
+}
+.steps li:last-child{border-bottom:none}
+.steps li::before{
+  counter-increment:s;content:counter(s);
+  position:absolute;left:0;top:9px;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--accent);color:#fff;
+  font-weight:800;font-size:.9rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.steps li b{color:var(--ink)}
+
+.tip{
+  background:var(--soft);
+  border-left:4px solid var(--accent-l);
+  border-radius:8px;
+  padding:13px 16px;
+  margin-top:14px;
+  font-size:.95rem;color:var(--muted);
+}
+.tip b{color:var(--accent-d)}
+
+.faq dt{margin-top:14px;font-weight:800;color:var(--ink);font-size:1rem}
+.faq dd{margin-top:4px;color:var(--muted);font-size:.97rem}
+.faq dt:first-child{margin-top:0}
+
+footer{
+  text-align:center;color:var(--muted);
+  font-size:.88rem;padding:0 20px 40px;
+}
+footer a{color:var(--accent-d);font-weight:700}
+
+@media(max-width:560px){
+  dl .row{grid-template-columns:1fr;gap:2px}
+  .wrap{padding:22px 14px 60px}
+  .card,.intro{padding:20px 18px}
+}
+
+/* ---------- Druck ---------- */
+@media print{
+  @page{size:A4;margin:16mm}
+  header{position:static;background:none;color:#000;box-shadow:none;padding:0 0 10px;border-bottom:2px solid #999}
+  .h-back{display:none}
+  header .h-title{color:#000}
+  body{background:#fff;color:#000}
+  .wrap{max-width:none;padding:0}
+  .card,.intro{box-shadow:none;border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid}
+  .card h2,.intro h1,.card h2 .dot{color:#000}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-title">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>
+    Hilfe &amp; Anleitung
+  </div>
+  <div class="h-spacer"></div>
+  <a class="h-back" href="index.html">&larr; Zur Startseite</a>
+</header>
+
+<div class="wrap">
+
+  <section class="intro">
+    <h1>Wie funktioniert Übio?</h1>
+    <p>Jede App erzeugt fertige Arbeitsbl&auml;tter zum Ausdrucken. Du stellst ein, was ge&uuml;bt werden soll, pr&uuml;fst die Aufgaben kurz und druckst aus &ndash; fertig. Hier findest du kurze Erkl&auml;rungen zu allen Einstellungen.</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="dot"></span>In 4 Schritten zum Arbeitsblatt</h2>
+    <ol class="steps">
+      <li><b>Generator:</b> W&auml;hle aus, was und wie viel ge&uuml;bt werden soll, und erzeuge die Aufgaben.</li>
+      <li><b>Liste:</b> Schau die erzeugten Aufgaben durch. Einzelne kannst du anpassen oder neu w&uuml;rfeln lassen.</li>
+      <li><b>Einstellungen:</b> Lege Aussehen fest &ndash; Name-Feld, Linien, L&ouml;sungsblatt usw.</li>
+      <li><b>Vorschau &amp; Drucken:</b> Kontrolliere die A4-Ansicht und drucke aus oder speichere als PDF.</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2><span class="dot"></span>Die Einstellungen im &Uuml;berblick</h2>
+    <dl>
+      <div class="row"><dt>Anzahl der Aufgaben</dt><dd>Wie viele Aufgaben auf das Blatt sollen. Mehr Aufgaben werden automatisch kleiner gesetzt, damit alles auf eine A4-Seite passt.</dd></div>
+      <div class="row"><dt>Schwierigkeit / Klasse</dt><dd>Stellt ein, wie schwer die Aufgaben sind &ndash; z.&nbsp;B. kleinere Zahlen oder einfachere W&ouml;rter f&uuml;r j&uuml;ngere Kinder.</dd></div>
+      <div class="row"><dt>Aufgaben-Typen</dt><dd>Viele Apps bieten mehrere Aufgaben-Arten als Schalter an. Aktiviere nur das, was ge&uuml;bt werden soll &ndash; gemischt geht auch.</dd></div>
+      <div class="row"><dt>L&ouml;sungsblatt</dt><dd>Wenn aktiv, wird zus&auml;tzlich ein zweites Blatt mit den L&ouml;sungen erzeugt. Praktisch zum schnellen Korrigieren.</dd></div>
+      <div class="row"><dt>Linien (Lineatur)</dt><dd>Bei Deutsch-Apps w&auml;hlbar: 1, 2 oder 3 Linien zum Schreiben &ndash; passend zur Klassenstufe und Heft-Lineatur.</dd></div>
+      <div class="row"><dt>Berichtigen-Modus</dt><dd>Gibt den Text vor und l&auml;sst darunter Platz, damit das Kind richtig abschreiben/berichtigen kann.</dd></div>
+      <div class="row"><dt>Name- &amp; Datum-Feld</dt><dd>Blendet oben eine Kopfzeile zum Eintragen von Name und Datum ein.</dd></div>
+    </dl>
+    <div class="tip"><b>Hinweis:</b> Schalter (Toggles) stehen am Anfang meist auf <i>aus</i>. Aktiviere gezielt das, was du brauchst.</div>
+  </section>
+
+  <section class="card">
+    <h2><span class="dot"></span>Drucken &amp; speichern</h2>
+    <dl>
+      <div class="row"><dt>Als PDF speichern</dt><dd>Im Druck-Dialog statt eines Druckers &bdquo;Als PDF speichern&ldquo; w&auml;hlen.</dd></div>
+      <div class="row"><dt>Papierformat A4</dt><dd>Die Bl&auml;tter sind f&uuml;r A4 gemacht. Sollte der Drucker auf US-Letter stehen, im Druck-Dialog auf A4 umstellen.</dd></div>
+      <div class="row"><dt>Hintergrundfarben</dt><dd>Falls Farben/Linien nicht mitgedruckt werden: im Druck-Dialog die Option &bdquo;Hintergrundgrafiken drucken&ldquo; aktivieren.</dd></div>
+      <div class="row"><dt>iPhone / iPad</dt><dd>&Uuml;ber das Teilen-Men&uuml; &rarr; Drucken. Die Apps passen die Seitenr&auml;nder f&uuml;r Safari automatisch an.</dd></div>
+    </dl>
+  </section>
+
+  <section class="card faq">
+    <h2><span class="dot"></span>H&auml;ufige Fragen</h2>
+    <dl>
+      <dt>Werden Daten gespeichert oder hochgeladen?</dt>
+      <dd>Nein. Alles l&auml;uft direkt im Browser auf deinem Ger&auml;t. Es werden keine Eingaben &uuml;bertragen.</dd>
+      <dt>Funktionieren die Apps auch offline?</dt>
+      <dd>Ja. Einmal geladen, lassen sie sich auch ohne Internet nutzen und sogar als App auf den Startbildschirm legen.</dd>
+      <dt>Kann ich Aufgaben &auml;ndern?</dt>
+      <dd>Ja, in der <b>Liste</b>-Ansicht lassen sich Aufgaben anpassen oder neu erzeugen, bevor du druckst.</dd>
+      <dt>Ich habe einen Fehler gefunden oder einen Wunsch.</dt>
+      <dd>Sehr gern! Schreib mir &uuml;ber die Kontaktadresse im <b>Impressum</b> &ndash; &uuml;ber R&uuml;ckmeldungen zu Fehlern, Ideen und Wunschfunktionen freue ich mich.</dd>
+    </dl>
+  </section>
+
+  <footer>
+    Übio &middot; Lern-Apps von Sascha Rothenburg &middot;
+    <a href="index.html">Startseite</a>
+  </footer>
+
+</div>
+
+<script src="ads.js"></script>
+
+</body>
+</html>
