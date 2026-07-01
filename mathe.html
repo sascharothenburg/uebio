@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Übio">
+<meta name="theme-color" content="#0369a1">
+<title>Übio · Mathematik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,system-ui,sans-serif;background:#f0f9ff;color:#1e293b;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+.wrap{height:100%;max-width:480px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.08);display:flex;flex-direction:column}
+.hdr{padding:calc(14px + env(safe-area-inset-top,0px) + var(--ad-top,0px)) 18px 16px;background:linear-gradient(140deg,#0369a1,#0ea5e9);color:#fff;flex-shrink:0;position:relative;z-index:10}
+.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;background:rgba(255,255,255,.22);border-radius:20px;color:#fff;font-size:.76rem;font-weight:800;text-decoration:none}
+.hdr-btns{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap}
+.hdr h1{font-size:1.5rem;font-weight:900;display:flex;align-items:center;gap:10px}
+.hdr .ic{font-size:1.6rem}
+.hdr .title-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hdr .brand{font-size:1.5rem;font-weight:900;letter-spacing:-.3px;opacity:.85;flex-shrink:0}
+.body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 16px calc(24px + env(safe-area-inset-bottom,0px))}
+.group{margin-top:18px}
+.group h2{font-size:.74rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#94a3b8;padding:0 4px 8px}
+.app{display:flex;align-items:center;gap:13px;padding:13px 14px;background:#fff;border:1.5px solid #eef2f7;border-radius:14px;margin-bottom:9px;text-decoration:none;color:inherit;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:transform .1s ease, box-shadow .1s ease, border-color .1s ease}
+.app:active{transform:scale(.985);box-shadow:0 1px 3px rgba(0,0,0,.08);border-color:#0ea5e9}
+.app .ai{width:42px;height:42px;flex-shrink:0;border-radius:11px;background:#f0f9ff;display:flex;align-items:center;justify-content:center;font-size:1.35rem}
+.app .at{flex:1;min-width:0;display:flex;flex-direction:column}
+.app .an{display:block;font-size:.98rem;font-weight:800;color:#1e293b}
+.app .ad{display:block;font-size:.76rem;color:#64748b;margin-top:1px}
+.app .ar{color:#0ea5e9;font-size:1.1rem;font-weight:900;flex-shrink:0}
+.empty{text-align:center;color:#94a3b8;font-size:.85rem;padding:40px 20px;line-height:1.7}
+.foot{text-align:center;color:#cbd5e1;font-size:.7rem;padding:10px 0 4px}
+
+/* Accordion */
+.group{margin-top:14px}
+.acc-head{display:flex;align-items:center;gap:10px;width:100%;border:none;background:#fff;cursor:pointer;font-family:inherit;padding:13px 14px;border:1.5px solid #eef2f7;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:border-color .12s ease,box-shadow .12s ease}
+.acc-head:active{transform:scale(.99)}
+.acc-head .ht{flex:1;text-align:left;font-size:.92rem;font-weight:900;color:#1e293b;letter-spacing:0}
+.acc-head .hc{font-size:.72rem;font-weight:800;color:#94a3b8;background:#f1f5f9;border-radius:20px;padding:2px 9px}
+.acc-head .hv{color:#0ea5e9;font-size:1rem;font-weight:900;transition:transform .18s ease;flex-shrink:0}
+.acc-head[aria-expanded="true"]{border-color:#0ea5e9}
+.acc-head[aria-expanded="true"] .hv{transform:rotate(90deg)}
+.acc-panel{overflow:hidden;max-height:0;transition:max-height .26s ease}
+.acc-panel.open{max-height:2000px}
+.acc-inner{padding:9px 0 2px}
+.acc-inner .app{margin-bottom:9px}
+.acc-inner .app:last-child{margin-bottom:2px}
+.hdr-btns .coffee-wrap{margin-left:auto;position:relative}
+.hdr-btns .coffee{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);border-radius:20px;color:#fff;font-size:.76rem;font-weight:800;text-decoration:none;cursor:pointer;font-family:inherit}
+.hdr-btns .coffee:active{background:rgba(255,255,255,.3)}
+.coffee-pop{position:absolute;right:0;top:calc(100% + 8px);width:236px;background:#fff;border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.22);padding:14px;z-index:50;display:none;color:#1e293b;text-align:left}
+.coffee-pop.open{display:block}
+.coffee-pop::before{content:"";position:absolute;right:18px;top:-7px;width:14px;height:14px;background:#fff;transform:rotate(45deg)}
+.coffee-pop .ct{font-size:.84rem;font-weight:900;margin-bottom:2px}
+.coffee-pop .cs{font-size:.72rem;color:#64748b;margin-bottom:11px;line-height:1.4}
+.coffee-pop .amts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}
+.coffee-pop .amt{padding:9px 0;border:1.5px solid #e2e8f0;border-radius:11px;background:#fff;font-size:.92rem;font-weight:800;color:#1e293b;cursor:pointer;font-family:inherit;text-align:center;transition:border-color .1s,background .1s}
+.coffee-pop .amt:active{transform:scale(.97)}
+.coffee-pop .amt.sel{border-color:#0ea5e9;background:#0ea5e9;color:#fff}
+.coffee-pop .custom{display:flex;align-items:center;gap:7px;margin-bottom:11px;border:1.5px solid #e2e8f0;border-radius:11px;padding:7px 11px}
+.coffee-pop .custom:focus-within{border-color:#0ea5e9}
+.coffee-pop .custom span{font-size:.95rem;font-weight:800;color:#94a3b8}
+.coffee-pop .custom input{flex:1;min-width:0;border:none;outline:none;font-family:inherit;font-size:.95rem;font-weight:800;color:#1e293b;background:transparent}
+.coffee-pop .go{display:block;width:100%;padding:11px 0;border:none;border-radius:12px;background:#0ea5e9;color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;font-family:inherit;text-align:center;text-decoration:none}
+.coffee-pop .go:active{filter:brightness(.93)}
+</style>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div class="title-row">
+      <h1><span class="ic">➕</span>Mathematik</h1>
+      <span class="brand">Übio</span>
+    </div>
+    <div class="hdr-btns">
+      <a class="back" href="index.html">← Zur&uuml;ck</a>
+      <a class="back" href="index.html">&#x1F3E0; Hauptmen&uuml;</a>
+      <div class="coffee-wrap">
+        <button class="coffee" type="button" onclick="toggleCoffee(event)">☕ Buy me a coffee</button>
+        <div class="coffee-pop" id="coffeePop">
+          <div class="ct">☕ Kaffeekasse</div>
+          <div class="cs">Diese App ist kostenlos. Über eine kleine Unterstützung freue ich mich sehr!</div>
+          <div class="amts">
+            <button class="amt" type="button" data-eur="1" onclick="pickAmt(this)">1 €</button>
+            <button class="amt sel" type="button" data-eur="2" onclick="pickAmt(this)">2 €</button>
+            <button class="amt" type="button" data-eur="5" onclick="pickAmt(this)">5 €</button>
+            <button class="amt" type="button" data-eur="10" onclick="pickAmt(this)">10 €</button>
+          </div>
+          <div class="custom">
+            <span>€</span>
+            <input type="text" inputmode="decimal" placeholder="Eigener Betrag" id="coffeeCustom" oninput="customAmt()">
+          </div>
+          <a class="go" id="coffeeGo" href="https://paypal.me/SaschaRothenburg/2EUR" target="_blank" rel="noopener">Spenden</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="body">
+    <div class="group"><button class="acc-head" type="button" id="acc-grundrechnen" aria-expanded="false" onclick="toggleAcc(this)"><span class="ht">Grundrechnen</span><span class="hc">4</span><span class="hv">›</span></button><div class="acc-panel"><div class="acc-inner"><a class="app" href="grundrechnen.html"><span class="ai">➕</span><span class="at"><span class="an">Grundrechnen</span><span class="ad">Plus &amp; Minus</span></span><span class="ar">›</span></a>
+      <a class="app" href="einmaleins.html"><span class="ai">✖️</span><span class="at"><span class="an">Einmaleins</span><span class="ad">Malreihen üben</span></span><span class="ar">›</span></a>
+      <a class="app" href="schriftliches-rechnen.html"><span class="ai">📝</span><span class="at"><span class="an">Schriftliches Rechnen</span><span class="ad">+ − × ÷ mit Rest</span></span><span class="ar">›</span></a>
+      <a class="app" href="rechenmauern.html"><span class="ai">🧱</span><span class="at"><span class="an">Rechenmauern</span><span class="ad">Zahlenpyramiden</span></span><span class="ar">›</span></a></div></div></div>
+    <div class="group"><button class="acc-head" type="button" id="acc-zahlverstaendnis" aria-expanded="false" onclick="toggleAcc(this)"><span class="ht">Zahlverständnis</span><span class="hc">5</span><span class="hv">›</span></button><div class="acc-panel"><div class="acc-inner"><a class="app" href="mengen.html"><span class="ai">🔵</span><span class="at"><span class="an">Mengen &amp; Punktebilder</span><span class="ad">Zehner-/Zwanzigerfeld</span></span><span class="ar">›</span></a>
+      <a class="app" href="zaehlen.html"><span class="ai">🍎</span><span class="at"><span class="an">Zählen &amp; Anzahlen</span><span class="ad">Mit Gegenständen zählen</span></span><span class="ar">›</span></a>
+      <a class="app" href="stellenwerttafel.html"><span class="ai">🔢</span><span class="at"><span class="an">Stellenwerttafel</span><span class="ad">E Z H T</span></span><span class="ar">›</span></a>
+      <a class="app" href="zahlenstrahl.html"><span class="ai">📏</span><span class="at"><span class="an">Zahlenstrahl</span><span class="ad">Zahlen einordnen</span></span><span class="ar">›</span></a>
+      <a class="app" href="bruchrechnen.html"><span class="ai">½</span><span class="at"><span class="an">Bruchrechnen</span><span class="ad">Brüche</span></span><span class="ar">›</span></a></div></div></div>
+    <div class="group"><button class="acc-head" type="button" id="acc-sachrechnen" aria-expanded="false" onclick="toggleAcc(this)"><span class="ht">Sachrechnen</span><span class="hc">4</span><span class="hv">›</span></button><div class="acc-panel"><div class="acc-inner"><a class="app" href="uhr.html"><span class="ai">🕒</span><span class="at"><span class="an">Uhr</span><span class="ad">Uhrzeit lesen</span></span><span class="ar">›</span></a>
+      <a class="app" href="zeit.html"><span class="ai">⏱️</span><span class="at"><span class="an">Zeit</span><span class="ad">Zeitspannen &amp; Einheiten</span></span><span class="ar">›</span></a>
+      <a class="app" href="laengen.html"><span class="ai">📏</span><span class="at"><span class="an">Längen</span><span class="ad">mm cm m km</span></span><span class="ar">›</span></a>
+      <a class="app" href="geld.html"><span class="ai">💰</span><span class="at"><span class="an">Geld</span><span class="ad">Rechnen mit Euro</span></span><span class="ar">›</span></a></div></div></div>
+    <div class="group"><button class="acc-head" type="button" id="acc-groessen-und-geometrie" aria-expanded="false" onclick="toggleAcc(this)"><span class="ht">Geometrie</span><span class="hc">3</span><span class="hv">›</span></button><div class="acc-panel"><div class="acc-inner"><a class="app" href="geometrie-formen-symmetrien.html"><span class="ai">🔷</span><span class="at"><span class="an">Formen &amp; Symmetrien</span><span class="ad">Geometrie</span></span><span class="ar">›</span></a>
+      <a class="app" href="geometrie-gitter-koerper.html"><span class="ai">📐</span><span class="at"><span class="an">Gitter &amp; Körper</span><span class="ad">Geometrie</span></span><span class="ar">›</span></a>
+      <a class="app" href="geometrie-wuerfelnetze-koerper.html"><span class="ai">📦</span><span class="at"><span class="an">Würfelnetze</span><span class="ad">Geometrie</span></span><span class="ar">›</span></a></div></div></div>
+    
+    <div class="foot">Übio &middot; © 2026 Sascha Rothenburg</div>
+  </div>
+</div>
+
+<script>
+function setHash(id){
+  // Zustand still in die URL schreiben (kein Sprung), damit Hardware-Back
+  // und pageshow das offene Akkordeon wiederherstellen können.
+  try{
+    if(id){ history.replaceState(null,'','#'+id); }
+    else{ history.replaceState(null,'',location.pathname+location.search); }
+  }catch(e){}
+}
+function closeAllAcc(except){
+  document.querySelectorAll('.acc-head').forEach(function(b){
+    if(b!==except){
+      b.setAttribute('aria-expanded','false');
+      if(b.nextElementSibling) b.nextElementSibling.classList.remove('open');
+    }
+  });
+}
+function toggleAcc(btn){
+  var open = btn.getAttribute('aria-expanded')==='true';
+  if(open){
+    btn.setAttribute('aria-expanded','false');
+    btn.nextElementSibling.classList.remove('open');
+    setHash(null);
+  } else {
+    closeAllAcc(btn);
+    btn.setAttribute('aria-expanded','true');
+    btn.nextElementSibling.classList.add('open');
+    setHash(btn.id);
+  }
+}
+function openAcc(id){
+  var btn = document.getElementById(id);
+  if(!btn || !btn.classList.contains('acc-head')) return;
+  closeAllAcc(btn);
+  btn.setAttribute('aria-expanded','true');
+  btn.nextElementSibling.classList.add('open');
+  if(btn.scrollIntoView){ btn.scrollIntoView({block:'start'}); }
+}
+window.toggleAcc=toggleAcc;
+window.openAcc=openAcc;
+function accRestore(){
+  var h=(location.hash||'').replace('#','');
+  if(h){ openAcc(h); }
+}
+if(document.readyState!=='loading'){ accRestore(); }
+else{ document.addEventListener('DOMContentLoaded', accRestore); }
+window.addEventListener('hashchange', accRestore);
+window.addEventListener('pageshow', accRestore);
+</script>
+<script src="ads.js"></script>
+<script>
+(function(){
+  var preset = 2;   // zuletzt gewaehlter Preset-Betrag (Fallback)
+  function buildUrl(eur){ return 'https://paypal.me/SaschaRothenburg/' + eur + 'EUR'; }
+  function fmt(v){ return (Math.round(v*100)/100).toString().replace(',','.'); }
+  function setGo(eur){
+    var go = document.getElementById('coffeeGo');
+    if(go) go.href = buildUrl(eur);
+  }
+  window.toggleCoffee = function(e){
+    e.stopPropagation();
+    var pop = document.getElementById('coffeePop');
+    if(pop) pop.classList.toggle('open');
+  };
+  window.pickAmt = function(btn){
+    preset = parseFloat(btn.getAttribute('data-eur'));
+    document.querySelectorAll('.coffee-pop .amt').forEach(function(b){ b.classList.remove('sel'); });
+    btn.classList.add('sel');
+    var ci = document.getElementById('coffeeCustom'); if(ci) ci.value='';
+    setGo(fmt(preset));
+  };
+  window.customAmt = function(){
+    var ci = document.getElementById('coffeeCustom');
+    var raw = (ci.value||'').replace(',','.').trim();
+    var v = parseFloat(raw);
+    document.querySelectorAll('.coffee-pop .amt').forEach(function(b){ b.classList.remove('sel'); });
+    if(!isNaN(v) && v>0){
+      setGo(fmt(v));
+    } else {
+      // leeres/ungueltiges Feld -> zurueck auf Preset und diesen wieder markieren
+      var pb = document.querySelector('.coffee-pop .amt[data-eur="'+preset+'"]');
+      if(pb) pb.classList.add('sel');
+      setGo(fmt(preset));
+    }
+  };
+  // Klick ausserhalb schliesst das Popover
+  document.addEventListener('click', function(e){
+    var pop = document.getElementById('coffeePop');
+    if(!pop || !pop.classList.contains('open')) return;
+    if(!e.target.closest('.coffee-wrap')) pop.classList.remove('open');
+  });
+})();
+</script>
+
+</body>
+</html>

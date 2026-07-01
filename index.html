@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Übio">
+<meta name="theme-color" content="#0369a1">
+<title>Übio · Grundschulübungen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,system-ui,sans-serif;background:#f1f5f9;color:#1e293b;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+.wrap{min-height:100%;max-width:480px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.08);display:flex;flex-direction:column}
+
+/* Kopf */
+.hero{padding:calc(26px + env(safe-area-inset-top,0px) + var(--ad-top,0px)) 22px 26px;background:linear-gradient(150deg,#0369a1 0%,#0ea5e9 45%,#22c55e 100%);color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.12)}
+.hero::before{content:"";position:absolute;left:-30px;bottom:-50px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.10)}
+.hero h1{font-size:1.7rem;font-weight:900;letter-spacing:-.5px;position:relative;z-index:1}
+.hero h1 .sub{font-size:1.15rem;font-weight:600;letter-spacing:0;opacity:.85}
+.hero p{font-size:.86rem;opacity:.9;margin-top:5px;position:relative;z-index:1}
+
+/* Auswahl-Überschrift */
+.lead{padding:22px 22px 6px;font-size:.78rem;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#64748b}
+
+/* Fach-Kacheln */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:12px 18px 18px}
+.tile{position:relative;border:none;border-radius:20px;padding:18px 16px 16px;text-align:left;color:#fff;cursor:pointer;text-decoration:none;display:flex;flex-direction:column;gap:6px;min-height:142px;overflow:hidden;font-family:inherit;box-shadow:0 6px 18px rgba(0,0,0,.13);transition:transform .12s ease, box-shadow .12s ease}
+.tile:active{transform:scale(.97);box-shadow:0 3px 10px rgba(0,0,0,.16)}
+.tile .ic{font-size:2.3rem;line-height:1}
+.tile .nm{font-size:1.18rem;font-weight:900;letter-spacing:-.3px}
+.tile .ct{font-size:.74rem;font-weight:700;opacity:.92;margin-top:auto}
+.tile .bubble{position:absolute;right:-22px;top:-22px;width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.16)}
+.tile.mathe{background:linear-gradient(140deg,#0369a1,#0ea5e9)}
+.tile.deutsch{background:linear-gradient(140deg,#b91c1c,#ef4444)}
+.tile.englisch{background:linear-gradient(140deg,#6d28d9,#8b5cf6)}
+.tile.sachkunde{background:linear-gradient(140deg,#15803d,#22c55e)}
+.tile.interaktiv{background:linear-gradient(140deg,#f59e0b,#ec4899 55%,#8b5cf6)}
+.tile.interaktiv{grid-column:1 / -1;min-height:0;flex-direction:row;align-items:center;gap:14px;padding:16px 18px}
+.tile.interaktiv .ic{font-size:2rem}
+.tile.interaktiv .txt{display:flex;flex-direction:column;gap:3px}
+.tile.interaktiv .nm{font-size:1.18rem}
+.tile.interaktiv .ct{margin-top:0;opacity:.92}
+.tile.interaktiv .bubble{width:96px;height:96px;right:-26px;top:-26px}
+
+/* Fuß */
+.foot{margin-top:auto;padding:18px 22px calc(20px + env(safe-area-inset-bottom,0px));text-align:center;color:#94a3b8;font-size:.72rem;line-height:1.6}
+.foot a{color:#64748b;text-decoration:none;font-weight:700}
+.coffee-wrap{position:relative;display:inline-block;margin-bottom:14px}
+.coffee{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;background:#fff;border:1.5px solid #e2e8f0;border-radius:22px;color:#475569;font-size:.8rem;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.coffee:active{transform:scale(.97)}
+.coffee-pop{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 10px);width:236px;background:#fff;border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.22);padding:14px;z-index:50;display:none;text-align:left;color:#1e293b}
+.coffee-pop.open{display:block}
+.coffee-pop::after{content:"";position:absolute;left:50%;transform:translateX(-50%) rotate(45deg);bottom:-7px;width:14px;height:14px;background:#fff}
+.coffee-pop .ct{font-size:.84rem;font-weight:900;margin-bottom:2px}
+.coffee-pop .cs{font-size:.72rem;color:#64748b;margin-bottom:11px;line-height:1.4}
+.coffee-pop .amts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}
+.coffee-pop .amt{padding:9px 0;border:1.5px solid #e2e8f0;border-radius:11px;background:#fff;font-size:.92rem;font-weight:800;color:#1e293b;cursor:pointer;font-family:inherit;text-align:center;transition:border-color .1s,background .1s}
+.coffee-pop .amt:active{transform:scale(.97)}
+.coffee-pop .amt.sel{border-color:#0ea5e9;background:#0ea5e9;color:#fff}
+.coffee-pop .custom{display:flex;align-items:center;gap:7px;margin-bottom:11px;border:1.5px solid #e2e8f0;border-radius:11px;padding:7px 11px}
+.coffee-pop .custom:focus-within{border-color:#0ea5e9}
+.coffee-pop .custom span{font-size:.95rem;font-weight:800;color:#94a3b8}
+.coffee-pop .custom input{flex:1;min-width:0;border:none;outline:none;font-family:inherit;font-size:.95rem;font-weight:800;color:#1e293b;background:transparent}
+.coffee-pop .go{display:block;width:100%;padding:11px 0;border:none;border-radius:12px;background:#0ea5e9;color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;font-family:inherit;text-align:center;text-decoration:none}
+.coffee-pop .go:active{filter:brightness(.93)}
+</style>
+</head>
+<body data-root="true">
+<script src="back-button.js"></script>
+<div class="wrap">
+  <div class="hero">
+    <h1>Übio <span class="sub">– Grundschulübungen</span></h1>
+    <p>Arbeitsblätter &amp; interaktive Übungen</p>
+  </div>
+
+  <div class="lead">Wähle ein Fach</div>
+  <div class="grid" id="grid"></div>
+
+  <div class="foot">
+    <div class="coffee-wrap">
+      <button class="coffee" type="button" onclick="toggleCoffee(event)">☕ Buy me a coffee</button>
+      <div class="coffee-pop" id="coffeePop">
+        <div class="ct">☕ Kaffeekasse</div>
+        <div class="cs">Diese Apps sind kostenlos. Über eine kleine Unterstützung freue ich mich sehr!</div>
+        <div class="amts">
+          <button class="amt" type="button" data-eur="1" onclick="pickAmt(this)">1 €</button>
+          <button class="amt sel" type="button" data-eur="2" onclick="pickAmt(this)">2 €</button>
+          <button class="amt" type="button" data-eur="5" onclick="pickAmt(this)">5 €</button>
+          <button class="amt" type="button" data-eur="10" onclick="pickAmt(this)">10 €</button>
+        </div>
+        <div class="custom">
+          <span>€</span>
+          <input type="text" inputmode="decimal" placeholder="Eigener Betrag" id="coffeeCustom" oninput="customAmt()">
+        </div>
+        <a class="go" id="coffeeGo" href="https://paypal.me/SaschaRothenburg/2EUR" target="_blank" rel="noopener">Spenden</a>
+      </div>
+    </div>
+    <div class="foot-credits">Übio &middot; © 2026 Sascha Rothenburg<br>
+    Grundschrift von Christian Urff<br>
+    <a href="hilfe.html">Hilfe & Tipps</a></div>
+  </div>
+</div>
+
+<script>
+/* Fächer – zentral gepflegt. count = Anzahl fertiger Apps (für die Kachel). */
+var SUBJECTS=[
+  {id:'mathe',    name:'Mathematik', icon:'\u2795', page:'mathe.html',     count:18},
+  {id:'deutsch',  name:'Deutsch',    icon:'\u270F\uFE0F', page:'deutsch.html', count:9},
+  {id:'englisch', name:'Englisch',   icon:'🇬🇧', page:'englisch.html', count:2},
+  {id:'sachkunde',name:'Sachkunde',  icon:'\uD83C\uDF0D', page:'sachkunde.html', count:2},
+  {id:'interaktiv',name:'Interaktiv',icon:'\u26A1', page:'interaktiv.html', count:5, sub:'Spielerisch am Bildschirm üben'}
+];
+
+function appCountLabel(n){
+  if(n<=0) return 'In Vorbereitung';
+  return n+(n===1?' App':' Apps');
+}
+
+(function render(){
+  var g=document.getElementById('grid');
+  SUBJECTS.forEach(function(s){
+    var a=document.createElement('a');
+    a.className='tile '+s.id;
+    a.href=s.page;
+    if(s.id==='interaktiv'){
+      a.innerHTML='<div class="bubble"></div>'+
+        '<div class="ic">'+s.icon+'</div>'+
+        '<div class="txt"><div class="nm">'+s.name+'</div>'+
+        '<div class="ct">'+(s.sub||appCountLabel(s.count))+'</div></div>';
+    } else {
+      a.innerHTML='<div class="bubble"></div>'+
+        '<div class="ic">'+s.icon+'</div>'+
+        '<div class="nm">'+s.name+'</div>'+
+        '<div class="ct">'+appCountLabel(s.count)+'</div>';
+    }
+    g.appendChild(a);
+  });
+})();
+
+/* PWA manifest (inline) */
+var manifest={name:'Übio – Grundschulübungen',short_name:'Übio',start_url:'.',display:'standalone',background_color:'#f1f5f9',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='90' fill='%230369a1'/%3E%3Ctext x='256' y='350' text-anchor='middle' font-size='280' font-family='sans-serif' fill='white'%3E%E2%9C%8F%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var mb=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+var ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(mb);document.head.appendChild(ml);
+</script>
+<script src="ads.js"></script>
+<script>
+(function(){
+  var preset = 2; // Default 2 Euro
+  function buildUrl(eur){ return 'https://paypal.me/SaschaRothenburg/' + eur + 'EUR'; }
+  function fmt(v){ return (Math.round(v*100)/100).toString().replace(',','.'); }
+  function setGo(eur){ var go=document.getElementById('coffeeGo'); if(go) go.href=buildUrl(eur); }
+  window.toggleCoffee = function(e){
+    e.stopPropagation();
+    var pop=document.getElementById('coffeePop');
+    if(pop) pop.classList.toggle('open');
+  };
+  window.pickAmt = function(btn){
+    preset = parseFloat(btn.getAttribute('data-eur'));
+    document.querySelectorAll('.coffee-pop .amt').forEach(function(b){ b.classList.remove('sel'); });
+    btn.classList.add('sel');
+    var ci=document.getElementById('coffeeCustom'); if(ci) ci.value='';
+    setGo(fmt(preset));
+  };
+  window.customAmt = function(){
+    var ci=document.getElementById('coffeeCustom');
+    var raw=(ci.value||'').replace(',','.').trim();
+    var v=parseFloat(raw);
+    document.querySelectorAll('.coffee-pop .amt').forEach(function(b){ b.classList.remove('sel'); });
+    if(!isNaN(v) && v>0){
+      setGo(fmt(v));
+    } else {
+      var pb=document.querySelector('.coffee-pop .amt[data-eur="'+preset+'"]');
+      if(pb) pb.classList.add('sel');
+      setGo(fmt(preset));
+    }
+  };
+  document.addEventListener('click', function(e){
+    var pop=document.getElementById('coffeePop');
+    if(!pop || !pop.classList.contains('open')) return;
+    if(!e.target.closest('.coffee-wrap')) pop.classList.remove('open');
+  });
+})();
+</script>
+
+</body>
+</html>
