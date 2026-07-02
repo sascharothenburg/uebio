@@ -6,8 +6,14 @@
    - In der Capacitor-App: PDF-Bytes -> Datei -> natives Print/Share-Plugin.
      Das druckt über iOS UIPrintInteractionController bzw. Android PrintManager.
      -> identisches Ergebnis auf beiden Plattformen (kein WebKit-Druck).
-   - Im Browser (Entwicklung): PDF in neuem Tab/als Blob öffnen, dann
-     der normale Druckdialog. Nur zum Testen des Layouts.
+   - Im Browser (Web-Version):
+     - Desktop: PDF in verstecktem iframe öffnen, iframe.print() auslösen.
+     - iOS (Safari/Chrome/Firefox – alle WebKit): iframe.print() betrifft auf
+       iOS zuverlässig NICHT den iframe-Inhalt, sondern den Top-Level-Kontext
+       (bekannter WebKit-Bug: Druckvorschau zeigt kurz das PDF, der
+       tatsächliche Ausdruck/Export ist aber falsch/leer). Deshalb auf iOS
+       das PDF stattdessen in einem neuen Tab öffnen -> nativer Vollbild-
+       PDF-Viewer mit eigenem, zuverlässigem Drucken/Teilen-Button.
 
    Benötigte Capacitor-Plugins (siehe README):
      @capacitor/filesystem   (PDF temporär speichern)
@@ -22,6 +28,15 @@
     return !!(global.Capacitor && global.Capacitor.isNativePlatform && global.Capacitor.isNativePlatform());
   }
 
+  // iOS erkennen: iPhone/iPod klassisch per UA, iPad ab iPadOS 13 meldet sich
+  // als "MacIntel" -> zusätzlich über Touch-Support abgrenzen.
+  function isIOS() {
+    const ua = global.navigator ? global.navigator.userAgent : '';
+    const platform = global.navigator ? global.navigator.platform : '';
+    const iPadOS13Plus = platform === 'MacIntel' && global.navigator.maxTouchPoints > 1;
+    return /iPad|iPhone|iPod/.test(ua) || iPadOS13Plus;
+  }
+
   function u8ToBase64(bytes) {
     let bin = '';
     const chunk = 0x8000;
@@ -31,11 +46,10 @@
     return btoa(bin);
   }
 
-  // --- Browser-Fallback: Blob in neuem Fenster, Druck anstoßen --------
-  function printInBrowser(bytes, fileName) {
+  // --- Browser-Fallback (Desktop): verstecktes iframe + print() -------
+  function printInBrowserDesktop(bytes, fileName) {
     const blob = new Blob([bytes], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
-    // iframe-Druck, damit der Dialog direkt erscheint
     const iframe = document.createElement('iframe');
     iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
     iframe.src = url;
@@ -45,19 +59,39 @@
         iframe.contentWindow.focus();
         iframe.contentWindow.print();
       } catch (e) {
-        // Falls Druck blockiert: einfach im Tab öffnen
         window.open(url, '_blank');
       }
       setTimeout(() => { URL.revokeObjectURL(url); iframe.remove(); }, 60000);
     };
   }
 
+  // --- Browser-Fallback (iOS): PDF im neuen Tab öffnen -----------------
+  // Kein programmatischer print()-Aufruf – iOS-WebKit druckt sonst den
+  // falschen Kontext. Der native PDF-Viewer bringt sein eigenes,
+  // zuverlässiges Drucken/Teilen-Icon mit.
+  function printInBrowserIOS(bytes, fileName) {
+    const blob = new Blob([bytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const win = window.open(url, '_blank');
+    if (!win) {
+      // Popup-Blocker: im selben Tab öffnen als letzter Ausweg
+      window.location.href = url;
+    }
+    // URL bewusst NICHT sofort revoken – iOS lädt den Viewer asynchron;
+    // großzügiges Timeout reicht, da der Tab die Blob-Referenz hält.
+    setTimeout(() => URL.revokeObjectURL(url), 5 * 60000);
+  }
+
+  function printInBrowser(bytes, fileName) {
+    if (isIOS()) {
+      printInBrowserIOS(bytes, fileName);
+    } else {
+      printInBrowserDesktop(bytes, fileName);
+    }
+  }
+
   // --- Native: speichern + Share/Print-Sheet -------------------------
   async function printNative(bytes, fileName) {
-    const { Filesystem, Directory } = global.Capacitor.Plugins.Filesystem
-      ? { Filesystem: global.Capacitor.Plugins.Filesystem, Directory: undefined }
-      : {};
-
     const FS = global.Capacitor.Plugins.Filesystem;
     const Share = global.Capacitor.Plugins.Share;
 
@@ -96,6 +130,6 @@
     }
   }
 
-  global.PrintBridge = { printPDF, isCapacitor };
+  global.PrintBridge = { printPDF, isCapacitor, isIOS };
 
 })(typeof window !== 'undefined' ? window : this);
