@@ -2,13 +2,13 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="fonts.css">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Plus &amp; Minus">
 <meta name="theme-color" content="#0369a1">
 <title>Plus &amp; Minus &middot; Interaktives &Uuml;ben &#183; Sascha Rothenburg</title>
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{font-family:Nunito,sans-serif;background:#eff6ff;color:#0c2a43;-webkit-user-select:none;user-select:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
@@ -388,7 +388,7 @@ var matchState={};
 function renderMatch(card,actions){
   // Ergebnisse sind durch makeUniqueResults bereits eindeutig
   var set=state.queue.slice();
-  matchState={set:set, leftSel:null, pairs:set.length, found:0};
+  matchState={set:set, leftSel:null, pairs:set.length, found:0, errors:0};
   document.getElementById('progTxt').textContent='Paare: 0/'+set.length;
   var lefts=set.map(function(o,i){return {o:o,key:i};});
   var rights=shuffle(set.map(function(o,i){return {o:o,key:i};}));
@@ -424,7 +424,7 @@ function matchClick(el,side,key){
     matchState.leftSel=null; matchState.found++;
     document.getElementById('progTxt').textContent='Paare: '+matchState.found+'/'+matchState.pairs;
     if(matchState.found>=matchState.pairs){
-      state.score=matchState.pairs; state.total=matchState.pairs;
+      state.score=matchState.pairs; state.total=matchState.pairs+matchState.errors;
       document.getElementById('scorePill').innerHTML='\u2713 '+state.score;
       setFeedback(true,'\ud83c\udf89 Alle Paare gefunden!');
       var b=document.createElement('button'); b.className='act-btn act-primary'; b.textContent='Weiter';
@@ -432,6 +432,7 @@ function matchClick(el,side,key){
       document.getElementById('qActions').innerHTML=''; document.getElementById('qActions').appendChild(b);
     }
   } else {
+    matchState.errors++;
     el.classList.add('wrong');
     var le=matchState.leftSel.el; le.classList.add('wrong');
     setTimeout(function(){el.classList.remove('wrong'); le.classList.remove('wrong','sel'); matchState.leftSel=null;},450);

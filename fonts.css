@@ -1,0 +1,64 @@
+/* ===========================================================================
+   fonts.css  ·  Lokale Nunito-Einbindung (DSGVO-konform, kein Google-Request)
+   © 2026 Sascha Rothenburg
+
+   Ersetzt den früheren @import von fonts.googleapis.com. Die .woff2-Dateien
+   liegen im Ordner  fonts/  neben den HTML-Dateien.
+
+   Benötigte Dateien (google-webfonts-helper, Subset "latin", woff2):
+     fonts/nunito-v32-latin-regular.woff2      fonts/nunito-v32-latin-italic.woff2      (400)
+     fonts/nunito-v32-latin-600.woff2          fonts/nunito-v32-latin-600italic.woff2
+     fonts/nunito-v32-latin-700.woff2          fonts/nunito-v32-latin-700italic.woff2
+     fonts/nunito-v32-latin-800.woff2          fonts/nunito-v32-latin-800italic.woff2
+     fonts/nunito-v32-latin-900.woff2          fonts/nunito-v32-latin-900italic.woff2
+
+   Hinweis: Die Gewichte 200 und 300 werden von den Apps nicht verwendet und
+   sind hier bewusst NICHT eingebunden (können gelöscht werden).
+
+   font-display:swap  -> Text bleibt sofort sichtbar (System-Font), bis Nunito
+   geladen ist; kein Layout-Sprung, keine leere Fläche.
+   =========================================================================== */
+
+/* ---- normal ---- */
+@font-face{
+  font-family:'Nunito';font-style:normal;font-weight:400;font-display:swap;
+  src:url('fonts/nunito-v32-latin-regular.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Nunito';font-style:normal;font-weight:600;font-display:swap;
+  src:url('fonts/nunito-v32-latin-600.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Nunito';font-style:normal;font-weight:700;font-display:swap;
+  src:url('fonts/nunito-v32-latin-700.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Nunito';font-style:normal;font-weight:800;font-display:swap;
+  src:url('fonts/nunito-v32-latin-800.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Nunito';font-style:normal;font-weight:900;font-display:swap;
+  src:url('fonts/nunito-v32-latin-900.woff2') format('woff2');
+}
+
+/* ---- italic ---- */
+@font-face{
+  font-family:'Nunito';font-style:italic;font-weight:400;font-display:swap;
+  src:url('fonts/nunito-v32-latin-italic.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Nunito';font-style:italic;font-weight:600;font-display:swap;
+  src:url('fonts/nunito-v32-latin-600italic.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Nunito';font-style:italic;font-weight:700;font-display:swap;
+  src:url('fonts/nunito-v32-latin-700italic.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Nunito';font-style:italic;font-weight:800;font-display:swap;
+  src:url('fonts/nunito-v32-latin-800italic.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Nunito';font-style:italic;font-weight:900;font-display:swap;
+  src:url('fonts/nunito-v32-latin-900italic.woff2') format('woff2');
+}

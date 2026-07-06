@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="fonts.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übio · Schulmaterial-Empfehlungen</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"Schulmaterial","short_name":"Schulmaterial","start_url":".","display":"standalone","background_color":"%23fdf6ec","theme_color":"%23c2410c","icons":[]}'>
+<style>
+
+:root{
+  --accent:#ea580c;
+  --accent-d:#c2410c;
+  --accent-l:#fb923c;
+  --bg:#fafafa;
+  --card:#ffffff;
+  --line:#e5e5e5;
+  --ink:#2b2b2b;
+  --muted:#6b6b6b;
+  --soft:#fff7ed;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+body{background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-d) 100%);
+  color:#fff;padding:14px 20px;padding-top:calc(14px + var(--ad-top,0px));
+  box-shadow:0 2px 12px rgba(0,0,0,.12);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+header .h-title{font-weight:800;font-size:1.2rem;display:flex;align-items:center;gap:10px}
+.h-spacer{flex:1 1 auto}
+.h-back{color:#fff;text-decoration:none;font-weight:700;font-size:.95rem;padding:7px 14px;border-radius:9px;background:rgba(255,255,255,.16);white-space:nowrap}
+.h-back:hover{background:rgba(255,255,255,.28)}
+
+.wrap{max-width:860px;margin:0 auto;padding:26px 20px 70px}
+
+.ad-banner{
+  background:var(--soft);border:1px solid #fed7aa;border-radius:14px;
+  padding:16px 20px;margin-bottom:22px;font-size:.92rem;color:var(--ink);
+}
+.ad-banner b{color:var(--accent-d)}
+.ad-badge{
+  display:inline-block;background:var(--accent-d);color:#fff;font-size:.68rem;
+  font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  padding:3px 9px;border-radius:6px;margin-right:8px;vertical-align:middle;
+}
+.ad-banner .imgconsent{
+  margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.ad-banner .imgconsent .lic{font-size:.84rem;color:var(--muted)}
+.load-imgs-btn{
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  font-family:inherit;font-size:.84rem;font-weight:800;color:#fff;
+  background:var(--accent-d);border:none;border-radius:9px;padding:8px 14px;
+  transition:filter .12s;
+}
+.load-imgs-btn:hover{filter:brightness(1.08)}
+.load-imgs-btn:disabled{opacity:.55;cursor:default;filter:none}
+
+.intro{margin-bottom:20px}
+.intro h1{font-size:1.5rem;font-weight:800;color:var(--accent-d);margin-bottom:6px}
+.intro p{color:var(--muted);font-size:.98rem}
+
+.tabs-wrap{position:relative;margin-bottom:18px}
+
+.search-wrap{
+  position:relative;margin-bottom:14px;display:flex;align-items:center;
+  background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;
+}
+.search-wrap .search-ic{font-size:1rem;color:var(--muted);flex:none}
+.search-wrap input{
+  flex:1;border:none;outline:none;padding:11px 10px;font-family:inherit;
+  font-size:.92rem;color:var(--ink);background:transparent;
+}
+.search-clear{
+  border:none;background:var(--soft);color:var(--accent-d);border-radius:50%;
+  width:22px;height:22px;font-size:.75rem;cursor:pointer;flex:none;
+}
+.search-status{font-size:.82rem;color:var(--muted);margin:-6px 0 14px 4px}
+.tabs{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab-fade{
+  position:absolute;top:0;bottom:6px;width:34px;pointer-events:none;
+  opacity:0;transition:opacity .15s;
+}
+.tab-fade.left{left:0;background:linear-gradient(90deg,var(--bg) 10%,transparent)}
+.tab-fade.right{right:0;background:linear-gradient(270deg,var(--bg) 10%,transparent)}
+.tab-fade.show{opacity:1}
+.tab-arrow{
+  position:absolute;top:calc(50% - 3px);transform:translateY(-50%);width:26px;height:26px;border-radius:50%;
+  border:1px solid var(--line);background:#fff;color:var(--accent-d);
+  font-size:.8rem;font-weight:900;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.1);
+  opacity:0;pointer-events:none;transition:opacity .15s;
+}
+.tab-arrow.show{opacity:1;pointer-events:auto}
+.tab-arrow.left{left:-4px}
+.tab-arrow.right{right:-4px}
+.tab-btn{
+  flex:none;display:flex;align-items:center;gap:7px;
+  border:1.5px solid var(--line);background:#fff;color:var(--muted);
+  font-family:inherit;font-weight:800;font-size:.86rem;
+  padding:9px 15px;border-radius:999px;cursor:pointer;white-space:nowrap;
+  transition:background .12s,color .12s,border-color .12s;
+}
+.tab-btn .ic{font-size:1rem}
+.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+.pgrid{display:grid;grid-template-columns:1fr;gap:12px}
+.pcard{
+  display:flex;gap:14px;align-items:center;border:1px solid var(--line);
+  border-radius:14px;padding:12px;background:#fff;
+}
+.pcard .pimg{
+  width:64px;height:64px;border-radius:10px;flex:none;object-fit:contain;
+  background:#f5f5f5;border:1px solid var(--line);
+}
+.pcard .pimg.ph{display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#cbd5e1}
+/* Zwei-Klick-Platzhalter für Amazon-Bilder (DSGVO: erst nach Klick laden) */
+.pcard .pimg.consent{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;padding:4px;text-align:center;line-height:1.15;
+  background:#f5f5f5;
+}
+.pcard .pimg.consent .ci{font-size:1.3rem;margin-bottom:2px}
+.pcard .pimg.consent .cl{font-size:.5rem;font-weight:700;color:#8a6d3b}
+.pcard .pimg.consent:hover{border-color:var(--accent-l);background:#efe9dd}
+.pcard .ptxt{flex:1;min-width:0}
+.pcard .ptitle{font-weight:800;font-size:.96rem;color:var(--ink)}
+.pcard .pdesc{font-size:.84rem;color:var(--muted);margin-top:2px}
+.pcard .pbtn-wrap{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.pcard .pbtn{
+  display:inline-block;background:var(--accent);color:#fff;font-weight:800;
+  font-size:.82rem;padding:8px 14px;border-radius:10px;text-decoration:none;
+  white-space:nowrap;
+}
+.pcard .pbtn:active{filter:brightness(.93)}
+.pcard .ptag{font-size:.62rem;font-weight:800;color:var(--accent-d);letter-spacing:.3px;text-transform:uppercase}
+
+.acc{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.acc-head{
+  width:100%;border:none;background:none;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:12px;padding:16px 18px;text-align:left;
+}
+.acc-head .nm{font-size:1rem;font-weight:800;color:var(--ink);flex:1}
+.acc-head .chev{font-size:.95rem;color:var(--muted);transition:transform .18s}
+.acc.open .acc-head .chev{transform:rotate(180deg)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .22s ease}
+.acc.open .acc-body{max-height:4000px}
+.acc-inner{padding:0 18px 16px}
+
+.sub-acc{border:1px solid var(--line);border-radius:12px;margin-top:8px;overflow:hidden}
+.sub-acc:first-child{margin-top:0}
+.sub-head{
+  width:100%;border:none;background:var(--soft);cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:10px;padding:11px 14px;text-align:left;
+  font-weight:800;font-size:.88rem;color:var(--accent-d);
+}
+.sub-head .chev{margin-left:auto;font-size:.8rem;transition:transform .18s}
+.sub-acc.open .sub-head .chev{transform:rotate(180deg)}
+.sub-body{max-height:0;overflow:hidden;transition:max-height .2s ease}
+.sub-acc.open .sub-body{max-height:2000px}
+
+.subsub-acc{border:1px solid var(--line);border-radius:10px;margin-top:6px;overflow:hidden;margin-left:6px}
+.subsub-acc:first-child{margin-top:0}
+.subsub-head{
+  width:100%;border:none;background:#fafafa;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:8px;padding:9px 12px;text-align:left;
+  font-weight:700;font-size:.82rem;color:var(--ink);
+}
+.subsub-head .chev{margin-left:auto;font-size:.75rem;transition:transform .18s}
+.subsub-acc.open .subsub-head .chev{transform:rotate(180deg)}
+.subsub-body{max-height:0;overflow:hidden;transition:max-height .2s ease}
+.subsub-acc.open .subsub-body{max-height:2000px}
+.subsub-inner{padding:8px 12px}
+.subsub-inner .pgrid{gap:8px}
+.subsub-inner .pcard{padding:9px}
+.sub-inner{padding:10px 14px}
+.sub-inner .pgrid{gap:10px}
+.sub-inner .pcard{padding:10px}
+
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:24px 20px 40px}
+footer a{color:var(--accent-d);font-weight:700}
+
+@media(max-width:480px){
+  .pcard{flex-wrap:wrap}
+  .pcard .pbtn-wrap{width:100%;align-items:stretch}
+  .pcard .pbtn{text-align:center}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-title">🛍️ Schulmaterial</div>
+  <div class="h-spacer"></div>
+  <a class="h-back" href="index.html">&larr; Zur Startseite</a>
+</header>
+
+<div class="wrap">
+
+  <div class="ad-banner">
+    <span class="ad-badge">Werbung</span>
+    <b>Affiliate-Hinweis:</b> Diese Seite enthält Amazon-Partnerlinks. Als Amazon-Partner verdiene ich an qualifizierten Verkäufen, ohne dass für dich ein Aufpreis entsteht.
+    <div class="imgconsent">
+      <button type="button" class="load-imgs-btn" id="loadAllImgs" onclick="loadAllConsentImgs(this)">🖼️ Produktbilder von Amazon laden</button>
+      <span class="lic">Aus Datenschutzgründen werden Produktbilder erst nach deinem Klick von Amazon geladen.</span>
+    </div>
+  </div>
+
+  <div class="intro">
+    <h1>Empfehlungen für den Schulstart</h1>
+    <p>Eine kleine, handverlesene Auswahl an Materialien, die gut zu den Übio-Übungen passen.</p>
+  </div>
+
+  <div class="search-wrap">
+    <span class="search-ic">🔍</span>
+    <input type="text" id="searchInput" placeholder="Suchen, z.B. Verlag, Titel oder Reihe…" oninput="applySearch(this.value)">
+    <button type="button" id="searchClear" class="search-clear" onclick="clearSearch()" hidden>✕</button>
+  </div>
+  <div id="searchStatus" class="search-status" hidden></div>
+
+  <div class="tabs-wrap">
+    <div class="tabs" id="tabsWrap"></div>
+    <div class="tab-fade left" id="fadeLeft"></div>
+    <div class="tab-fade right" id="fadeRight"></div>
+    <button class="tab-arrow left" id="arrowLeft" type="button" aria-label="Nach links scrollen">‹</button>
+    <button class="tab-arrow right" id="arrowRight" type="button" aria-label="Nach rechts scrollen">›</button>
+  </div>
+  <div id="panelsWrap"></div>
+
+  <footer>
+    Übio &middot; © 2026 Sascha Rothenburg &middot;
+    <a href="index.html">Startseite</a>
+  </footer>
+
+</div>
+
+<script>
+/* =====================================================================
+   KATEGORIEN (= Tabs). Reihenfolge bestimmt die Tab-Reihenfolge.
+   type: 'flat'        -> einfache Produktliste (wie bisher)
+         'lehrbuecher' -> eigene Klasse->Fach-Struktur (siehe LEHRBUECHER)
+   ===================================================================== */
+var CATEGORIES = [
+  { id:'anschauung',   name:'Anschauungsmaterial',    icon:'🧩', type:'subcat', dataVar:'ANSCHAUUNG',
+    subcats:[ {id:'mathematik', label:'Mathematik'}, {id:'deutsch', label:'Deutsch'} ] },
+  { id:'unterricht',   name:'Unterrichtsmaterialien', icon:'🎒', type:'subcat', dataVar:'UNTERRICHT',
+    subcats:[ {id:'deutsch', label:'Deutsch'}, {id:'mathematik', label:'Mathematik'},
+              {id:'englisch', label:'Englisch'}, {id:'sachkunde', label:'Sachkunde'},
+              {id:'faecheruebergreifend', label:'Fächerübergreifend'}, {id:'stifte', label:'Stifte'} ] },
+  { id:'luek',         name:'LÜK-Lernspiele',   icon:'🧩', type:'luek' },
+  { id:'lehrbuecher',  name:'Lehrbücher',       icon:'📖', type:'verlag', dataVar:'LEHRBUECHER' },
+  { id:'arbeitshefte', name:'Arbeitshefte',     icon:'📝', type:'verlag', dataVar:'ARBEITSHEFTE' }
+];
+
+/* =====================================================================
+   ANSCHAUUNGSMATERIAL: pro Eintrag eine Zeile.
+   - subkat: 'mathematik' oder 'deutsch'
+   - title, desc, img (SiteStripe/Grafikadresse kopieren, "" = Platzhalter-Icon), url
+   ===================================================================== */
+/* ANSCHAUUNG:START */
+var ANSCHAUUNG = [
+  { subkat:'mathematik', title:'Das Zahlenbuch 1-2: 1+1 Karten. Aufgaben sortieren und ordnen, Rechenstrategien entwickeln Klasse 1-2 (Das Zahlenbuch. Ausgabe ab 2017)', desc:'', img:'https://m.media-amazon.com/images/I/41Ng34jcpEL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122010216?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'Das Zahlenbuch: 1x1 Karten. Aufgaben sortieren und ordnen, Rechenstrategien entwickeln Klasse 2-3 (Das Zahlenbuch. Ausgabe ab 2017)', desc:'', img:'https://m.media-amazon.com/images/I/41a+7ID02tL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122010232?tag=uebiorg-21' }
+];
+/* ANSCHAUUNG:END */
+
+/* =====================================================================
+   UNTERRICHTSMATERIALIEN: pro Eintrag eine Zeile.
+   - subkat: 'deutsch' / 'mathematik' / 'englisch' / 'sachkunde' /
+             'faecheruebergreifend' / 'stifte'
+   - title, desc, img, url  wie oben
+   ===================================================================== */
+/* UNTERRICHT:START */
+var UNTERRICHT = [
+  { subkat:'deutsch', title:'Oxford Schulheft A5, 32 Blatt, Lineatur 1, liniert, 10 Stück', desc:'', img:'https://m.media-amazon.com/images/I/71ZLGvYGxOL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B00EO0YUEY?tag=uebiorg-21' },
+  { subkat:'deutsch', title:'Oxford Schulheft A5, 16 Blatt, Lineatur 2, liniert, 15 Stück', desc:'', img:'https://m.media-amazon.com/images/I/71sOHMq6QRL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B00EO0YRKQ?tag=uebiorg-21' },
+  { subkat:'deutsch', title:'Oxford Schulheft A5, 16 Blatt, Lineatur 3, liniert, 15 Stück', desc:'', img:'https://m.media-amazon.com/images/I/71ZBfyBDgIL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B00EO0YRII?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'1 Geodreieck und 2 Lineal, Geodreieck Lineal 15 & 20 cm, Geometrie-Set aus Kunststoff, 3-teiliges Zeichnung Set zum Kreise Zeic Geeignet, für Schulbüro Zeichnen und Modellieren', desc:'', img:'https://m.media-amazon.com/images/I/61iseNSQggL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0H1CYQ9YB?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'CALCUSO Geometrie Set Pro – 15-teiliges Geodreieck Set mit Zirkel mit Feststellrad, Lineal, Radiergummi und Anspitzer in schwarzer Federmappe – ideal für Schule, Uni, Büro, Zirkel ab 4. Klasse', desc:'', img:'https://m.media-amazon.com/images/I/81mRZ-lqX9L._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0DH4XY3RQ?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'Oxford Schulheft A5, 16 Blatt, Lineatur 5, kariert, 15 Stück', desc:'', img:'https://m.media-amazon.com/images/I/71NF3x7-5bL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B008V7933O?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'Oxford Schulheft A5, 16 Blatt, Lineatur 8f, rautiert mit Rand, 15 Stück', desc:'', img:'https://m.media-amazon.com/images/I/71iujFJO6uL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B008V7933E?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'Oxford Rechenheft, A5 quer, Lineatur R (1. Klasse), rot, 10 Stück', desc:'', img:'https://m.media-amazon.com/images/I/71tWtJtA3rL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B000OZIW7O?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'Oxford Schulheft A5, 16 Blatt, Lineatur 7, kariert, 15 Stück', desc:'', img:'https://m.media-amazon.com/images/I/71yGrBi4+pL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B00EO0YUY4?tag=uebiorg-21' },
+  { subkat:'faecheruebergreifend', title:'perfect line - 100 Trennstreifen für Ordner A4, Trennblätter aus Recycling-Karton, Made in Germany, 5 Farben, gelocht, Blauer Engel zertifiziert', desc:'', img:'https://m.media-amazon.com/images/I/61kWl5XzMOL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B07BDM98YV?tag=uebiorg-21' },
+  { subkat:'faecheruebergreifend', title:'Pelikan Deckfarbkasten K12, 12 Farben + 1 Tube Deckweiß, 1 Stück', desc:'', img:'https://m.media-amazon.com/images/I/71dMu-amk-L._AC_SX679_.jpg', url:'https://www.amazon.de/dp/B0165TR2CI?tag=uebiorg-21' },
+  { subkat:'faecheruebergreifend', title:'Pelikan 720250 Deckfarbkasten K12, 12 Farben + 1 Tube Deckweiß, Schul-Standard (Deckfarbkasten & 10tlg. Pinselset) | 12 Farben, 1 Tube Deckweiß, Schul-Standard', desc:'', img:'https://m.media-amazon.com/images/I/81a5eafQboL._AC_SX300_SY300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B084MDWZS2?tag=uebiorg-21' },
+  { subkat:'faecheruebergreifend', title:'Herlitz 8643025 Schulmalfarben, 6 Farben a 25 ml', desc:'', img:'https://m.media-amazon.com/images/I/71L52UmfYWL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B00191TX5C?tag=uebiorg-21' },
+  { subkat:'faecheruebergreifend', title:'TSI Borstenpinsel-Set 10-teilig aus Hochwertigen Borsten (Größen 2,4,6,8,10,12,14,16,18 und 20), Schaft Naturbelassen, Aluminiumzwinge, Art. Nr. 49032', desc:'', img:'https://m.media-amazon.com/images/I/31vkF1s3t8L._SY445_SX342_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B079RMBNYQ?tag=uebiorg-21' },
+  { subkat:'faecheruebergreifend', title:'TSI Schulmalpinsel-Set 12tlg, Haarpinsel (Größe 1,2,4,6,8 und 10) - Borstenpinsel (Größe 4,6,8,10,12 und 14), Schaft farbig lackiert, Art. Nr. 49111', desc:'', img:'https://m.media-amazon.com/images/I/81ZonkF3SvL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B08BLPMTFB?tag=uebiorg-21' },
+  { subkat:'faecheruebergreifend', title:'WEMATE Federmäppchen Federtaschen Mäppchen Etui Stifte 5 Fach, Große Kapazität Pencil Case Großes Federmäppchen Tasche Halter Schreibwaren Zippered Desk Organizer', desc:'', img:'https://m.media-amazon.com/images/I/81MUwZBzPdL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0C4P4LZBG?tag=uebiorg-21' },
+  { subkat:'faecheruebergreifend', title:'13 Brunnen Schnellhefter A4 farbig sortiert PP-Folie glasklares Deckblatt', desc:'', img:'https://m.media-amazon.com/images/I/61dmD2T6LdL._AC_SX300_SY300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B01K1YV51C?tag=uebiorg-21' },
+  { subkat:'faecheruebergreifend', title:'Exacompta 55549B Postmappe aus extra starkem Colorspan-Karton mit 3 Innenklappen DIN A4 mit 2 Gummizügen gelb Juris-Mappe Sammelmappe Dokumentenmappe für Büro und Schule, 1 Stück', desc:'', img:'https://m.media-amazon.com/images/I/61oqDtOM2cL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B07R68BP29?tag=uebiorg-21' },
+  { subkat:'stifte', title:'STABILO - Schulfüller mit Standard-Feder M - EASYbuddy in schwarz/magenta - blau (löschbar) - inkl. Patrone - Blister', desc:'', img:'https://m.media-amazon.com/images/I/71gIo0DbAsL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B081SHMJ8B?tag=uebiorg-21' },
+  { subkat:'stifte', title:'STABILO - Schulfüller mit Anfänger-Feder A - EASYbuddy in schwarz/himmelblau - blau (löschbar) - inkl. Patrone', desc:'', img:'https://m.media-amazon.com/images/I/71n8rChN2+L._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B07KTK77WD?tag=uebiorg-21' },
+  { subkat:'stifte', title:'STABILO - Ergonomischer Tintenroller für Rechtshänder - EASYoriginal in dunkel-/hellblau - blau (löschbar) - inkl. Patrone - Blister', desc:'', img:'https://m.media-amazon.com/images/I/71xJSne2YrL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B00T7ULULW?tag=uebiorg-21' },
+  { subkat:'stifte', title:'Faber-Castell 110912 Jumbo Grip Buntstifte für Kinder, 12er-Jumbo-Buntstifte-Set, Malstifte mit Grip und dreieckigem Schaft, wasserlöslichen Pigmenten, leicht auswaschbar und bruchsicher, Schulsachen', desc:'', img:'https://m.media-amazon.com/images/I/71dvZO0s1eL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0007OECLC?tag=uebiorg-21' },
+  { subkat:'stifte', title:'Faber-Castell 112412 Colour Grip Buntstifte für Kinder, 12er-Buntstifte-Set, Malstifte mit Grip und dreieckigem Schaft, wasserlöslichen Pigmenten, leicht auswaschbar und bruchsicher, Schulsachen', desc:'', img:'https://m.media-amazon.com/images/I/71DE8Lz2vQL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0007OECNU?tag=uebiorg-21' },
+  { subkat:'stifte', title:'Faber-Castell - Schreibset Grip 2001 Schwarz, 5-teilig | Mit 3 Bleistiften B, Radiergummi und Spitzer für Schule und Prüfungen', desc:'', img:'https://m.media-amazon.com/images/I/6144jDHA-jL._AC_SX300_SY300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0BSQXJRMX?tag=uebiorg-21' },
+  { subkat:'stifte', title:'Faber-Castell 111992 - Bleistift Jumbo Grip HB', desc:'', img:'https://m.media-amazon.com/images/I/714pFE89MwL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B081JM5MPG?tag=uebiorg-21' },
+  { subkat:'stifte', title:'FABER-CASTELL - Schreibset Jumbo mit Bleistift, Spitzer und Radierer | Schulset silber mit Jumbo Bleistift B, Radiergummi und Spitzer', desc:'', img:'https://m.media-amazon.com/images/I/81BCzNZnJiL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B000WH0RI6?tag=uebiorg-21' },
+  { subkat:'stifte', title:'STABILO - Fineliner - point 88-10er Pack Office - 4 x schwarz, 3 x blau, 2 x rot, 1 x grün', desc:'', img:'https://m.media-amazon.com/images/I/81Yj00gVAFL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0014EJMH8?tag=uebiorg-21' },
+  { subkat:'stifte', title:'STABILO - Premium-Filzstift - Pen 68-12er Pack', desc:'', img:'https://m.media-amazon.com/images/I/81p9zxfcZzL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B019RSYBEQ?tag=uebiorg-21' },
+  { subkat:'stifte', title:'STABILO - Textmarker - BOSS ORIGINAL - 4er Pack - gelb', desc:'', img:'https://m.media-amazon.com/images/I/81068S1X0xL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B001780B76?tag=uebiorg-21' }
+];
+/* UNTERRICHT:END */
+
+/* =====================================================================
+   LÜK-KÄSTEN: Kontrollgeräte, altersübergreifend nutzbar (keine
+   Klassen-/Fachzuordnung nötig).
+   - title, desc, img, url  wie oben
+   ===================================================================== */
+/* LUEK_KAESTEN:START */
+var LUEK_KAESTEN = [
+  { title:'LÜK-Kontrollgerät', desc:'Inkl. 24 Aufgabenplättchen – selbstständiges Üben mit Selbstkontrolle', img:'https://m.media-amazon.com/images/I/61Tui262KBL._SL1500_.jpg', url:'https://amzn.to/4v3S3vb' }
+];
+/* LUEK_KAESTEN:END */
+
+/* =====================================================================
+   LUEK_HEFTE: Sets & Einzelhefte, gruppiert nach Altersstufe -> Fach.
+   - altersstufe: freier Text, empfohlen: 'Kindergarten/Vorschule',
+     'Vorschule/1. Klasse', '2. Klasse', '3. Klasse', '4. Klasse',
+     '5./6. Klasse' (Reihenfolge wird über ALTERSSTUFEN_ORDER gesteuert)
+   - fach: z.B. Mathematik, Deutsch, Englisch, Konzentration/Logik, Sachkunde
+   ===================================================================== */
+/* LUEK_HEFTE:START */
+var LUEK_HEFTE = [
+  { altersstufe:'Vorschule/1. Klasse', fach:'Konzentration/Logik', title:'miniLÜK: Kindergarten/Vorschule Konzentrationstraining 1 (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/51iulTM-BqL._SY522_.jpg', url:'https://www.amazon.de/dp/3837703185?tag=uebiorg-21' },
+  { altersstufe:'Vorschule/1. Klasse', fach:'Konzentration/Logik', title:'LÜK miniSet Ist doch logisch 4540: Vorschule Ist doch logisch! (miniLÜK-Sets: Kasten + Übungsheft/e)', desc:'', img:'https://m.media-amazon.com/images/I/51EV3dy7YOL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/3837745406?tag=uebiorg-21' },
+  { altersstufe:'Kindergarten/Vorschule', fach:'Deutsch', title:'miniLÜK: Vorschule Ich freue mich auf die Schule 1: Vorbereitende Übungen zum Lesenlernen (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/61dH7iTSSQL._SY522_.jpg', url:'https://www.amazon.de/dp/3894141611?tag=uebiorg-21' },
+  { altersstufe:'Vorschule/1. Klasse', fach:'Deutsch', title:'miniLÜK: Vorschule/1. Klasse - Deutsch Lesen lernen mit der Maus: Vorschule/1. Klasse - Deutsch: Einfache Buchstaben und Wörter für Vorschulkinder (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/51lLcf4+aaL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3894143495?tag=uebiorg-21' },
+  { altersstufe:'Vorschule/1. Klasse', fach:'Mathematik', title:'miniLÜK: Vorschule/1. Klasse - Mathematik Zahlen und Zählen mit der Maus: Spielend rechnen lernen (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/51VGEJWVYrL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3894143584?tag=uebiorg-21' }
+];
+/* LUEK_HEFTE:END */
+
+/* =====================================================================
+   LEHRBÜCHER und ARBEITSHEFTE: jeweils eigene flache Liste, pro Eintrag
+   eine Zeile. Gruppierung auf der Seite: Verlag -> Klasse -> Fach.
+   - verlag: freier Text (z.B. Cornelsen, Westermann, Klett, Diesterweg)
+   - klasse: Array mit einer oder mehreren Zahlen 1-6, z.B. [3] oder [3,4]
+     bei Doppelbänden (erscheint dann in beiden Klassen-Accordions)
+   - fach:   Deutsch / Mathematik / Englisch / Sachkunde
+   - title, desc, img, url  wie oben
+   ARBEITSHEFTE enthält auch Zusatz-/Ergänzungsmaterial (im Titel
+   kenntlich machen, z.B. "... - Zusatzheft Rechtschreibung").
+   ===================================================================== */
+/* LEHRBUECHER:START */
+var LEHRBUECHER = [
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Zebra 1: Lesebuch mit Medien Klasse 1 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41fkMFYz6ZL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122710242?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Zebra 2: Lesebuch mit Medien Klasse 2 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41GqGa4V4gL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122710374?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Zebra 3: Lesebuch mit Medien Klasse 3 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41JUl4GkXGL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122710471?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Zebra 4: Lesebuch mit Medien Klasse 4 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41Qw7wZv6QL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122710617?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Piri 1: Die Fibel Klasse 1 (Piri. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41iXzksYR1L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/312300502X?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Piri 1. Ausgabe Bayern: Die Fibel Klasse 1 (Piri. Ausgabe für Bayern ab 2021)', desc:'', img:'https://m.media-amazon.com/images/I/41+a1sJ42EL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123005216?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Piri 2. Das Sprach-Lese-Buch: Schulbuch Klasse 2 (Piri. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41ir3r+GdmL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123006018?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Piri 4. Das Sprach-Lese-Buch: Schulbuch Klasse 4 (Piri. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41M6Hy3jj3L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123006212?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Piri 3. Das Sprach-Lese-Buch: Schulbuch Klasse 3 (Piri. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41FOaUm1cvL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123006115?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Piri 2. Ausgabe Bayern: Das Sprach-Lese-Buch Klasse 2 (Piri. Ausgabe für Bayern ab 2021)', desc:'', img:'https://m.media-amazon.com/images/I/41XP69htfDL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123005704?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Piri 3. Ausgabe Bayern: Das Sprach-Lese-Buch Klasse 3 (Piri. Ausgabe für Bayern ab 2021)', desc:'', img:'https://m.media-amazon.com/images/I/41H1qctnuSL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123005801?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Piri 4. Ausgabe Bayern: Das Sprach-Lese-Buch Klasse 4 (Piri. Ausgabe für Bayern ab 2021)', desc:'', img:'https://m.media-amazon.com/images/I/41pmzJzjKUL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123005909?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[1], fach:'Deutsch', title:'ABC der Tiere 1 Neubearbeitung – Die Silbenfibel®: Leselehrgang, Druckschrift (ABC der Tiere 1 - Neubearbeitung 2023)', desc:'', img:'https://m.media-amazon.com/images/I/41kLwHedSSL._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3619147906?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[2], fach:'Deutsch', title:'ABC der Tiere 2 Neubearbeitung – Lesebuch (ABC der Tiere 2 - Neubearbeitung 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41KbIzMuCrL._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3619247900?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[3], fach:'Deutsch', title:'ABC der Tiere 3 – Lesebuch', desc:'', img:'https://m.media-amazon.com/images/I/41qVAKOkubL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619345902?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[3], fach:'Deutsch', title:'ABC der Tiere 3 – Sprachbuch', desc:'', img:'https://m.media-amazon.com/images/I/41DxuGNoNiL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619345910?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[4], fach:'Deutsch', title:'ABC der Tiere 4 – Lesebuch', desc:'', img:'https://m.media-amazon.com/images/I/4129GGSv62L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619445907?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[4], fach:'Deutsch', title:'ABC der Tiere 4 – Sprachbuch: Dieser Artikel ersetzt den Artikel mit der Bestell-Nr. 4405-91 (ISBN: 978-3-619-44591-2)', desc:'', img:'https://m.media-amazon.com/images/I/41YJTpYGvlL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619994919?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Fibel Verbrauch plus Diagnoseheft „Das kann ich“ 1', desc:'', img:'https://m.media-amazon.com/images/I/71sQzlOM4iL._SY466_.jpg', url:'https://www.amazon.de/dp/314129240X?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[2], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Sprachbuch 2 Ausleihe mit Diagnoseheft "Das kann ich" Sprache 2', desc:'', img:'https://m.media-amazon.com/images/I/419g5-bZIrL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141293201?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[2], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Lesebuch 2 mit Diagnoseheft „Das kann ich“ Lesen 2', desc:'', img:'https://m.media-amazon.com/images/I/41XWjpJe1WL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141293791?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Lesebuch 3 mit Diagnoseheft „Das kann ich“ Lesen 3', desc:'', img:'https://m.media-amazon.com/images/I/41KZyRKeitL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141294437?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[4], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Lesebuch 4 mit Diagnoseheft „Das kann ich“ Lesen 4', desc:'', img:'https://m.media-amazon.com/images/I/41zXhUJNWfL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141295050?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[1], fach:'Deutsch', title:'Tinto 1 - Ausgabe 2026 - 1. Schuljahr: Erstlesebuch - Mit Wortschatzheft und digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/616xeH+SDmL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464814211?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[2], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Ausgabe 2026 - 2. Schuljahr: Sprach-Lese-Buch - Mit STARKer Merkkarte, Lernentwicklungsheft und digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/61P2xfslahL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464814785?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Neubearbeitung 2019 - 3. Schuljahr: Basisbuch Sprache und Lesen - Mit Lernentwicklungsheft, STARK-/Grammatikkarte und BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/41zGCPgo98L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060844771?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[4], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Neubearbeitung 2019 - 4. Schuljahr: Basisbuch Sprache und Lesen - Mit Lernentwicklungsheft, STARK-/Grammatikkarte und BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/41tP8NOgZeL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/306084478X?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[1], fach:'Deutsch', title:'Jo-Jo Fibel - Allgemeine Ausgabe 2023 - 1. Schuljahr: Fibel - Mit Silbenschieber und digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/415zPR+jhyL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464812049?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[2], fach:'Deutsch', title:'Jo-Jo Sprachbuch - Allgemeine Ausgabe 2024 - 2. Schuljahr: Sprachbuch - Mit FRESCH-Karte, Lernspurenheft und digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/41qvmDyugDL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464807207?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Deutsch', title:'Jo-Jo Sprachbuch - Allgemeine Ausgabe 2024 - 3. Schuljahr: Sprachbuch - Mit FRESCH-Karte, Lernspurenheft und digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/41nPU-hs5WL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/346481307X?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[4], fach:'Deutsch', title:'Jo-Jo Sprachbuch - Allgemeine Ausgabe 2024 - 4. Schuljahr: Sprachbuch - Mit FRESCH-Karte, Lernspurenheft und digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/61sPZqflDKL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464813088?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1], fach:'Deutsch', title:'BAUSTEINE Fibel - Ausgabe 2021: Fibel Silbenausgabe', desc:'', img:'https://m.media-amazon.com/images/I/41H057OeD-L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141370125?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1], fach:'Deutsch', title:'BAUSTEINE Fibel - Ausgabe 2021: Fibel', desc:'', img:'https://m.media-amazon.com/images/I/416qd+0tuuL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141370117?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[2], fach:'Deutsch', title:'BAUSTEINE Lesebuch - Ausgabe 2014 für Bayern: Lesebuch 2', desc:'', img:'https://m.media-amazon.com/images/I/41d+nmbEDlL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3425129058?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3], fach:'Deutsch', title:'BAUSTEINE Lesebuch - Ausgabe 2021: Lesebuch 3', desc:'', img:'https://m.media-amazon.com/images/I/41Uc4Zt0Q-L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141371679?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[4], fach:'Deutsch', title:'BAUSTEINE Lesebuch - Ausgabe 2021: Lesebuch 4', desc:'', img:'https://m.media-amazon.com/images/I/41W3vDjrvEL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141371733?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Niko 1: Differenzierte Fibel mit Lernstandsheft Klasse 1 (Niko. Ausgabe ab 2020)', desc:'', img:'https://m.media-amazon.com/images/I/41oCSa2oiuL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123106691?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Niko Sprachbuch 2: Schulbuch mit Grammatik-Einleger Klasse 2 (Niko. Ausgabe ab 2020)', desc:'', img:'https://m.media-amazon.com/images/I/31tHC35CucL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123108597?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Niko Sprachbuch 3: Schulbuch mit Grammatik-Einleger Klasse 3 (Niko. Ausgabe ab 2020)', desc:'', img:'https://m.media-amazon.com/images/I/41hDf-wHVUL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123108678?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Niko Lesebuch 3: Differenziertes Lesebuch mit Niko-Folie Klasse 3 (Niko. Ausgabe ab 2020)', desc:'', img:'https://m.media-amazon.com/images/I/41kwaLmw0nL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123107760?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Niko Sprachbuch 4: Schulbuch mit Grammatik-Einleger Klasse 4 (Niko. Ausgabe ab 2020)', desc:'', img:'https://m.media-amazon.com/images/I/41PfvucnjbL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123108724?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Niko Lesebuch 4: Differenziertes Lesebuch mit Niko-Folie Klasse 4 (Niko. Ausgabe ab 2020)', desc:'', img:'https://m.media-amazon.com/images/I/415MRx763eL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123107779?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[1], fach:'Deutsch', title:'Mimi, die Lesemaus - Fibel für den Erstleseunterricht - Ausgabe F (Bayern, Baden-Württemberg, Rheinland-Pfalz und Hessen): Fibel (Mimi, die Lesemaus, ... Rheinland-Pfalz und Hessen))', desc:'', img:'https://m.media-amazon.com/images/I/41dFcAOw3lL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637016990?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1], fach:'Deutsch', title:'Flex und Flora - Ausgabe 2021: Lesebuch 1', desc:'', img:'https://m.media-amazon.com/images/I/41rLAJlIVHL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141040133?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[2], fach:'Deutsch', title:'Flex und Flora - Ausgabe 2021: Lesebuch 2', desc:'', img:'https://m.media-amazon.com/images/I/41PSakja6wL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141054959?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3], fach:'Deutsch', title:'Flex und Flora - Ausgabe 2021: Lesebuch 3', desc:'', img:'https://m.media-amazon.com/images/I/41x0OPGy-XL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141054983?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[4], fach:'Deutsch', title:'Flex und Flora - Ausgabe 2021: Lesebuch 4', desc:'', img:'https://m.media-amazon.com/images/I/4190HMKjHDL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141055017?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Bücherwurm Fibel: Fibel mit Medien Klasse 1 (Bücherwurm. Ausgabe ab 2026)', desc:'', img:'https://m.media-amazon.com/images/I/41VIgnxXw3L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123109747?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Bücherwurm 2: Sprachbuch mit Medien Klasse 2 (Bücherwurm. Ausgabe ab 2026)', desc:'', img:'https://m.media-amazon.com/images/I/41eIutOp3qL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123110001?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Bücherwurm Sprachbuch 3. Ausgabe für Berlin, Brandenburg, Mecklenburg-Vorpommern, Sachsen, Sachsen-Anhalt, Thüringen: Schulbuch Klasse 3 (Bücherwurm. Ausgabe ab 2019)', desc:'', img:'https://m.media-amazon.com/images/I/41irFdL29fL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123107833?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Bücherwurm Sprachbuch 4. Ausgabe für Berlin, Brandenburg, Mecklenburg-Vorpommern, Sachsen, Sachsen-Anhalt, Thüringen: Schulbuch Klasse 4 (Bücherwurm. Ausgabe ab 2019)', desc:'', img:'https://m.media-amazon.com/images/I/41f+SPxdH1S._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123107841?tag=uebiorg-21' },
+  { verlag:'Auer', klasse:[1], fach:'Deutsch', title:'Die Auer Fibel. Ausgabe Bayern: Schulbuch Klasse 1 (Die Auer Fibel. Ausgabe für Bayern ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/415RUKnHBrL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3120073547?tag=uebiorg-21' },
+  { verlag:'Schroedel', klasse:[1], fach:'Deutsch', title:'Fara und Fu - Ausgabe 2013: Fara und Fu 1 Silbenausgabe', desc:'', img:'https://m.media-amazon.com/images/I/51wti3tK+8L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3507428245?tag=uebiorg-21' },
+  { verlag:'Schroedel', klasse:[1], fach:'Deutsch', title:'Fara und Fu - Ausgabe 2013: Fara und Fu 1', desc:'', img:'https://m.media-amazon.com/images/I/51NeM8vKl4L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3507427729?tag=uebiorg-21' },
+  { verlag:'Schroedel', klasse:[2], fach:'Deutsch', title:'Fara und Fu - Ausgabe 2013: Fara und Fu 2', desc:'', img:'https://m.media-amazon.com/images/I/51yRa1e49cL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/350742794X?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[5], fach:'Mathematik', title:'Dreifach Mathe - Ausgabe 2021 - 5. Schuljahr: Schulbuch - Mit digitalen Hilfen, Erklärfilmen und Wortvertonungen', desc:'', img:'https://m.media-amazon.com/images/I/31KZ9EJRaiL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060436088?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[6], fach:'Mathematik', title:'Dreifach Mathe - Ausgabe 2021 - 6. Schuljahr: Schulbuch - Mit digitalen Hilfen, Erklärfilmen und Wortvertonungen', desc:'', img:'https://m.media-amazon.com/images/I/31ZtHVZQFML._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060436096?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Mathematik', title:'Das Zahlenbuch 1: Schulbuch Klasse 1 (Das Zahlenbuch. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41rUjJ5XmNL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122011115?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Mathematik', title:'Das Zahlenbuch 2: Schulbuch Klasse 2 (Das Zahlenbuch. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41DnS3AE8wL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122011212?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Mathematik', title:'Das Zahlenbuch 3: Schulbuch Klasse 3 (Das Zahlenbuch. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41ZHPphtFuL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/312201131X?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Mathematik', title:'Das Zahlenbuch 4: Schulbuch Klasse 4 (Das Zahlenbuch. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41Dy7ejTQqL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122011417?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1], fach:'Mathematik', title:'Welt der Zahl - Allgemeine Ausgabe 2021: Schulbuch 1', desc:'', img:'https://m.media-amazon.com/images/I/41zl+Sh8+uL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141061017?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[2], fach:'Mathematik', title:'Welt der Zahl - Allgemeine Ausgabe 2021: Schulbuch 2 Verleih', desc:'', img:'https://m.media-amazon.com/images/I/41ZV3h3o7SL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141061025?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3], fach:'Mathematik', title:'Welt der Zahl - Allgemeine Ausgabe 2021: Schulbuch 3', desc:'', img:'https://m.media-amazon.com/images/I/41dn4ggjOJL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141061033?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[4], fach:'Mathematik', title:'Welt der Zahl - Allgemeine Ausgabe 2021: Schulbuch 4', desc:'', img:'https://m.media-amazon.com/images/I/41FToIWknLL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141061041?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[1], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2026 - 1. Schuljahr: Schulbuch mit Kartonbeilagen, "Das kann ich schon"-Heft und digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/614CZ4isjvL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464815315?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[1], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 1. Schuljahr: Schulbuch mit Kartonbeilagen und Lernspurenheft - Mit BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/410Aw2JeTJL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060822522?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[2], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 2. Schuljahr: Schulbuch mit Kartonbeilagen und Lernspurenheft - Mit BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/41z31swNTDL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060822530?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3,4], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 3. Schuljahr: Schulbuch mit Kartonbeilagen und Lernspurenheft - Mit BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/41kW9G7D+oL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060822549?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[4], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 4. Schuljahr: Schulbuch mit Kartonbeilagen und Lernspurenheft - Mit BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/41WQqcjwADL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060822557?tag=uebiorg-21' }
+];
+/* LEHRBUECHER:END */
+
+/* ARBEITSHEFTE:START */
+var ARBEITSHEFTE = [
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Zebra 1: Buchstabenheft Plus mit Medien in Druckschrift Klasse 1 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41IxQbPFWHL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/312271020X?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Zebra 1: Vorkurs Klasse 1 (Zebra. Ausgabe ab 2018)', desc:'', img:'https://m.media-amazon.com/images/I/41P5AC-Tb5L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122709953?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Zebra 1: Arbeitsheft Lesen / Schreiben mit Medien Klasse 1 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41Nt-ikzNTL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122710250?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Zebra 1: Schreiblehrgang Grundschrift Klasse 1 (Zebra. Ausgabe ab 2018)', desc:'', img:'https://m.media-amazon.com/images/I/41iGyZbt5NL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122709260?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Zebra 2: Arbeitsheft Lesen/Schreiben mit Medien Klasse 2 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41A0vcpRT-L.jpg', url:'https://www.amazon.de/dp/3122710331?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Zebra 2: Arbeitsheft Sprache mit Medien Klasse 2 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/512-M8SUQCL._SY522_.jpg', url:'https://www.amazon.de/dp/3122710307?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Zebra 2: Paket: Arbeitsheft Sprache und Arbeitsheft Lesen/Schreiben Klasse 2 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41j8QTR4RZL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/312271034X?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Zebra 3: Paket: Arbeitsheft Sprache, Arbeitsheft Lesen/Schreiben Klasse 3 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/71xT2ksx4DL._SY522_.jpg', url:'https://www.amazon.de/dp/3122710455?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Zebra 3: Arbeitsheft Sprache mit Medien Klasse 3 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41s7R8uvWTL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122710420?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Zebra 4: Paket: Arbeitsheft Sprache, Arbeitsheft Lesen/Schreiben Klasse 4 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/51YHt-Tf9mL._SY522_.jpg', url:'https://www.amazon.de/dp/3122710595?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Zebra 4: Arbeitsheft Sprache mit Medien Klasse 4 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/51whq7IACfL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122710560?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Zebra 4: Arbeitsheft Sprache Klasse 4 (Zebra. Ausgabe ab 2018)', desc:'', img:'https://m.media-amazon.com/images/I/41oJui0IKFL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122709821?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Zebra 4: Arbeitsheft Lesen/Schreiben mit Medien Klasse 4 (Zebra. Ausgabe ab 2024)', desc:'', img:'https://m.media-amazon.com/images/I/51o+HZKJsyL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122710587?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[2], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Neubearbeitung 2019 - 2. Schuljahr: Arbeitsheft Sprache und Lesen', desc:'', img:'https://m.media-amazon.com/images/I/51Ga+ZjiVYL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060843511?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Neubearbeitung 2019 - 3. Schuljahr: Arbeitsheft Sprache und Lesen', desc:'', img:'https://m.media-amazon.com/images/I/41eiYdxeQIL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060844909?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Zu den Ausgaben 2019 und 2026 - 3. Schuljahr: Arbeitsheft Training - Grundwortschatz und Rechtschreibung', desc:'', img:'https://m.media-amazon.com/images/I/61HGuiAO8eL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464815633?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[4], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Neubearbeitung 2019 - 4. Schuljahr: Arbeitsheft Sprache und Lesen', desc:'', img:'https://m.media-amazon.com/images/I/41jP2IBXapL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060844917?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[2], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Zu den Ausgaben 2019 und 2026 - 2. Schuljahr: Arbeitsheft Training - Grundwortschatz und Rechtschreibung', desc:'', img:'https://m.media-amazon.com/images/I/418ZQyF6pfL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464815625?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Neubearbeitung 2019 - 3. Schuljahr: Basisbuch Sprache und Lesen - Mit Lernentwicklungsheft, STARK-/Grammatikkarte und BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/41zGCPgo98L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060844771?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Ausgabe 2013 - 3./4. Schuljahr: Training: Richtig schreiben - Arbeitsheft', desc:'', img:'https://m.media-amazon.com/images/I/41Ev0q1+CsL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/306084268X?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Piri 1: Arbeitsheft PLUS in Druckschrift Klasse 1 (Piri. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41HMAlwrNkL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123005135?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Piri 1. Ausgabe Bayern: Arbeitsheft in Druckschrift Klasse 1 (Piri. Ausgabe für Bayern ab 2021)', desc:'', img:'https://m.media-amazon.com/images/I/41WjIDqM6PL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123005224?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Sachkunde', title:'Piri 1 Sachunterricht. Ausgabe Brandenburg, Sachsen-Anhalt und Thüringen: Arbeitsheft Klasse 1 (Piri. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/414OJzICvOL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/312300631X?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Piri 2: Arbeitsheft in Druckschrift Klasse 2 (Piri. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/415nesG5TBL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123006026?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Sachkunde', title:'Piri 2 Sachunterricht. Ausgabe Brandenburg, Sachsen-Anhalt und Thüringen: Arbeitsheft Klasse 2 (Piri. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41pPuz6EULL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123006336?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Piri 3: Arbeitsheft in Schulausgangsschrift Klasse 3 (Piri. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41r+URgzDBL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123006131?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Piri 4: Arbeitsheft in Schulausgangsschrift Klasse 4 (Piri. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41VM03id4zL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123006239?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[1], fach:'Deutsch', title:'ABC der Tiere 1 Neubearbeitung – Arbeitsheft Druckschrift, Teil A und B (ABC der Tiere 1 - Neubearbeitung 2023)', desc:'', img:'https://m.media-amazon.com/images/I/41-WeKVIbHL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619147914?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[1], fach:'Deutsch', title:'ABC der Tiere 1 Neubearbeitung – Schreiblehrgang Druckschrift, Teil A und B (ABC der Tiere 1 - Neubearbeitung 2023)', desc:'', img:'https://m.media-amazon.com/images/I/41BKwkHHflL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619147930?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[2], fach:'Deutsch', title:'ABC der Tiere 2 Neubearbeitung – Spracharbeitsheft (ABC der Tiere 2 - Neubearbeitung 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41IlsfCYwLL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619247919?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[2], fach:'Deutsch', title:'ABC der Tiere 2 Neubearbeitung – Arbeitsheft zum Lesebuch (ABC der Tiere 2 - Neubearbeitung 2024)', desc:'', img:'https://m.media-amazon.com/images/I/41ywnO1lbvL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619247927?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[3], fach:'Deutsch', title:'ABC der Tiere 3 Neubearbeitung – Spracharbeitsheft (ABC der Tiere 3 - Neubearbeitung 2026)', desc:'', img:'https://m.media-amazon.com/images/I/81PslTdtkaL._SY522_.jpg', url:'https://www.amazon.de/dp/3619347913?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[3], fach:'Deutsch', title:'ABC der Tiere 3 – Arbeitsheft Sprachbuch', desc:'', img:'https://m.media-amazon.com/images/I/41RvmEaPxnL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619345937?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[3], fach:'Deutsch', title:'ABC der Tiere 3 – Arbeitsheft Lesebuch', desc:'', img:'https://m.media-amazon.com/images/I/41KcLBN-BlL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619345929?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[4], fach:'Deutsch', title:'ABC der Tiere 4 – Arbeitsheft Sprachbuch: Arbeitsheft Sprachbuch 4', desc:'', img:'https://m.media-amazon.com/images/I/81TSP8VgvOL._SY522_.jpg', url:'https://www.amazon.de/dp/3619445931?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[4], fach:'Deutsch', title:'ABC der Tiere 4 – Arbeitsheft Lesebuch', desc:'', img:'https://m.media-amazon.com/images/I/41PEXy610iL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619445923?tag=uebiorg-21' },
+  { verlag:'Mildenberger', klasse:[4], fach:'Deutsch', title:'ABC der Tiere 4 – Spracharbeitsheft Kompakt: Dieser Artikel ersetzt den Artikel mit der Bestell-Nr. 4405-31 (ISBN: 978-3-619-44531-8)', desc:'', img:'https://m.media-amazon.com/images/I/41LWNQv7WJL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3619994315?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Paket Arbeitshefte 1 (Teil A und B) Druckschrift zur Fibel Verbrauch plus Beilagen', desc:'', img:'https://m.media-amazon.com/images/I/41A-UdP-7VL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141292418?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Paket Arbeitshefte 1 (Teil A und B) Grundschrift zur Fibel Verbrauch plus Beilagen', desc:'', img:'https://m.media-amazon.com/images/I/41wU9O5Dk4L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141292442?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[2], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Spracharbeitshefte 2 Druckschrift mit Diagnoseheft: Spracharbeitshefte 2 Druckschrift Verbrauch mit Diagnoseheft "Das kann ich" Sprache 2', desc:'', img:'https://m.media-amazon.com/images/I/41C2CSmKAML._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/314129335X?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3], fach:'Deutsch', title:'Karibu - Ausgabe 2016: Spracharbeitsheft 3: Spracharbeitsheft A, Spracharbeitsheft B und dem Methodenheft', desc:'', img:'https://m.media-amazon.com/images/I/41PiiRvmBtL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/314121087X?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Übungsheft Lesestrategien 3 Lesetraining und Lesestrategien', desc:'', img:'https://m.media-amazon.com/images/I/417iLBeResL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141294445?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[4], fach:'Deutsch', title:'Karibu - Ausgabe 2016: Arbeitsheft 4', desc:'', img:'https://m.media-amazon.com/images/I/411Lc2t5Q6L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141211094?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[4], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Übungsheft Lesestrategien 4 Lesetraining und Lesestrategien', desc:'', img:'https://m.media-amazon.com/images/I/41hBYrDKHLL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141295069?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[4], fach:'Deutsch', title:'Karibu - Ausgabe 2024: Mein 5-Minuten-Training: Richtig schreiben 4', desc:'', img:'https://m.media-amazon.com/images/I/41ybbWQNhuL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141294992?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[1], fach:'Deutsch', title:'Tinto 1 - Ausgabe 2026 - 1. Schuljahr: Buchstabenkurs Schreiben und Lesen in Druckschrift - Teil A+B im Paket, mit Lauttabelle', desc:'', img:'https://m.media-amazon.com/images/I/61lgd2x74SL._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3464814246?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[2], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Ausgabe 2026 - 2. Schuljahr: Arbeitsheft Sprache und Lesen - Druckschrift', desc:'', img:'https://m.media-amazon.com/images/I/61cx9oYMCbL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464814815?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Zu den Ausgaben 2019 und 2026 - 3. Schuljahr: Arbeitsheft Training - Grundwortschatz und Rechtschreibung', desc:'', img:'https://m.media-amazon.com/images/I/61HGuiAO8eL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464815633?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Neubearbeitung 2019 - 3. Schuljahr: Arbeitsheft Sprache und Lesen', desc:'', img:'https://m.media-amazon.com/images/I/41eiYdxeQIL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060844909?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[4], fach:'Deutsch', title:'Tinto Sprachlesebuch 2-4 - Neubearbeitung 2019 - 4. Schuljahr: Arbeitsheft Sprache und Lesen', desc:'', img:'https://m.media-amazon.com/images/I/41jP2IBXapL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060844917?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[1], fach:'Deutsch', title:'Jo-Jo Fibel - Allgemeine Ausgabe 2023 - 1. Schuljahr: Arbeitsheft in Druckschrift - Mit Lauttabelle und Lernspurenheft', desc:'', img:'https://m.media-amazon.com/images/I/417ju19SuNL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464812057?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[1], fach:'Deutsch', title:'Jo-Jo Fibel - Allgemeine Ausgabe 2023 - 1. Schuljahr: Arbeitsheft Training - Grundwortschatz und Rechtschreibung', desc:'', img:'https://m.media-amazon.com/images/I/41y3wI-MuqL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464812286?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[2], fach:'Deutsch', title:'Jo-Jo Sprachbuch - Allgemeine Ausgabe 2024 - 2. Schuljahr: Arbeitsheft Training - Grundwortschatz und Rechtschreibung', desc:'', img:'https://m.media-amazon.com/images/I/41lyL4M9w5L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464813908?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[2], fach:'Deutsch', title:'Jo-Jo Sprachbuch - Allgemeine Ausgabe 2024 - 2. Schuljahr: Arbeitsheft in Druckschrift', desc:'', img:'https://m.media-amazon.com/images/I/41L2M8bIgzL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464814068?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Deutsch', title:'Jo-Jo Sprachbuch - Allgemeine Ausgabe 2024 - 3. Schuljahr: Arbeitsheft Training - Grundwortschatz und Rechtschreibung', desc:'', img:'https://m.media-amazon.com/images/I/416+AHtKeRL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464813916?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Deutsch', title:'Jo-Jo Sprachbuch - Allgemeine Ausgabe 2024 - 3. Schuljahr: Arbeitsheft', desc:'', img:'https://m.media-amazon.com/images/I/41X2gtPDFaL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464813096?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[4], fach:'Deutsch', title:'Jo-Jo Sprachbuch - Allgemeine Ausgabe 2024 - 4. Schuljahr: Arbeitsheft Training - Grundwortschatz und Rechtschreibung', desc:'', img:'https://m.media-amazon.com/images/I/619NDri1OxL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464813924?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[4], fach:'Deutsch', title:'Jo-Jo Sprachbuch - Allgemeine Ausgabe 2024 - 4. Schuljahr: Arbeitsheft', desc:'', img:'https://m.media-amazon.com/images/I/617ZcqH1d5L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/346481310X?tag=uebiorg-21' },
+  { verlag:'Diesterweg', klasse:[1], fach:'Deutsch', title:'Konfetti - Ausgabe 2013: Heft 1: inkl. Anlauttabelle, Turmheft', desc:'', img:'https://m.media-amazon.com/images/I/41nkFXoSXyL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/342502504X?tag=uebiorg-21' },
+  { verlag:'Diesterweg', klasse:[2], fach:'Deutsch', title:'Konfetti - Ausgabe 2013: Heft 2: inkl. Abschreibkarten', desc:'', img:'https://m.media-amazon.com/images/I/51TlFDn-QbL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3425025058?tag=uebiorg-21' },
+  { verlag:'Diesterweg', klasse:[1], fach:'Deutsch', title:'Konfetti - Ausgabe 2013: Arbeitsheft Lesen und Texte verfassen 1/2', desc:'', img:'https://m.media-amazon.com/images/I/41prlyd-kuL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3425025201?tag=uebiorg-21' },
+  { verlag:'Diesterweg', klasse:[3], fach:'Deutsch', title:'Konfetti - Ausgabe 2013: Arbeitsheft Rechtschreiben und Sprachgebrauch untersuchen 3', desc:'', img:'https://m.media-amazon.com/images/I/41NzYlG59OL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3425025244?tag=uebiorg-21' },
+  { verlag:'Diesterweg', klasse:[3], fach:'Deutsch', title:'Konfetti - Ausgabe 2013: Arbeitsheft Lesen und Texte verfassen 3', desc:'', img:'https://m.media-amazon.com/images/I/41GQBQWWS9L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3425025252?tag=uebiorg-21' },
+  { verlag:'Diesterweg', klasse:[4], fach:'Deutsch', title:'Konfetti - Ausgabe 2013: Arbeitsheft Rechtschreiben und Sprachgebrauch untersuchen 4', desc:'', img:'https://m.media-amazon.com/images/I/41iGB3ZRK5L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3425025287?tag=uebiorg-21' },
+  { verlag:'Diesterweg', klasse:[4], fach:'Deutsch', title:'Konfetti - Ausgabe 2013: Arbeitsheft Lesen und Texte verfassen 4', desc:'', img:'https://m.media-amazon.com/images/I/413beUGM-vL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3425025295?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Niko 1: Paket: Arbeitsheft zur Fibel in Grundschrift, Grundschriftlehrgang Klasse 1 (Niko. Ausgabe ab 2020)', desc:'', img:'https://m.media-amazon.com/images/I/41ptxSvq-IL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123106756?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Niko 1: Paket: Arbeitsheft zur Fibel in Grundschrift, Grundschriftlehrgang Klasse 1 (Niko. Ausgabe ab 2026)', desc:'', img:'https://m.media-amazon.com/images/I/51dprGHdMhL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123109100?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Niko 2: Arbeitsheft PLUS Sprache Lesen mit Medien Klasse 2 (Niko. Ausgabe ab 2026)', desc:'', img:'https://m.media-amazon.com/images/I/41-OuLGQZbL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123109259?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Niko Sprachbuch 3: Arbeitsheft Klasse 3 (Niko. Ausgabe ab 2020)', desc:'', img:'https://m.media-amazon.com/images/I/41U9HXD9qvS._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123108686?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Niko Sprachbuch 4: Arbeitsheft Klasse 4 (Niko. Ausgabe ab 2020)', desc:'', img:'https://m.media-amazon.com/images/I/41qL-t+JB+L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123108732?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[1], fach:'Deutsch', title:'Mimi, die Lesemaus - Fibel für den Erstleseunterricht - Ausgabe F (Bayern, Baden-Württemberg, Rheinland-Pfalz und Hessen): Arbeitsheft - Mit ... Rheinland-Pfalz und Hessen))', desc:'', img:'https://m.media-amazon.com/images/I/41-ltvDjU+L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637017008?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1], fach:'Deutsch', title:'Flex und Flora - Ausgabe 2021: Lernpaket Deutsch 1 (Grundschrift) Verbrauchsmaterial', desc:'', img:'https://m.media-amazon.com/images/I/41uBTeqDcWL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141040117?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[2], fach:'Deutsch', title:'Flex und Flora - Ausgabe 2021: Lernpaket Deutsch 2 (Druckschrift) Verbrauchsmaterial', desc:'', img:'https://m.media-amazon.com/images/I/41LfC1nK5lL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141040613?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3], fach:'Deutsch', title:'Flex und Flora - Ausgabe 2021: Lernpaket Deutsch 3 (Druckschrift) Verbrauchsmaterial: Ausgabe 2021 - Kompetenzhefte 3 Paket: Verbrauchsmaterial', desc:'', img:'https://m.media-amazon.com/images/I/417uPVo+yhL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141041261?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[4], fach:'Deutsch', title:'Flex und Flora - Ausgabe 2021: Lernpaket Deutsch 4 (Druckschrift) Verbrauchsmaterial', desc:'', img:'https://m.media-amazon.com/images/I/41hVsjStDEL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141041911?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Bücherwurm Fibel: Arbeitsheft PLUS mit Schreibtabelle und Medien Klasse 1 (Bücherwurm. Ausgabe ab 2026)', desc:'', img:'https://m.media-amazon.com/images/I/41NZlTlBFdL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123109763?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Deutsch', title:'Bücherwurm Fibel: Arbeitsheft in Druckschrift mit Schreibtabelle und Medien Klasse 1 (Bücherwurm. Ausgabe ab 2026)', desc:'', img:'https://m.media-amazon.com/images/I/41qC4pG3bcL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123109755?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Bücherwurm 2: Arbeitsheft mit Medien und eTraining Klasse 2 (Bücherwurm. Ausgabe ab 2026)', desc:'', img:'https://m.media-amazon.com/images/I/41LqHlNtfJL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123110060?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Deutsch', title:'Bücherwurm 2: Arbeitsheft PLUS mit Medien und eTraining Klasse 2 (Bücherwurm. Ausgabe ab 2026)', desc:'', img:'https://m.media-amazon.com/images/I/41e3yNUMaIL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123110133?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Deutsch', title:'Bücherwurm Sprachbuch 3. Ausgabe für Berlin, Brandenburg, Mecklenburg-Vorpommern, Sachsen, Sachsen-Anhalt, Thüringen: Arbeitsheft zum Sprachbuch Klasse 3 (Bücherwurm. Ausgabe ab 2019)', desc:'', img:'https://m.media-amazon.com/images/I/411PqN8MUIL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123107868?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Deutsch', title:'Bücherwurm Sprachbuch 4. Ausgabe für Berlin, Brandenburg, Mecklenburg-Vorpommern, Sachsen, Sachsen-Anhalt, Thüringen: Arbeitsheft zum Sprachbuch Klasse 4 (Bücherwurm. Ausgabe ab 2019)', desc:'', img:'https://m.media-amazon.com/images/I/41HkFQuTf+L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3123107876?tag=uebiorg-21' },
+  { verlag:'Auer', klasse:[1], fach:'Deutsch', title:'Die Auer Fibel. Ausgabe Bayern: Arbeitsheft in Druckschrift: Teil A, Teil B und Schreiblehrgang DS Klasse 1 (Die Auer Fibel. Ausgabe für Bayern ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41njeH1EzOL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3120073555?tag=uebiorg-21' },
+  { verlag:'Schroedel', klasse:[1], fach:'Deutsch', title:'Fara und Fu - Ausgabe 2013: Arbeitshefte 1 und 2 (inkl. Schlüsselwortkarte)', desc:'', img:'https://m.media-amazon.com/images/I/411EQ6NccVL._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3507427753?tag=uebiorg-21' },
+  { verlag:'Schroedel', klasse:[1], fach:'Deutsch', title:'Fara und Fu - Ausgabe 2013: Sachheft 1', desc:'', img:'https://m.media-amazon.com/images/I/411i4nfda6L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3507427834?tag=uebiorg-21' },
+  { verlag:'Schroedel', klasse:[2], fach:'Deutsch', title:'Fara und Fu - Ausgabe 2013: Spracharbeitsheft 2 DS', desc:'', img:'https://m.media-amazon.com/images/I/41Jr-rAi7FL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3507427974?tag=uebiorg-21' },
+  { verlag:'Schroedel', klasse:[2], fach:'Deutsch', title:'Fara und Fu - Ausgabe 2013: Sachheft 2', desc:'', img:'https://m.media-amazon.com/images/I/4185NGlqP2L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3507428105?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3,4], fach:'Englisch', title:'Flex and Flory 3-4 - Ausgabe 2023: Workbook 3 mit Diagnoseheft', desc:'', img:'https://m.media-amazon.com/images/I/71iSkAH1LdL._SY522_.jpg', url:'https://www.amazon.de/dp/3141188009?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3,4], fach:'Englisch', title:'Flex and Flory 3-4 - Ausgabe 2023: Workbook 4 mit Diagnoseheft', desc:'', img:'https://m.media-amazon.com/images/I/41O72D+Y8sL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141188122?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1,2,3,4], fach:'Englisch', title:'Flex and Flory 1-4 - Ausgabe 2017: Workbook 1/2 mit Schüler-Audio-CD und Diagnoseheft', desc:'', img:'https://m.media-amazon.com/images/I/71ZU-3sr-pL._SY522_.jpg', url:'https://www.amazon.de/dp/3425057073?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3,4], fach:'Englisch', title:'Flex and Flory 3-4 - Ausgabe 2023: Words and phrases', desc:'', img:'https://m.media-amazon.com/images/I/41w6loxxGgL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141188246?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1,2,3,4], fach:'Englisch', title:'Flex and Flory 1-4 - Ausgabe 2017: Workbook 4 mit Schüler-Audio-CD und Diagnoseheft', desc:'', img:'https://m.media-amazon.com/images/I/41e5Ga7K4yL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3425057375?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3,4], fach:'Englisch', title:'Flex and Flory 3-4 - Ausgabe 2018: Workbook 4 mit Schüler-Audio-CD und Diagnoseheft', desc:'', img:'https://m.media-amazon.com/images/I/417ugKhBo9L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/342505774X?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1,2,3,4], fach:'Englisch', title:'Flex and Flory 1-4 - Ausgabe 2017: Workbook 3 mit Schüler-Audio-CD und Diagnoseheft', desc:'', img:'https://m.media-amazon.com/images/I/41s6HbclSDL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3425057235?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1], fach:'Mathematik', title:'Flex und Flo - Ausgabe 2021: Lernpaket Mathematik 1 Verbrauchsmaterial', desc:'', img:'https://m.media-amazon.com/images/I/71vSNJA949L._SY522_.jpg', url:'https://www.amazon.de/dp/3141180555?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[2], fach:'Mathematik', title:'Flex und Flo - Ausgabe 2021: Lernpaket Mathematik 2 Verbrauchsmaterial', desc:'', img:'https://m.media-amazon.com/images/I/41TvS1Yt9YL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141181101?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[4], fach:'Mathematik', title:'Flex und Flo - Ausgabe 2021: Lernpaket Mathematik 4 Verbrauchsmaterial', desc:'', img:'https://m.media-amazon.com/images/I/41fw1Y87NtL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141182795?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3], fach:'Mathematik', title:'Flex und Flo - Ausgabe 2021: Lernpaket Mathematik 3 Verbrauchsmaterial', desc:'', img:'https://m.media-amazon.com/images/I/41qIovMKjKL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141181942?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[5], fach:'Mathematik', title:'Dreifach Mathe - Ausgabe 2021 - 5. Schuljahr: Arbeitsheft mit Lösungen', desc:'', img:'https://m.media-amazon.com/images/I/316+wr47y2L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/306043624X?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[6], fach:'Mathematik', title:'Dreifach Mathe - Ausgabe 2021 - 6. Schuljahr: Arbeitsheft mit Lösungen', desc:'', img:'https://m.media-amazon.com/images/I/31C0WKBfvYL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060436266?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Mathematik', title:'Das Zahlenbuch 1: Arbeitsheft Klasse 1 (Das Zahlenbuch. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/51lXfjJxSML._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122011123?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Mathematik', title:'Das Zahlenbuch 2: Arbeitsheft Klasse 2 (Das Zahlenbuch. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41JIsqMmH1L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122011220?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Mathematik', title:'Das Zahlenbuch 3: Arbeitsheft Klasse 3 (Das Zahlenbuch. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41e6FSNQvOL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122011328?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Mathematik', title:'Das Zahlenbuch 4: Arbeitsheft Klasse 4 (Das Zahlenbuch. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41bWR+-ut8L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122011425?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[1], fach:'Mathematik', title:'Welt der Zahl - Allgemeine Ausgabe 2021: Arbeitsheft 1', desc:'', img:'https://m.media-amazon.com/images/I/41L7ejW9VWL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141061114?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[2], fach:'Mathematik', title:'Welt der Zahl - Allgemeine Ausgabe 2021: Arbeitsheft 2', desc:'', img:'https://m.media-amazon.com/images/I/41KyVJP8CxL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141061122?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[3], fach:'Mathematik', title:'Welt der Zahl - Allgemeine Ausgabe 2021: Arbeitsheft 3', desc:'', img:'https://m.media-amazon.com/images/I/41LfpVDNuvL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141061130?tag=uebiorg-21' },
+  { verlag:'Westermann', klasse:[4], fach:'Mathematik', title:'Welt der Zahl - Allgemeine Ausgabe 2021: Arbeitsheft 4', desc:'', img:'https://m.media-amazon.com/images/I/41g0DmiQdRL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3141061149?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[1], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 1. Schuljahr: Arbeitsheft - Mit interaktiven Übungen online', desc:'', img:'https://m.media-amazon.com/images/I/41zmB3DhS4L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060822565?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[1], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2026 - 1. Schuljahr: Arbeitsheft - Mit digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/61se-BKd7eL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464815323?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[2], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 2. Schuljahr: Arbeitsheft mit interaktiven Übungen und Übungsheft - Im Paket', desc:'', img:'https://m.media-amazon.com/images/I/41o8o2DfM8L._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3464807843?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[3], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 3. Schuljahr: Arbeitsheft mit interaktiven Übungen und Übungsheft - Im Paket', desc:'', img:'https://m.media-amazon.com/images/I/41qSl1xv02L._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3464807851?tag=uebiorg-21' },
+  { verlag:'Cornelsen', klasse:[4], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 4. Schuljahr: Arbeitsheft mit interaktiven Übungen und Übungsheft - Im Paket', desc:'', img:'https://m.media-amazon.com/images/I/41yB--t394L._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/346480786X?tag=uebiorg-21' }
+];
+/* ARBEITSHEFTE:END */
+
+/* =====================================================================
+   Rendering-Helfer
+   ===================================================================== */
+function productCardHtml(p){
+  var imgHtml = p.img
+    ? '<div class="pimg consent" role="button" tabindex="0" title="Produktbild von Amazon laden" data-img="'+p.img+'"><span class="ci">🖼️</span><span class="cl">Bild von Amazon laden</span></div>'
+    : '<div class="pimg ph">🛒</div>';
+  var searchText = (p.title + ' ' + (p.desc || '')).toLowerCase().replace(/"/g, '&quot;');
+  return (
+    '<div class="pcard" data-search="'+searchText+'">'+
+      imgHtml+
+      '<div class="ptxt">'+
+        '<div class="ptitle">'+p.title+'</div>'+
+        '<div class="pdesc">'+p.desc+'</div>'+
+      '</div>'+
+      '<div class="pbtn-wrap">'+
+        '<span class="ptag">Anzeige</span>'+
+        '<a class="pbtn" href="'+p.url+'" target="_blank" rel="nofollow sponsored noopener">Bei Amazon ansehen</a>'+
+      '</div>'+
+    '</div>'
+  );
+}
+
+function renderSubcatPanel(cat){
+  var data = cat.dataVar === 'ANSCHAUUNG' ? ANSCHAUUNG : UNTERRICHT;
+  var container = document.createElement('div');
+
+  cat.subcats.forEach(function(sub){
+    var items = data.filter(function(it){ return it.subkat === sub.id; });
+    if(!items.length) return;
+
+    var acc = document.createElement('div');
+    acc.className = 'acc';
+
+    var head = document.createElement('button');
+    head.type = 'button';
+    head.className = 'acc-head';
+    head.innerHTML = '<span class="nm">'+sub.label+'</span><span class="chev">▾</span>';
+    head.addEventListener('click', function(){ acc.classList.toggle('open'); });
+
+    var body = document.createElement('div');
+    body.className = 'acc-body';
+    var inner = document.createElement('div');
+    inner.className = 'acc-inner';
+    var grid = document.createElement('div');
+    grid.className = 'pgrid';
+    grid.innerHTML = items.map(productCardHtml).join('');
+    inner.appendChild(grid);
+    body.appendChild(inner);
+
+    acc.appendChild(head);
+    acc.appendChild(body);
+    container.appendChild(acc);
+  });
+
+  return container;
+}
+
+var ALTERSSTUFEN_ORDER = [
+  'Kindergarten/Vorschule', 'Vorschule/1. Klasse', '1. Klasse', '2. Klasse',
+  '3. Klasse', '4. Klasse', '3./4. Klasse', '5./6. Klasse'
+];
+
+function altersstufeSortKey(a){
+  var i = ALTERSSTUFEN_ORDER.indexOf(a);
+  return i === -1 ? 999 : i;
+}
+
+function renderLuekPanel(){
+  var container = document.createElement('div');
+
+  if(LUEK_KAESTEN.length){
+    var kastenBlock = document.createElement('div');
+    kastenBlock.className = 'kaesten-block';
+
+    var kastenHeading = document.createElement('div');
+    kastenHeading.className = 'fach-heading';
+    kastenHeading.textContent = 'Kontrollgeräte (Kästen)';
+    kastenHeading.style.cssText = 'font-size:.8rem;font-weight:800;color:var(--accent-d);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px';
+    kastenBlock.appendChild(kastenHeading);
+
+    var kastenGrid = document.createElement('div');
+    kastenGrid.className = 'pgrid';
+    kastenGrid.style.marginBottom = '22px';
+    kastenGrid.innerHTML = LUEK_KAESTEN.map(productCardHtml).join('');
+    kastenBlock.appendChild(kastenGrid);
+
+    container.appendChild(kastenBlock);
+  }
+
+  var stufen = [];
+  LUEK_HEFTE.forEach(function(h){
+    if(stufen.indexOf(h.altersstufe) === -1) stufen.push(h.altersstufe);
+  });
+  stufen.sort(function(a, b){ return altersstufeSortKey(a) - altersstufeSortKey(b); });
+
+  stufen.forEach(function(stufe){
+    var acc = document.createElement('div');
+    acc.className = 'acc';
+
+    var head = document.createElement('button');
+    head.type = 'button';
+    head.className = 'acc-head';
+    head.innerHTML = '<span class="nm">'+stufe+'</span><span class="chev">▾</span>';
+    head.addEventListener('click', function(){ acc.classList.toggle('open'); });
+
+    var body = document.createElement('div');
+    body.className = 'acc-body';
+    var inner = document.createElement('div');
+    inner.className = 'acc-inner';
+
+    var faecher = [];
+    LUEK_HEFTE.filter(function(h){ return h.altersstufe === stufe; }).forEach(function(h){
+      if(faecher.indexOf(h.fach) === -1) faecher.push(h.fach);
+    });
+
+    faecher.forEach(function(fach){
+      var items = LUEK_HEFTE.filter(function(h){ return h.altersstufe === stufe && h.fach === fach; });
+
+      var subAcc = document.createElement('div');
+      subAcc.className = 'sub-acc';
+
+      var subHead = document.createElement('button');
+      subHead.type = 'button';
+      subHead.className = 'sub-head';
+      subHead.innerHTML = fach + ' <span class="chev">▾</span>';
+      subHead.addEventListener('click', function(){ subAcc.classList.toggle('open'); });
+
+      var subBody = document.createElement('div');
+      subBody.className = 'sub-body';
+      var subInner = document.createElement('div');
+      subInner.className = 'sub-inner';
+      var subGrid = document.createElement('div');
+      subGrid.className = 'pgrid';
+      subGrid.innerHTML = items.map(productCardHtml).join('');
+      subInner.appendChild(subGrid);
+      subBody.appendChild(subInner);
+
+      subAcc.appendChild(subHead);
+      subAcc.appendChild(subBody);
+      inner.appendChild(subAcc);
+    });
+
+    body.appendChild(inner);
+    acc.appendChild(head);
+    acc.appendChild(body);
+    container.appendChild(acc);
+  });
+
+  return container;
+}
+
+var FAECHER_BUCH_ORDER = ['Deutsch', 'Mathematik', 'Englisch', 'Sachkunde'];
+
+function renderVerlagPanel(data){
+  var container = document.createElement('div');
+
+  var verlage = [];
+  data.forEach(function(it){ if(verlage.indexOf(it.verlag) === -1) verlage.push(it.verlag); });
+  verlage.sort(function(a, b){ return a.localeCompare(b, 'de'); });
+
+  verlage.forEach(function(verlag){
+    var acc = document.createElement('div');
+    acc.className = 'acc';
+
+    var head = document.createElement('button');
+    head.type = 'button';
+    head.className = 'acc-head';
+    head.innerHTML = '<span class="nm">'+verlag+'</span><span class="chev">▾</span>';
+    head.addEventListener('click', function(){ acc.classList.toggle('open'); });
+
+    var body = document.createElement('div');
+    body.className = 'acc-body';
+    var inner = document.createElement('div');
+    inner.className = 'acc-inner';
+
+    var klassen = [1,2,3,4,5,6].filter(function(k){
+      return data.some(function(it){ return it.verlag === verlag && it.klasse.indexOf(k) !== -1; });
+    });
+
+    klassen.forEach(function(k){
+      var subAcc = document.createElement('div');
+      subAcc.className = 'sub-acc';
+
+      var subHead = document.createElement('button');
+      subHead.type = 'button';
+      subHead.className = 'sub-head';
+      subHead.innerHTML = 'Klasse '+k+' <span class="chev">▾</span>';
+      subHead.addEventListener('click', function(){ subAcc.classList.toggle('open'); });
+
+      var subBody = document.createElement('div');
+      subBody.className = 'sub-body';
+      var subInner = document.createElement('div');
+      subInner.className = 'sub-inner';
+
+      var faecher = FAECHER_BUCH_ORDER.filter(function(f){
+        return data.some(function(it){ return it.verlag === verlag && it.klasse.indexOf(k) !== -1 && it.fach === f; });
+      });
+
+      faecher.forEach(function(fach){
+        var items = data.filter(function(it){ return it.verlag === verlag && it.klasse.indexOf(k) !== -1 && it.fach === fach; });
+
+        var subsubAcc = document.createElement('div');
+        subsubAcc.className = 'subsub-acc';
+
+        var subsubHead = document.createElement('button');
+        subsubHead.type = 'button';
+        subsubHead.className = 'subsub-head';
+        subsubHead.innerHTML = fach + ' <span class="chev">▾</span>';
+        subsubHead.addEventListener('click', function(){ subsubAcc.classList.toggle('open'); });
+
+        var subsubBody = document.createElement('div');
+        subsubBody.className = 'subsub-body';
+        var subsubInner = document.createElement('div');
+        subsubInner.className = 'subsub-inner';
+        var subsubGrid = document.createElement('div');
+        subsubGrid.className = 'pgrid';
+        subsubGrid.innerHTML = items.map(productCardHtml).join('');
+        subsubInner.appendChild(subsubGrid);
+        subsubBody.appendChild(subsubInner);
+
+        subsubAcc.appendChild(subsubHead);
+        subsubAcc.appendChild(subsubBody);
+        subInner.appendChild(subsubAcc);
+      });
+
+      subBody.appendChild(subInner);
+      subAcc.appendChild(subHead);
+      subAcc.appendChild(subBody);
+      inner.appendChild(subAcc);
+    });
+
+    body.appendChild(inner);
+    acc.appendChild(head);
+    acc.appendChild(body);
+    container.appendChild(acc);
+  });
+
+  return container;
+}
+
+/* =====================================================================
+   Tabs aufbauen + Umschalten (mit Hash-Restore wie auf den Fach-Seiten)
+   ===================================================================== */
+function activateTab(id){
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.tab === id);
+  });
+  document.querySelectorAll('.tab-panel').forEach(function(p){
+    p.classList.toggle('active', p.dataset.tab === id);
+  });
+  history.replaceState(null, '', '#' + id);
+}
+
+(function render(){
+  var tabsWrap = document.getElementById('tabsWrap');
+  var panelsWrap = document.getElementById('panelsWrap');
+
+  CATEGORIES.forEach(function(cat){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tab-btn';
+    btn.dataset.tab = cat.id;
+    btn.innerHTML = '<span class="ic">'+cat.icon+'</span><span>'+cat.name+'</span>';
+    btn.addEventListener('click', function(){ activateTab(cat.id); });
+    tabsWrap.appendChild(btn);
+
+    var panel = document.createElement('div');
+    panel.className = 'tab-panel';
+    panel.dataset.tab = cat.id;
+    panel.appendChild(
+      cat.type === 'verlag' ? renderVerlagPanel(cat.dataVar === 'ARBEITSHEFTE' ? ARBEITSHEFTE : LEHRBUECHER) :
+      cat.type === 'luek' ? renderLuekPanel() :
+      renderSubcatPanel(cat)
+    );
+    panelsWrap.appendChild(panel);
+  });
+
+  var startTab = location.hash.replace('#', '');
+  var valid = CATEGORIES.some(function(c){ return c.id === startTab; });
+  activateTab(valid ? startTab : CATEGORIES[0].id);
+
+  initTabScrollIndicators();
+})();
+
+/* =====================================================================
+   Scroll-Indikatoren für die Tab-Leiste: Verlaufsschatten + Pfeile,
+   die anzeigen/ermöglichen, dass es weitere Kategorien gibt.
+   ===================================================================== */
+function initTabScrollIndicators(){
+  var tabsWrap = document.getElementById('tabsWrap');
+  var fadeLeft = document.getElementById('fadeLeft');
+  var fadeRight = document.getElementById('fadeRight');
+  var arrowLeft = document.getElementById('arrowLeft');
+  var arrowRight = document.getElementById('arrowRight');
+  if(!tabsWrap) return;
+
+  function update(){
+    var maxScroll = tabsWrap.scrollWidth - tabsWrap.clientWidth;
+    var atStart = tabsWrap.scrollLeft <= 2;
+    var atEnd = tabsWrap.scrollLeft >= maxScroll - 2;
+    var scrollable = maxScroll > 4;
+
+    fadeLeft.classList.toggle('show', scrollable && !atStart);
+    fadeRight.classList.toggle('show', scrollable && !atEnd);
+    arrowLeft.classList.toggle('show', scrollable && !atStart);
+    arrowRight.classList.toggle('show', scrollable && !atEnd);
+  }
+
+  tabsWrap.addEventListener('scroll', update);
+  window.addEventListener('resize', update);
+  arrowLeft.addEventListener('click', function(){ tabsWrap.scrollBy({left:-140, behavior:'smooth'}); });
+  arrowRight.addEventListener('click', function(){ tabsWrap.scrollBy({left:140, behavior:'smooth'}); });
+
+  update();
+}
+
+window.addEventListener('hashchange', function(){
+  var id = location.hash.replace('#', '');
+  var valid = CATEGORIES.some(function(c){ return c.id === id; });
+  if(valid) activateTab(id);
+});
+
+/* =====================================================================
+   Suche: filtert Produktkarten per Titel/Beschreibung, klappt die
+   Accordions auf, die Treffer enthalten, blendet den Rest aus und
+   springt bei Bedarf automatisch zum Tab mit den Treffern.
+   ===================================================================== */
+function cardVisible(card){
+  return card.style.display !== 'none';
+}
+
+function applySearch(rawQuery){
+  var query = rawQuery.trim().toLowerCase();
+  var clearBtn = document.getElementById('searchClear');
+  var status = document.getElementById('searchStatus');
+  clearBtn.hidden = !query;
+
+  var cards = document.querySelectorAll('.pcard');
+  cards.forEach(function(card){
+    var match = !query || (card.dataset.search || '').indexOf(query) !== -1;
+    card.style.display = match ? '' : 'none';
+  });
+
+  // Von innen nach außen: Fach-Accordion (subsub) -> Klasse/Altersstufe (sub) -> Verlag/Kategorie (acc)
+  ['.subsub-acc', '.sub-acc', '.acc'].forEach(function(sel){
+    document.querySelectorAll(sel).forEach(function(acc){
+      var anyVisible = Array.prototype.some.call(acc.querySelectorAll('.pcard'), cardVisible);
+      if(query){
+        acc.style.display = anyVisible ? '' : 'none';
+        acc.classList.toggle('open', anyVisible);
+      } else {
+        acc.style.display = '';
+        acc.classList.remove('open');
+      }
+    });
+  });
+
+  // LÜK-Kästen-Block (kein Accordion, eigener Wrapper)
+  document.querySelectorAll('.kaesten-block').forEach(function(block){
+    var anyVisible = Array.prototype.some.call(block.querySelectorAll('.pcard'), cardVisible);
+    block.style.display = (!query || anyVisible) ? '' : 'none';
+  });
+
+  if(!query){
+    status.hidden = true;
+    return;
+  }
+
+  // Trefferzahl gesamt + ggf. Tab wechseln, falls der aktive Tab leer ist
+  var totalMatches = Array.prototype.filter.call(cards, cardVisible).length;
+  status.hidden = false;
+  status.textContent = totalMatches
+    ? totalMatches + (totalMatches === 1 ? ' Treffer' : ' Treffer')
+    : 'Keine Treffer für "' + rawQuery.trim() + '"';
+
+  var activePanel = document.querySelector('.tab-panel.active');
+  var activeHasMatch = activePanel && Array.prototype.some.call(activePanel.querySelectorAll('.pcard'), cardVisible);
+  if(!activeHasMatch){
+    var panels = document.querySelectorAll('.tab-panel');
+    for(var i=0;i<panels.length;i++){
+      var hasMatch = Array.prototype.some.call(panels[i].querySelectorAll('.pcard'), cardVisible);
+      if(hasMatch){ activateTab(panels[i].dataset.tab); break; }
+    }
+  }
+}
+
+function clearSearch(){
+  var input = document.getElementById('searchInput');
+  input.value = '';
+  applySearch('');
+  input.focus();
+}
+
+/* =====================================================================
+   Zwei-Klick-Bilder (DSGVO): Amazon-Produktbilder werden erst geladen,
+   wenn der Nutzer den Platzhalter anklickt. Vorher entsteht KEINE
+   Verbindung zu Amazon-Servern, es wird keine IP übertragen.
+   ===================================================================== */
+function loadConsentImg(ph){
+  var url = ph.getAttribute('data-img');
+  if(!url) return;
+  var img = document.createElement('img');
+  img.className = 'pimg';
+  img.alt = '';
+  img.loading = 'lazy';
+  img.src = url;
+  ph.parentNode.replaceChild(img, ph);
+}
+/* Zentraler Button im Affiliate-Hinweis: alle Platzhalter auf einmal laden. */
+function loadAllConsentImgs(btn){
+  var list = document.querySelectorAll('.pimg.consent');
+  for(var i=0; i<list.length; i++){ loadConsentImg(list[i]); }
+  if(btn){
+    btn.disabled = true;
+    btn.textContent = '✓ Produktbilder geladen';
+  }
+}
+document.addEventListener('click', function(e){
+  var ph = e.target.closest ? e.target.closest('.pimg.consent') : null;
+  if(ph) loadConsentImg(ph);
+});
+document.addEventListener('keydown', function(e){
+  if(e.key!=='Enter' && e.key!==' ') return;
+  var ph = e.target.closest ? e.target.closest('.pimg.consent') : null;
+  if(ph){ e.preventDefault(); loadConsentImg(ph); }
+});
+</script>
+
+</body>
+</html>
