@@ -43,23 +43,24 @@ header .h-title{font-weight:800;font-size:1.2rem;display:flex;align-items:center
   padding:16px 20px;margin-bottom:22px;font-size:.92rem;color:var(--ink);
 }
 .ad-banner b{color:var(--accent-d)}
+
+.img-consent-banner{
+  background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;
+  padding:12px 16px;margin-bottom:16px;font-size:.85rem;color:var(--ink);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.img-consent-btn{
+  background:var(--accent);color:#fff;border:none;border-radius:8px;
+  padding:8px 14px;font-family:inherit;font-weight:800;font-size:.8rem;
+  cursor:pointer;white-space:nowrap;
+}
+.img-consent-btn:hover{background:var(--accent-d)}
+.pimg.pimg-pending{cursor:default;font-size:1.3rem}
 .ad-badge{
   display:inline-block;background:var(--accent-d);color:#fff;font-size:.68rem;
   font-weight:800;letter-spacing:.4px;text-transform:uppercase;
   padding:3px 9px;border-radius:6px;margin-right:8px;vertical-align:middle;
 }
-.ad-banner .imgconsent{
-  margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-}
-.ad-banner .imgconsent .lic{font-size:.84rem;color:var(--muted)}
-.load-imgs-btn{
-  display:inline-flex;align-items:center;gap:6px;cursor:pointer;
-  font-family:inherit;font-size:.84rem;font-weight:800;color:#fff;
-  background:var(--accent-d);border:none;border-radius:9px;padding:8px 14px;
-  transition:filter .12s;
-}
-.load-imgs-btn:hover{filter:brightness(1.08)}
-.load-imgs-btn:disabled{opacity:.55;cursor:default;filter:none}
 
 .intro{margin-bottom:20px}
 .intro h1{font-size:1.5rem;font-weight:800;color:var(--accent-d);margin-bottom:6px}
@@ -200,13 +201,14 @@ footer a{color:var(--accent-d);font-weight:700}
 
 <div class="wrap">
 
-<div class="ad-banner">
+  <div class="ad-banner">
     <span class="ad-badge">Werbung</span>
     <b>Affiliate-Hinweis:</b> Diese Seite enthält Amazon-Partnerlinks. Als Amazon-Partner verdiene ich an qualifizierten Verkäufen, ohne dass für dich ein Aufpreis entsteht.
-    <div class="imgconsent">
-      <button type="button" class="load-imgs-btn" id="loadAllImgs" onclick="loadAllConsentImgs(this)">🖼️ Produktbilder von Amazon laden</button>
-      <span class="lic">Aus Datenschutzgründen werden Produktbilder erst nach deinem Klick von Amazon geladen.</span>
-    </div>
+  </div>
+
+  <div class="img-consent-banner" id="imgConsentBanner">
+    🖼️ Produktbilder werden von Amazon-Servern geladen. Beim Anzeigen wird deine IP-Adresse an Amazon übertragen.
+    <button type="button" class="img-consent-btn" onclick="grantImageConsent()">Bilder laden &amp; dauerhaft zulassen</button>
   </div>
 
   <div class="intro">
@@ -331,18 +333,18 @@ var LUEK_KAESTEN = [
 
 /* =====================================================================
    LUEK_HEFTE: Sets & Einzelhefte, gruppiert nach Altersstufe -> Fach.
-   - altersstufe: freier Text, empfohlen: 'Kindergarten/Vorschule',
-     'Vorschule/1. Klasse', '2. Klasse', '3. Klasse', '4. Klasse',
-     '5./6. Klasse' (Reihenfolge wird über ALTERSSTUFEN_ORDER gesteuert)
-   - fach: z.B. Mathematik, Deutsch, Englisch, Konzentration/Logik, Sachkunde
+   - altersstufe: Array mit einer oder mehreren Stufen, z.B. ['1. Klasse']
+     oder ['1. Klasse','2. Klasse'] (erscheint dann in beiden Accordions)
+   - fach: Array mit einem oder mehreren Themenbereichen, z.B.
+     ['Mathematik'] oder ['Mathematik','Konzentration/Logik']
    ===================================================================== */
 /* LUEK_HEFTE:START */
 var LUEK_HEFTE = [
-  { altersstufe:'Vorschule/1. Klasse', fach:'Konzentration/Logik', title:'miniLÜK: Kindergarten/Vorschule Konzentrationstraining 1 (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/51iulTM-BqL._SY522_.jpg', url:'https://www.amazon.de/dp/3837703185?tag=uebiorg-21' },
-  { altersstufe:'Vorschule/1. Klasse', fach:'Konzentration/Logik', title:'LÜK miniSet Ist doch logisch 4540: Vorschule Ist doch logisch! (miniLÜK-Sets: Kasten + Übungsheft/e)', desc:'', img:'https://m.media-amazon.com/images/I/51EV3dy7YOL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/3837745406?tag=uebiorg-21' },
-  { altersstufe:'Kindergarten/Vorschule', fach:'Deutsch', title:'miniLÜK: Vorschule Ich freue mich auf die Schule 1: Vorbereitende Übungen zum Lesenlernen (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/61dH7iTSSQL._SY522_.jpg', url:'https://www.amazon.de/dp/3894141611?tag=uebiorg-21' },
-  { altersstufe:'Vorschule/1. Klasse', fach:'Deutsch', title:'miniLÜK: Vorschule/1. Klasse - Deutsch Lesen lernen mit der Maus: Vorschule/1. Klasse - Deutsch: Einfache Buchstaben und Wörter für Vorschulkinder (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/51lLcf4+aaL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3894143495?tag=uebiorg-21' },
-  { altersstufe:'Vorschule/1. Klasse', fach:'Mathematik', title:'miniLÜK: Vorschule/1. Klasse - Mathematik Zahlen und Zählen mit der Maus: Spielend rechnen lernen (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/51VGEJWVYrL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3894143584?tag=uebiorg-21' }
+  { altersstufe:['Vorschule/1. Klasse'], fach:['Konzentration/Logik'], title:'miniLÜK: Kindergarten/Vorschule Konzentrationstraining 1 (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/51iulTM-BqL._SY522_.jpg', url:'https://www.amazon.de/dp/3837703185?tag=uebiorg-21' },
+  { altersstufe:['Vorschule/1. Klasse'], fach:['Konzentration/Logik'], title:'LÜK miniSet Ist doch logisch 4540: Vorschule Ist doch logisch! (miniLÜK-Sets: Kasten + Übungsheft/e)', desc:'', img:'https://m.media-amazon.com/images/I/51EV3dy7YOL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/3837745406?tag=uebiorg-21' },
+  { altersstufe:['Kindergarten/Vorschule'], fach:['Deutsch'], title:'miniLÜK: Vorschule Ich freue mich auf die Schule 1: Vorbereitende Übungen zum Lesenlernen (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/61dH7iTSSQL._SY522_.jpg', url:'https://www.amazon.de/dp/3894141611?tag=uebiorg-21' },
+  { altersstufe:['Vorschule/1. Klasse'], fach:['Deutsch'], title:'miniLÜK: Vorschule/1. Klasse - Deutsch Lesen lernen mit der Maus: Vorschule/1. Klasse - Deutsch: Einfache Buchstaben und Wörter für Vorschulkinder (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/51lLcf4+aaL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3894143495?tag=uebiorg-21' },
+  { altersstufe:['Vorschule/1. Klasse'], fach:['Mathematik'], title:'miniLÜK: Vorschule/1. Klasse - Mathematik Zahlen und Zählen mit der Maus: Spielend rechnen lernen (miniLÜK-Übungshefte: Vorschule)', desc:'', img:'https://m.media-amazon.com/images/I/51VGEJWVYrL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3894143584?tag=uebiorg-21' }
 ];
 /* LUEK_HEFTE:END */
 
@@ -578,7 +580,7 @@ var ARBEITSHEFTE = [
    ===================================================================== */
 function productCardHtml(p){
   var imgHtml = p.img
-    ? '<img class="pimg" src="'+p.img+'" alt="" loading="lazy">'
+    ? '<div class="pimg ph pimg-pending" data-img="'+p.img+'">🖼️</div>'
     : '<div class="pimg ph">🛒</div>';
   var searchText = (p.title + ' ' + (p.desc || '')).toLowerCase().replace(/"/g, '&quot;');
   return (
@@ -665,7 +667,9 @@ function renderLuekPanel(){
 
   var stufen = [];
   LUEK_HEFTE.forEach(function(h){
-    if(stufen.indexOf(h.altersstufe) === -1) stufen.push(h.altersstufe);
+    (h.altersstufe || []).forEach(function(s){
+      if(stufen.indexOf(s) === -1) stufen.push(s);
+    });
   });
   stufen.sort(function(a, b){ return altersstufeSortKey(a) - altersstufeSortKey(b); });
 
@@ -685,12 +689,16 @@ function renderLuekPanel(){
     inner.className = 'acc-inner';
 
     var faecher = [];
-    LUEK_HEFTE.filter(function(h){ return h.altersstufe === stufe; }).forEach(function(h){
-      if(faecher.indexOf(h.fach) === -1) faecher.push(h.fach);
+    LUEK_HEFTE.filter(function(h){ return (h.altersstufe || []).indexOf(stufe) !== -1; }).forEach(function(h){
+      (h.fach || []).forEach(function(f){
+        if(faecher.indexOf(f) === -1) faecher.push(f);
+      });
     });
 
     faecher.forEach(function(fach){
-      var items = LUEK_HEFTE.filter(function(h){ return h.altersstufe === stufe && h.fach === fach; });
+      var items = LUEK_HEFTE.filter(function(h){
+        return (h.altersstufe || []).indexOf(stufe) !== -1 && (h.fach || []).indexOf(fach) !== -1;
+      });
 
       var subAcc = document.createElement('div');
       subAcc.className = 'sub-acc';
@@ -966,6 +974,40 @@ function clearSearch(){
   applySearch('');
   input.focus();
 }
+
+/* =====================================================================
+   Bilder-Consent: Amazon-Produktbilder werden erst nach ausdrücklichem
+   Klick geladen (überträgt sonst ungefragt die IP-Adresse an Amazon).
+   Zustimmung wird lokal gemerkt, damit sie nicht bei jedem Besuch neu
+   nötig ist.
+   ===================================================================== */
+var IMG_CONSENT_KEY = 'uebio_amazon_img_consent';
+
+function revealImages(){
+  document.querySelectorAll('.pimg-pending').forEach(function(el){
+    var src = el.dataset.img;
+    if(!src) return;
+    var img = document.createElement('img');
+    img.className = 'pimg';
+    img.src = src;
+    img.alt = '';
+    img.loading = 'lazy';
+    el.replaceWith(img);
+  });
+  var banner = document.getElementById('imgConsentBanner');
+  if(banner) banner.style.display = 'none';
+}
+
+function grantImageConsent(){
+  try { localStorage.setItem(IMG_CONSENT_KEY, '1'); } catch(e){ /* Storage evtl. blockiert - dann gilt Zustimmung nur für diesen Besuch */ }
+  revealImages();
+}
+
+(function initImageConsent(){
+  var alreadyConsented = false;
+  try { alreadyConsented = localStorage.getItem(IMG_CONSENT_KEY) === '1'; } catch(e){ /* ignore */ }
+  if(alreadyConsented) revealImages();
+})();
 </script>
 
 </body>
