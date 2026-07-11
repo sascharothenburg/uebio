@@ -48,6 +48,18 @@ header .h-title{font-weight:800;font-size:1.2rem;display:flex;align-items:center
   font-weight:800;letter-spacing:.4px;text-transform:uppercase;
   padding:3px 9px;border-radius:6px;margin-right:8px;vertical-align:middle;
 }
+.ad-banner .imgconsent{
+  margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.ad-banner .imgconsent .lic{font-size:.84rem;color:var(--muted)}
+.load-imgs-btn{
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  font-family:inherit;font-size:.84rem;font-weight:800;color:#fff;
+  background:var(--accent-d);border:none;border-radius:9px;padding:8px 14px;
+  transition:filter .12s;
+}
+.load-imgs-btn:hover{filter:brightness(1.08)}
+.load-imgs-btn:disabled{opacity:.55;cursor:default;filter:none}
 
 .intro{margin-bottom:20px}
 .intro h1{font-size:1.5rem;font-weight:800;color:var(--accent-d);margin-bottom:6px}
@@ -188,9 +200,13 @@ footer a{color:var(--accent-d);font-weight:700}
 
 <div class="wrap">
 
-  <div class="ad-banner">
+<div class="ad-banner">
     <span class="ad-badge">Werbung</span>
     <b>Affiliate-Hinweis:</b> Diese Seite enthält Amazon-Partnerlinks. Als Amazon-Partner verdiene ich an qualifizierten Verkäufen, ohne dass für dich ein Aufpreis entsteht.
+    <div class="imgconsent">
+      <button type="button" class="load-imgs-btn" id="loadAllImgs" onclick="loadAllConsentImgs(this)">🖼️ Produktbilder von Amazon laden</button>
+      <span class="lic">Aus Datenschutzgründen werden Produktbilder erst nach deinem Klick von Amazon geladen.</span>
+    </div>
   </div>
 
   <div class="intro">
