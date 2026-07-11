@@ -2,11 +2,11 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="fonts.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Übio · Schulmaterial-Empfehlungen</title>
 <link rel="manifest" href='data:application/manifest+json,{"name":"Schulmaterial","short_name":"Schulmaterial","start_url":".","display":"standalone","background_color":"%23fdf6ec","theme_color":"%23c2410c","icons":[]}'>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
 
 :root{
   --accent:#ea580c;
@@ -48,18 +48,6 @@ header .h-title{font-weight:800;font-size:1.2rem;display:flex;align-items:center
   font-weight:800;letter-spacing:.4px;text-transform:uppercase;
   padding:3px 9px;border-radius:6px;margin-right:8px;vertical-align:middle;
 }
-.ad-banner .imgconsent{
-  margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-}
-.ad-banner .imgconsent .lic{font-size:.84rem;color:var(--muted)}
-.load-imgs-btn{
-  display:inline-flex;align-items:center;gap:6px;cursor:pointer;
-  font-family:inherit;font-size:.84rem;font-weight:800;color:#fff;
-  background:var(--accent-d);border:none;border-radius:9px;padding:8px 14px;
-  transition:filter .12s;
-}
-.load-imgs-btn:hover{filter:brightness(1.08)}
-.load-imgs-btn:disabled{opacity:.55;cursor:default;filter:none}
 
 .intro{margin-bottom:20px}
 .intro h1{font-size:1.5rem;font-weight:800;color:var(--accent-d);margin-bottom:6px}
@@ -126,15 +114,6 @@ header .h-title{font-weight:800;font-size:1.2rem;display:flex;align-items:center
   background:#f5f5f5;border:1px solid var(--line);
 }
 .pcard .pimg.ph{display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#cbd5e1}
-/* Zwei-Klick-Platzhalter für Amazon-Bilder (DSGVO: erst nach Klick laden) */
-.pcard .pimg.consent{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  cursor:pointer;padding:4px;text-align:center;line-height:1.15;
-  background:#f5f5f5;
-}
-.pcard .pimg.consent .ci{font-size:1.3rem;margin-bottom:2px}
-.pcard .pimg.consent .cl{font-size:.5rem;font-weight:700;color:#8a6d3b}
-.pcard .pimg.consent:hover{border-color:var(--accent-l);background:#efe9dd}
 .pcard .ptxt{flex:1;min-width:0}
 .pcard .ptitle{font-weight:800;font-size:.96rem;color:var(--ink)}
 .pcard .pdesc{font-size:.84rem;color:var(--muted);margin-top:2px}
@@ -212,10 +191,6 @@ footer a{color:var(--accent-d);font-weight:700}
   <div class="ad-banner">
     <span class="ad-badge">Werbung</span>
     <b>Affiliate-Hinweis:</b> Diese Seite enthält Amazon-Partnerlinks. Als Amazon-Partner verdiene ich an qualifizierten Verkäufen, ohne dass für dich ein Aufpreis entsteht.
-    <div class="imgconsent">
-      <button type="button" class="load-imgs-btn" id="loadAllImgs" onclick="loadAllConsentImgs(this)">🖼️ Produktbilder von Amazon laden</button>
-      <span class="lic">Aus Datenschutzgründen werden Produktbilder erst nach deinem Klick von Amazon geladen.</span>
-    </div>
   </div>
 
   <div class="intro">
@@ -272,7 +247,15 @@ var CATEGORIES = [
 /* ANSCHAUUNG:START */
 var ANSCHAUUNG = [
   { subkat:'mathematik', title:'Das Zahlenbuch 1-2: 1+1 Karten. Aufgaben sortieren und ordnen, Rechenstrategien entwickeln Klasse 1-2 (Das Zahlenbuch. Ausgabe ab 2017)', desc:'', img:'https://m.media-amazon.com/images/I/41Ng34jcpEL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122010216?tag=uebiorg-21' },
-  { subkat:'mathematik', title:'Das Zahlenbuch: 1x1 Karten. Aufgaben sortieren und ordnen, Rechenstrategien entwickeln Klasse 2-3 (Das Zahlenbuch. Ausgabe ab 2017)', desc:'', img:'https://m.media-amazon.com/images/I/41a+7ID02tL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122010232?tag=uebiorg-21' }
+  { subkat:'mathematik', title:'Das Zahlenbuch: 1x1 Karten. Aufgaben sortieren und ordnen, Rechenstrategien entwickeln Klasse 2-3 (Das Zahlenbuch. Ausgabe ab 2017)', desc:'', img:'https://m.media-amazon.com/images/I/41a+7ID02tL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122010232?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'WISSNER® Dienes Dezimal-Rechenmaterial mit 121 Teilen aus nachhaltigem RE-Plastic – Aktives Lernen mit den Zehnersystem-Teilen für das bessere Verständnis von Zahlen und Mengen', desc:'', img:'https://m.media-amazon.com/images/I/31ooaKj5cPL._SX342_SY445_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B01FUP98RK?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'WISSNER® RE-Wood Dienes Grundsortiment (121 Teile) – Lernspielzeug', desc:'', img:'https://m.media-amazon.com/images/I/31C7dZJ+KmL._SX342_SY445_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B01HQ725SY?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'WISSNER® Rechenstäbe 126 Stück – Bunte RE-Wood Rechenstäbe für spielerisches Zahlenverständnis, Grundschule, Montessori-inspiriertes Lernen, Zahlenstäbe', desc:'', img:'https://m.media-amazon.com/images/I/71fOqyE05PL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B06Y5LQ6HY?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'small Foot Lernbox Rechenstäbchen mit Zahlen „Educate“ aus Holz, Mathe-Lernspielzeug, für Kinder ab 6 Jahren, 12559, Bunt', desc:'', img:'https://m.media-amazon.com/images/I/71RmtU9FpLL._AC_SX300_SY300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0D981V6BT?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'TEUVO Montessori Spielzeug Mathematik Zahlen Lernen Holzspielzeug für Kinder ab 2 3 4 5 6 Jahre, Lernspiele Zahl und Zählung Motorikspielzeug Steckspiel Peg Board Mathe Spielzeug für Home Schule Lehre', desc:'', img:'https://m.media-amazon.com/images/I/71yz3AuPKCL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0CJNFNQDN?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'SumBlox Mini (Starter Set) - Set of 38 Mini STEM Solid Wood Educational Numbers, Including Wooden Box and Pack of 36 Activity Cards (German)', desc:'', img:'https://m.media-amazon.com/images/I/815aRM7XXkL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0929NRNBK?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'Kinder Kalender für Lernen und Spaß - Zeitlos gestaltet mit Piktogrammen. Mein Erster Kalender Kinder Montessori. Wochentage - Monate. Jahre und Jahreszeiten (Deutsch)', desc:'', img:'https://m.media-amazon.com/images/I/61cbFPPctiL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0CDLWHZJG?tag=uebiorg-21' },
+  { subkat:'mathematik', title:'Montessori Holzspielzeug ab 3 Jahren – 3-in-1 Lernbox aus Holz: Buchstaben, Lesen Lernen, Zahlen & Rechnen – Lernspielzeug Kinder Geschenk zur Einschulung & Vorschule', desc:'', img:'https://m.media-amazon.com/images/I/61H2AFYX-PL._AC_SY300_SX300_QL70_ML2_.jpg', url:'https://www.amazon.de/dp/B0DZYV1RRQ?tag=uebiorg-21' }
 ];
 /* ANSCHAUUNG:END */
 
@@ -323,7 +306,10 @@ var UNTERRICHT = [
    ===================================================================== */
 /* LUEK_KAESTEN:START */
 var LUEK_KAESTEN = [
-  { title:'LÜK-Kontrollgerät', desc:'Inkl. 24 Aufgabenplättchen – selbstständiges Üben mit Selbstkontrolle', img:'https://m.media-amazon.com/images/I/61Tui262KBL._SL1500_.jpg', url:'https://amzn.to/4v3S3vb' }
+  { title:'LÜK-Kontrollgerät', desc:'Inkl. 24 Aufgabenplättchen – selbstständiges Üben mit Selbstkontrolle', img:'https://m.media-amazon.com/images/I/61Tui262KBL._SL1500_.jpg', url:'https://amzn.to/4v3S3vb' },
+  { title:'LÜK: Kontrollgerät blau mit 24 Aufgabenplättchen (kompakt) Neuere Kompaktversion (LÜK: Lösungsgeräte für alle LÜK-Übungshefte)', desc:'', img:'https://m.media-amazon.com/images/I/41l1eqtIhUL._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3072450064?tag=uebiorg-21' },
+  { title:'LÜK: Kontrollgerät pink mit 24 Aufgabenplättchen (kompakt) Neuere Kompaktversion (LÜK: Lösungsgeräte für alle LÜK-Übungshefte)', desc:'', img:'https://m.media-amazon.com/images/I/41Rvw5NIZ0L._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3072450056?tag=uebiorg-21' },
+  { title:'miniLÜK: Kontrollgerät Klarsichtdeckel blau (miniLÜK: Kästen)', desc:'', img:'https://m.media-amazon.com/images/I/31ProX2kTqL._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3837710068?tag=uebiorg-21' }
 ];
 /* LUEK_KAESTEN:END */
 
@@ -426,7 +412,19 @@ var LEHRBUECHER = [
   { verlag:'Cornelsen', klasse:[1], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 1. Schuljahr: Schulbuch mit Kartonbeilagen und Lernspurenheft - Mit BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/410Aw2JeTJL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060822522?tag=uebiorg-21' },
   { verlag:'Cornelsen', klasse:[2], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 2. Schuljahr: Schulbuch mit Kartonbeilagen und Lernspurenheft - Mit BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/41z31swNTDL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060822530?tag=uebiorg-21' },
   { verlag:'Cornelsen', klasse:[3,4], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 3. Schuljahr: Schulbuch mit Kartonbeilagen und Lernspurenheft - Mit BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/41kW9G7D+oL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060822549?tag=uebiorg-21' },
-  { verlag:'Cornelsen', klasse:[4], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 4. Schuljahr: Schulbuch mit Kartonbeilagen und Lernspurenheft - Mit BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/41WQqcjwADL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060822557?tag=uebiorg-21' }
+  { verlag:'Cornelsen', klasse:[4], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 4. Schuljahr: Schulbuch mit Kartonbeilagen und Lernspurenheft - Mit BuchTaucher-App', desc:'', img:'https://m.media-amazon.com/images/I/41WQqcjwADL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060822557?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[1], fach:'Mathematik', title:'Zahlenzauber - Mathematik für Grundschulen - Allgemeine Ausgabe 2016 - 1. Schuljahr: Schulbuch mit Kartonbeilagen (Zahlenzauber, Allgemeine Ausgabe 2016, 1. Schuljahr)', desc:'', img:'https://m.media-amazon.com/images/I/41CnFLrROGL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637018705?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[2], fach:'Mathematik', title:'Zahlenzauber - Mathematik für Grundschulen - Allgemeine Ausgabe 2016 - 2. Schuljahr: Schulbuch mit Kartonbeilagen (Zahlenzauber, Allgemeine Ausgabe 2016, 2. Schuljahr)', desc:'', img:'https://m.media-amazon.com/images/I/41xwXYWK7PL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637018721?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[3], fach:'Mathematik', title:'Zahlenzauber - Mathematik für Grundschulen - Allgemeine Ausgabe 2016 - 3. Schuljahr: Schulbuch mit Kartonbeilagen (Zahlenzauber, Allgemeine Ausgabe 2016, 3. Schuljahr)', desc:'', img:'https://m.media-amazon.com/images/I/415DxDaoICL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637018748?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[4], fach:'Mathematik', title:'Zahlenzauber - Mathematik für Grundschulen - Ausgabe Bayern 2014 - 4. Jahrgangsstufe: Schulbuch mit Kartonbeilagen (Zahlenzauber, Ausgabe Bayern 2014, 4. Jahrgangsstufe)', desc:'', img:'https://m.media-amazon.com/images/I/41mt8O5u6CL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637016737?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Mathematik', title:'Rechenrabe 2: Schulbuch mit Beilagen Klasse 2 (Rechenrabe. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/31vLqRtLTnL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122019744?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Mathematik', title:'Rechenrabe 1: Schulbuch mit Beilagen Klasse 1 (Rechenrabe. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/31lLM6CBguL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/312201968X?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Mathematik', title:'Rechenrabe 3: Schulbuch Klasse 3 (Rechenrabe. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/412U++PU5GL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122019809?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Mathematik', title:'Rechenrabe 4: Mein Mathematikbuch Klasse 4 (Rechenrabe. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41XwjpxglOL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122019868?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[1], fach:'Mathematik', title:'Fredo - Mathematik - Ausgabe A - 2021 - 1. Schuljahr: Schulbuch mit Kartonbeilagen und "Das kann ich jetzt!"-Heft - Mit digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/41pNZMvJVsL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060846758?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[2], fach:'Mathematik', title:'Fredo - Mathematik - Ausgabe A - 2021 - 2. Schuljahr: Schulbuch mit Kartonbeilagen und "Das kann ich jetzt!"-Heft - Mit digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/41q+XquWJSL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060848718?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[3], fach:'Mathematik', title:'Fredo - Mathematik - Ausgabe A - 2015 - 3. Schuljahr: Schulbuch mit Kartonbeilagen', desc:'', img:'https://m.media-amazon.com/images/I/4167-QutaaL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637018640?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[4], fach:'Mathematik', title:'Fredo - Mathematik - Ausgabe A - 2015 - 4. Schuljahr: Schulbuch mit Kartonbeilagen', desc:'', img:'https://m.media-amazon.com/images/I/418Ji-IOgNL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637018659?tag=uebiorg-21' }
 ];
 /* LEHRBUECHER:END */
 
@@ -543,7 +541,19 @@ var ARBEITSHEFTE = [
   { verlag:'Cornelsen', klasse:[1], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2026 - 1. Schuljahr: Arbeitsheft - Mit digitalen Medien', desc:'', img:'https://m.media-amazon.com/images/I/61se-BKd7eL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3464815323?tag=uebiorg-21' },
   { verlag:'Cornelsen', klasse:[2], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 2. Schuljahr: Arbeitsheft mit interaktiven Übungen und Übungsheft - Im Paket', desc:'', img:'https://m.media-amazon.com/images/I/41o8o2DfM8L._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3464807843?tag=uebiorg-21' },
   { verlag:'Cornelsen', klasse:[3], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 3. Schuljahr: Arbeitsheft mit interaktiven Übungen und Übungsheft - Im Paket', desc:'', img:'https://m.media-amazon.com/images/I/41qSl1xv02L._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/3464807851?tag=uebiorg-21' },
-  { verlag:'Cornelsen', klasse:[4], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 4. Schuljahr: Arbeitsheft mit interaktiven Übungen und Übungsheft - Im Paket', desc:'', img:'https://m.media-amazon.com/images/I/41yB--t394L._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/346480786X?tag=uebiorg-21' }
+  { verlag:'Cornelsen', klasse:[4], fach:'Mathematik', title:'Jo-Jo Mathematik - Allgemeine Ausgabe 2018 - 4. Schuljahr: Arbeitsheft mit interaktiven Übungen und Übungsheft - Im Paket', desc:'', img:'https://m.media-amazon.com/images/I/41yB--t394L._SX342_SY445_ML2_.jpg', url:'https://www.amazon.de/dp/346480786X?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[1], fach:'Mathematik', title:'Zahlenzauber - Mathematik für Grundschulen - Ausgabe Bayern 2014 - 1. Jahrgangsstufe: Arbeitsheft - Mit Lösungsheft (Zahlenzauber, Ausgabe Bayern 2014, 1. Jahrgangsstufe)', desc:'', img:'https://m.media-amazon.com/images/I/51y79p3xJwL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637016648?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[2], fach:'Mathematik', title:'Zahlenzauber - Mathematik für Grundschulen - Ausgabe Bayern 2014 - 2. Jahrgangsstufe: Arbeitsheft - Mit Lösungsheft (Zahlenzauber, Ausgabe Bayern 2014, 2. Jahrgangsstufe)', desc:'', img:'https://m.media-amazon.com/images/I/5177xoPP8HL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637016680?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[3], fach:'Mathematik', title:'Zahlenzauber - Mathematik für Grundschulen - Ausgabe Bayern 2014 - 3. Jahrgangsstufe: Arbeitsheft - Mit Lösungsheft (Zahlenzauber, Ausgabe Bayern 2014, 3. Jahrgangsstufe)', desc:'', img:'https://m.media-amazon.com/images/I/51r8cIr9S2L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637016710?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[4], fach:'Mathematik', title:'Zahlenzauber - Mathematik für Grundschulen - Ausgabe Bayern 2014 - 4. Jahrgangsstufe: Arbeitsheft - Mit Lösungsheft (Zahlenzauber, Ausgabe Bayern 2014, 4. Jahrgangsstufe)', desc:'', img:'https://m.media-amazon.com/images/I/41VpbLnsB-L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637016745?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[2], fach:'Mathematik', title:'Rechenrabe 2: Mein Arbeitsheft Klasse 2 (Rechenrabe. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/31mCsDio8WL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122019752?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[1], fach:'Mathematik', title:'Rechenrabe 1: Mein Arbeitsheft Klasse 1 (Rechenrabe. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/31PLmT-SlML._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122019698?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[3], fach:'Mathematik', title:'Rechenrabe 3: Mein Arbeitsheft Klasse 3 (Rechenrabe. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/31HZGXUIPnL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122019817?tag=uebiorg-21' },
+  { verlag:'Klett', klasse:[4], fach:'Mathematik', title:'Rechenrabe 4: Mein Arbeitsheft Klasse 4 (Rechenrabe. Ausgabe ab 2022)', desc:'', img:'https://m.media-amazon.com/images/I/41zVsezY29L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3122019876?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[1], fach:'Mathematik', title:'Fredo - Mathematik - Ausgabe A - 2021 - 1. Schuljahr: Arbeitsheft mit interaktiven Übungen online - Mit Stickerbogen', desc:'', img:'https://m.media-amazon.com/images/I/41ezDPAyl3L._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060846766?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[2], fach:'Mathematik', title:'Fredo - Mathematik - Ausgabe A - 2021 - 2. Schuljahr: Arbeitsheft mit interaktiven Übungen online - Mit Stickerbogen', desc:'', img:'https://m.media-amazon.com/images/I/41poJAK2STL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3060848726?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[3], fach:'Mathematik', title:'Fredo - Mathematik - Ausgabe A - 2015 - 3. Schuljahr: Arbeitsheft', desc:'', img:'https://m.media-amazon.com/images/I/51-VuKf7KwL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637018683?tag=uebiorg-21' },
+  { verlag:'Oldenbourg', klasse:[4], fach:'Mathematik', title:'Fredo - Mathematik - Ausgabe A - 2015 - 4. Schuljahr: Arbeitsheft', desc:'', img:'https://m.media-amazon.com/images/I/51o4pBZY+XL._SY445_SX342_ML2_.jpg', url:'https://www.amazon.de/dp/3637018691?tag=uebiorg-21' }
 ];
 /* ARBEITSHEFTE:END */
 
@@ -552,7 +562,7 @@ var ARBEITSHEFTE = [
    ===================================================================== */
 function productCardHtml(p){
   var imgHtml = p.img
-    ? '<div class="pimg consent" role="button" tabindex="0" title="Produktbild von Amazon laden" data-img="'+p.img+'"><span class="ci">🖼️</span><span class="cl">Bild von Amazon laden</span></div>'
+    ? '<img class="pimg" src="'+p.img+'" alt="" loading="lazy">'
     : '<div class="pimg ph">🛒</div>';
   var searchText = (p.title + ' ' + (p.desc || '')).toLowerCase().replace(/"/g, '&quot;');
   return (
@@ -940,40 +950,6 @@ function clearSearch(){
   applySearch('');
   input.focus();
 }
-
-/* =====================================================================
-   Zwei-Klick-Bilder (DSGVO): Amazon-Produktbilder werden erst geladen,
-   wenn der Nutzer den Platzhalter anklickt. Vorher entsteht KEINE
-   Verbindung zu Amazon-Servern, es wird keine IP übertragen.
-   ===================================================================== */
-function loadConsentImg(ph){
-  var url = ph.getAttribute('data-img');
-  if(!url) return;
-  var img = document.createElement('img');
-  img.className = 'pimg';
-  img.alt = '';
-  img.loading = 'lazy';
-  img.src = url;
-  ph.parentNode.replaceChild(img, ph);
-}
-/* Zentraler Button im Affiliate-Hinweis: alle Platzhalter auf einmal laden. */
-function loadAllConsentImgs(btn){
-  var list = document.querySelectorAll('.pimg.consent');
-  for(var i=0; i<list.length; i++){ loadConsentImg(list[i]); }
-  if(btn){
-    btn.disabled = true;
-    btn.textContent = '✓ Produktbilder geladen';
-  }
-}
-document.addEventListener('click', function(e){
-  var ph = e.target.closest ? e.target.closest('.pimg.consent') : null;
-  if(ph) loadConsentImg(ph);
-});
-document.addEventListener('keydown', function(e){
-  if(e.key!=='Enter' && e.key!==' ') return;
-  var ph = e.target.closest ? e.target.closest('.pimg.consent') : null;
-  if(ph){ e.preventDefault(); loadConsentImg(ph); }
-});
 </script>
 
 </body>
