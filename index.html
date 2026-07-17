@@ -2,22 +2,12 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="fonts.css">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Übio">
 <meta name="theme-color" content="#0369a1">
-<title>Übio – Kostenlose Grundschulübungen zum Ausdrucken</title>
-<meta name="description" content="Kostenlose Arbeitsblätter für die Grundschule (Klasse 1-6): Mathe, Deutsch, Englisch, Sachkunde. Individuell erstellbar, sofort als PDF ausdruckbar.">
-<link rel="canonical" href="https://uebio.de/">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="de_DE">
-<meta property="og:site_name" content="Übio">
-<meta property="og:url" content="https://uebio.de/">
-<meta property="og:title" content="Übio – Kostenlose Grundschulübungen zum Ausdrucken">
-<meta property="og:description" content="Kostenlose Arbeitsblätter für die Grundschule (Klasse 1-6): Mathe, Deutsch, Englisch, Sachkunde. Individuell erstellbar, sofort als PDF ausdruckbar.">
-<meta property="og:image" content="https://uebio.de/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
+<title>Übio · Grundschulübungen</title>
+<link rel="stylesheet" href="fonts.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -76,26 +66,6 @@ body{font-family:Nunito,system-ui,sans-serif;background:#f1f5f9;color:#1e293b;-w
 .coffee-pop .custom input{flex:1;min-width:0;border:none;outline:none;font-family:inherit;font-size:.95rem;font-weight:800;color:#1e293b;background:transparent}
 .coffee-pop .go{display:block;width:100%;padding:11px 0;border:none;border-radius:12px;background:#0ea5e9;color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;font-family:inherit;text-align:center;text-decoration:none}
 .coffee-pop .go:active{filter:brightness(.93)}
-
-/* Schulmaterial-Banner (nur Web-Version, Amazon-Affiliate) */
-.shop-banner{margin:6px 22px 4px}
-.shop-link{
-  display:flex;align-items:center;gap:13px;text-decoration:none;color:#fff;
-  padding:14px 16px;border-radius:16px;
-  background:linear-gradient(135deg,#ea580c,#f59e0b);
-  box-shadow:0 5px 16px rgba(0,0,0,.13);
-  transition:transform .12s ease;
-}
-.shop-link:active{transform:scale(.98)}
-.shop-ic{font-size:1.6rem;flex:none}
-.shop-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
-.shop-nm{font-size:.98rem;font-weight:800}
-.shop-sub{font-size:.76rem;opacity:.92;display:flex;align-items:center;gap:6px}
-.ad-tag{
-  display:inline-block;background:rgba(255,255,255,.28);font-size:.62rem;
-  font-weight:800;letter-spacing:.3px;text-transform:uppercase;
-  padding:2px 7px;border-radius:5px;
-}
 </style>
 </head>
 <body data-root="true">
@@ -109,19 +79,6 @@ body{font-family:Nunito,system-ui,sans-serif;background:#f1f5f9;color:#1e293b;-w
   <div class="lead">Wähle ein Fach</div>
   <div class="grid" id="grid"></div>
 
-  <!-- AFFILIATE:START (nur Web-Version – im Node-Build-Script für den
-       Android-Build zwischen diesen Markern entfernen) -->
-  <div class="shop-banner">
-    <a class="shop-link" href="schulmaterialien.html">
-      <span class="shop-ic">🛍️</span>
-      <span class="shop-txt">
-        <span class="shop-nm">Schulmaterial-Empfehlungen</span>
-        <span class="shop-sub">Hefte, Stifte &amp; mehr <span class="ad-tag">Werbung</span></span>
-      </span>
-    </a>
-  </div>
-  <!-- AFFILIATE:END -->
-
   <div class="foot">
     <div class="coffee-wrap">
       <button class="coffee" type="button" onclick="toggleCoffee(event)">☕ Buy me a coffee</button>
@@ -129,10 +86,10 @@ body{font-family:Nunito,system-ui,sans-serif;background:#f1f5f9;color:#1e293b;-w
         <div class="ct">☕ Kaffeekasse</div>
         <div class="cs">Diese Apps sind kostenlos. Über eine kleine Unterstützung freue ich mich sehr!</div>
         <div class="amts">
-          <button class="amt" type="button" data-eur="1" onclick="pickAmt(this)">1 €</button>
-          <button class="amt sel" type="button" data-eur="2" onclick="pickAmt(this)">2 €</button>
-          <button class="amt" type="button" data-eur="5" onclick="pickAmt(this)">5 €</button>
-          <button class="amt" type="button" data-eur="10" onclick="pickAmt(this)">10 €</button>
+          <button class="amt" type="button" data-eur="1" onclick="pickAmt(this)">1 €</button>
+          <button class="amt sel" type="button" data-eur="2" onclick="pickAmt(this)">2 €</button>
+          <button class="amt" type="button" data-eur="5" onclick="pickAmt(this)">5 €</button>
+          <button class="amt" type="button" data-eur="10" onclick="pickAmt(this)">10 €</button>
         </div>
         <div class="custom">
           <span>€</span>
@@ -142,8 +99,8 @@ body{font-family:Nunito,system-ui,sans-serif;background:#f1f5f9;color:#1e293b;-w
       </div>
     </div>
     <div class="foot-credits">Übio &middot; © 2026 Sascha Rothenburg<br>
-    Grundschrift von Christian Urff<br>
-    <a href="hilfe.html">Hilfe & Tipps</a> &middot; <a href="impressum.html">Impressum</a> &middot; <a href="datenschutz.html">Datenschutz</a></div>
+    Grundschrift von Christian Urff &middot; Bienchen SAS von Peter Wiegel<br>
+    <a href="hilfe.html">Hilfe &amp; Tipps</a> &middot; <a href="impressum.html">Impressum</a> &middot; <a href="https://uebio.de/datenschutz-app.html">Datenschutz</a></div>
   </div>
 </div>
 
@@ -151,7 +108,7 @@ body{font-family:Nunito,system-ui,sans-serif;background:#f1f5f9;color:#1e293b;-w
 /* Fächer – zentral gepflegt. count = Anzahl fertiger Apps (für die Kachel). */
 var SUBJECTS=[
   {id:'mathe',    name:'Mathematik', icon:'\u2795', page:'mathe.html',     count:16},
-  {id:'deutsch',  name:'Deutsch',    icon:'\u270F\uFE0F', page:'deutsch.html', count:9},
+  {id:'deutsch',  name:'Deutsch',    icon:'\u270F\uFE0F', page:'deutsch.html', count:10},
   {id:'englisch', name:'Englisch',   icon:'🇬🇧', page:'englisch.html', count:1},
   {id:'sachkunde',name:'Sachkunde',  icon:'\uD83C\uDF0D', page:'sachkunde.html', count:2},
   {id:'interaktiv',name:'Interaktiv',icon:'\u26A1', page:'interaktiv.html', count:5, sub:'Spielerisch am Bildschirm üben'}
