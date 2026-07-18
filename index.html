@@ -45,6 +45,14 @@ body{font-family:Nunito,system-ui,sans-serif;background:#f1f5f9;color:#1e293b;-w
 .tile.interaktiv .ct{margin-top:0;opacity:.92}
 .tile.interaktiv .bubble{width:96px;height:96px;right:-26px;top:-26px}
 
+/* Play Store Hinweis */
+.playcard{margin:4px 18px 4px;padding:16px 16px;border-radius:20px;background:linear-gradient(140deg,#0f172a,#1e293b);display:flex;align-items:center;gap:14px;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.13)}
+.playcard:active{transform:scale(.98)}
+.playcard .pc-txt{flex:1;color:#fff}
+.playcard .pc-txt .pt1{font-size:.98rem;font-weight:900;letter-spacing:-.2px}
+.playcard .pc-txt .pt2{font-size:.74rem;opacity:.75;margin-top:2px}
+.playcard img{height:40px;width:auto;display:block;flex-shrink:0}
+
 /* Fuß */
 .foot{padding:18px 22px calc(20px + env(safe-area-inset-bottom,0px));text-align:center;color:#94a3b8;font-size:.72rem;line-height:1.6}
 .foot a{color:#64748b;text-decoration:none;font-weight:700}
@@ -79,6 +87,14 @@ body{font-family:Nunito,system-ui,sans-serif;background:#f1f5f9;color:#1e293b;-w
   <div class="lead">Wähle ein Fach</div>
   <div class="grid" id="grid"></div>
 
+  <a class="playcard" href="https://play.google.com/store/apps/details?id=de.rothenburg.grundschule" target="_blank" rel="noopener">
+    <div class="pc-txt">
+      <div class="pt1">Jetzt auch als App</div>
+      <div class="pt2">Übio für Android bei Google Play</div>
+    </div>
+    <img src="https://play.google.com/intl/de/badges/static/images/badges/de_badge_web_generic.png" alt="Jetzt bei Google Play" loading="lazy">
+  </a>
+
   <div class="foot">
     <div class="coffee-wrap">
       <button class="coffee" type="button" onclick="toggleCoffee(event)">☕ Buy me a coffee</button>
@@ -86,10 +102,10 @@ body{font-family:Nunito,system-ui,sans-serif;background:#f1f5f9;color:#1e293b;-w
         <div class="ct">☕ Kaffeekasse</div>
         <div class="cs">Diese Apps sind kostenlos. Über eine kleine Unterstützung freue ich mich sehr!</div>
         <div class="amts">
-          <button class="amt" type="button" data-eur="1" onclick="pickAmt(this)">1 €</button>
-          <button class="amt sel" type="button" data-eur="2" onclick="pickAmt(this)">2 €</button>
-          <button class="amt" type="button" data-eur="5" onclick="pickAmt(this)">5 €</button>
-          <button class="amt" type="button" data-eur="10" onclick="pickAmt(this)">10 €</button>
+          <button class="amt" type="button" data-eur="1" onclick="pickAmt(this)">1 €</button>
+          <button class="amt sel" type="button" data-eur="2" onclick="pickAmt(this)">2 €</button>
+          <button class="amt" type="button" data-eur="5" onclick="pickAmt(this)">5 €</button>
+          <button class="amt" type="button" data-eur="10" onclick="pickAmt(this)">10 €</button>
         </div>
         <div class="custom">
           <span>€</span>
