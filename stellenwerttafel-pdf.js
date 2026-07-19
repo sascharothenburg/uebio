@@ -41,7 +41,6 @@
   // Spalten je Stellenzahl + Aufgabenzahl je Seite (aus Notizen)
   const GEO = {
     colsByPlaces: {2:4, 3:4, 4:3, 5:2, 6:2},
-    autoCount:    {2:20, 3:20, 4:15, 5:10, 6:10},
     cellW: 34,        // Kästchenbreite
     cellH: 28,        // Kästchenhöhe
     labelH: 12,
@@ -127,11 +126,22 @@
     }
   }
 
-  // Kapazität (Aufgaben pro Seite) aus autoCount / Layout
+  // Kapazität (Aufgaben pro Seite) aus der ECHTEN Grid-Geometrie berechnet
+  // (muss exakt mit der Seiten-Aufteilung in buildWorksheetPDF übereinstimmen,
+  // sonst wird das Blatt nie vollständig gefüllt)
   function colsFor(places){ return GEO.colsByPlaces[places] || 4; }
+  const TOP_WITH_HEADER = PT.marginY + 30 + 12;
+  const TOP_NO_HEADER = PT.marginY + 4;
+  function rowsPerPageAt(topY) {
+    const bottom = PT.pageH - PT.marginY;
+    return Math.max(1, Math.floor((bottom - topY) / taskCellHeight()));
+  }
   function capacityForPages(numPages, places) {
-    const auto = GEO.autoCount[places] || 20;
-    return numPages <= 1 ? auto : Math.round(auto * 2.2);
+    const cols = colsFor(places);
+    const rowsP1 = rowsPerPageAt(TOP_WITH_HEADER);
+    if (numPages <= 1) return rowsP1 * cols;
+    const rowsP2 = rowsPerPageAt(TOP_NO_HEADER);
+    return (rowsP1 + rowsP2) * cols;
   }
 
   async function buildWorksheetPDF(spec, opts, _unused) {
@@ -177,11 +187,10 @@
       : (tasks[0].type==='num2tab' ? 'Trage jede Zahl richtig in die Stellenwerttafel ein.'
                                    : 'Lies die Zahl aus der Stellenwerttafel ab und schreibe sie auf.');
 
-    // Kapazität pro Seite (Zeilen)
-    function rowsPerPage(topY){ return Math.max(1, Math.floor((bottom - topY) / cellH)); }
-    const topWithHeader = PT.marginY + 30 + 12;
-    const topNoHeader = PT.marginY + 4;
-    const capP1 = rowsPerPage(topWithHeader) * cols;
+    // Kapazität pro Seite (Zeilen) — dieselben Konstanten wie capacityForPages()
+    const topWithHeader = TOP_WITH_HEADER;
+    const topNoHeader = TOP_NO_HEADER;
+    const capP1 = rowsPerPageAt(topWithHeader) * cols;
 
     const pageSlices = [];
     if (numPages <= 1) pageSlices.push(tasks);

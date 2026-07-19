@@ -183,7 +183,7 @@ setupSingle('placeOpts');setupMulti('typeOpts');
    p1 = Seite 1 (mit Header), p2 = GESAMTzahl bei 2 Seiten. Lookup nach Stellenzahl.
    p2-Werte sind Startwerte und werden am iPad nachjustiert. */
 var numPages=1;
-var PER_PAGE={2:{p1:20,p2:44},3:{p1:20,p2:44},4:{p1:15,p2:33},5:{p1:10,p2:22},6:{p1:10,p2:22}};
+var PER_PAGE={2:{p1:36,p2:76},3:{p1:36,p2:76},4:{p1:27,p2:57},5:{p1:18,p2:38},6:{p1:18,p2:38}};
 function pageCfg(){ var p=getSingle('placeOpts')||3; return PER_PAGE[p]||PER_PAGE[3]; }
 function totalCount(){ var c=pageCfg(); return numPages<=1?c.p1:(c.p2!=null?c.p2:c.p1*2); }
 function pageSplits(){ var c=pageCfg(); if(numPages<=1)return [c.p1]; var t=(c.p2!=null?c.p2:c.p1*2); return [c.p1,t-c.p1]; }
