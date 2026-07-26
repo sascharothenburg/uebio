@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="fonts.css">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Artikel zuordnen">
+<meta name="theme-color" content="#dc2626">
+<title>Artikel zuordnen üben – der, die, das | Übio</title>
+<meta name="description" content="der, die oder das? Artikel den Nomen richtig zuordnen üben. Kostenlose Grundschul-Arbeitsblätter für Klasse 1-4.">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#fef2f2;color:#1e1b4b;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+input{-webkit-user-select:text;user-select:text}
+.app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1)}
+.hdr{background:linear-gradient(135deg,#b91c1c,#dc2626);color:#fff;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));flex-shrink:0}
+.hdr h1{font-size:1.1rem;font-weight:900}
+.hdr p{font-size:.68rem;opacity:.85;margin-top:1px}
+.hdr-btns{display:flex;gap:8px;margin-top:6px;align-items:center}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(255,255,255,.25);border-radius:20px;color:#fff;font-family:Nunito,sans-serif;font-size:.72rem;font-weight:800;text-decoration:none;cursor:pointer;border:none}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e2e8f0;flex-shrink:0}
+.tab{flex:1;padding:10px 4px 8px;text-align:center;font-size:.65rem;font-weight:800;color:#6b7280;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.active{color:#dc2626;border-bottom-color:#dc2626}
+.ti{display:block;font-size:1.1rem;margin-bottom:1px}
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(80px + env(safe-area-inset-bottom,0px));display:none}
+.screen.active{display:block}
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:14px;margin-bottom:10px;border:1px solid #e2e8f0}
+.card h2{font-size:.72rem;font-weight:800;color:#dc2626;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer}
+.bp{background:linear-gradient(135deg,#b91c1c,#dc2626);color:#fff}
+.tgl{position:relative;width:44px;height:24px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl-s{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.2s}
+.tgl-s::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.tgl input:checked+.tgl-s{background:#dc2626}
+.tgl input:checked+.tgl-s::before{transform:translateX(20px)}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0}
+.sr:last-child{border-bottom:none}
+.sl{font-size:.88rem;font-weight:600}
+.ss{font-size:.73rem;color:#6b7280;margin-top:1px}
+.ni{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:9px;font-family:Nunito,sans-serif;font-size:.9rem;font-weight:600;color:#1e1b4b;background:#fef2f2;outline:none}
+.ni:focus{border-color:#dc2626}
+.sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;z-index:100}
+@media print{.app,.sbar{display:none!important}body{background:#fff}}
+.seg{display:flex;gap:6px}
+.seg-b{flex:1;padding:9px 4px;border-radius:9px;border:2px solid #e2e8f0;background:#f8fafc;font-family:Nunito,sans-serif;font-size:.78rem;font-weight:800;color:#6b7280;cursor:pointer}
+.seg-b.active{background:#dc2626;color:#fff;border-color:#dc2626}
+.seg+.seg{margin-top:6px}
+</style>
+<script src="pdf-lib.min.js"></script>
+<script src="fontkit.umd.min.js"></script>
+<script src="pdf.min.js"></script>
+<script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
+<script src="artikel-pdf.js"></script>
+<script src="print-bridge.js"></script>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <h1>&#x1F9E9; Artikel zuordnen</h1>
+  <div class="hdr-btns">
+    <a href="deutsch.html#acc-grammatik" class="hdr-btn">&#x2190; Zur&uuml;ck</a>
+    <a href="index.html" class="hdr-btn">&#x1F3E0; Hauptmen&uuml;</a>
+  </div>
+</div>
+<div class="tabs">
+  <button class="tab active" id="t-gen"><span class="ti">&#x26A1;</span>Generator</button>
+  <button class="tab" id="t-set"><span class="ti">&#x2699;</span>Einst.</button>
+  <button class="tab" id="t-pre"><span class="ti">&#x1F441;</span>Vorschau</button>
+</div>
+<div class="screens">
+<div class="screen active" id="s-gen">
+  <div class="card">
+    <h2>Schwierigkeit</h2>
+    <div class="seg" id="diffSeg">
+      <button class="seg-b active" data-v="12">Klasse 1&ndash;2</button>
+      <button class="seg-b" data-v="34">Klasse 3&ndash;4</button>
+    </div>
+    <div class="ss" id="diffHint" style="margin-top:8px">Einfache, bekannte Nomen (Hund, Katze, Haus).</div>
+  </div>
+  <div class="card">
+    <h2>Umfang</h2>
+    <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Seitenzahl</label>
+    <div class="seg" id="pageSeg">
+      <button class="seg-b active" data-pg="1">1 Seite</button>
+      <button class="seg-b" data-pg="2">2 Seiten</button>
+    </div>
+    <p style="font-size:.7rem;color:#6b7280;margin-top:6px">Jede Seite mischt automatisch alle vier &Uuml;bungsformen: L&uuml;cken, Sortieren, Ankreuzen und Fehler finden.</p>
+  </div>
+</div>
+<div class="screen" id="s-set">
+  <div class="card">
+    <h2>Kind</h2>
+    <input class="ni" type="text" id="nameF" placeholder="Name des Kindes">
+  </div>
+  <div class="card">
+    <h2>Layout</h2>
+    <div class="sr"><div class="sl">L&ouml;sungsblatt anh&auml;ngen</div><label class="tgl"><input type="checkbox" id="showSolution"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div><div class="sl">Merksatz drucken</div><div class="ss">Kurze Regel oben auf dem Blatt</div></div><label class="tgl"><input type="checkbox" id="showRule"><span class="tgl-s"></span></label></div>
+  </div>
+  <div class="card">
+    <h2>&#x1F4DD; Schreiblinien</h2>
+    <div class="ss" style="margin-bottom:8px">Lineatur zum Abschreiben bei den L&uuml;cken-Aufgaben</div>
+    <div class="seg" id="lineSeg">
+      <button class="seg-b" data-v="1">Eine Linie</button>
+      <button class="seg-b active" data-v="2">Zwei Linien</button>
+      <button class="seg-b" data-v="3">Drei Linien</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>&#x1F4D0; Kopfzeile</h2>
+    <div class="sr"><div class="sl">Name-Feld</div><label class="tgl"><input type="checkbox" id="showName"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Datum-Feld</div><label class="tgl"><input type="checkbox" id="showDate"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">Klasse-Feld</div><label class="tgl"><input type="checkbox" id="showKl"><span class="tgl-s"></span></label></div>
+  </div>
+</div>
+<div class="screen" id="s-pre"><div id="previewContent"></div></div>
+</div>
+</div>
+<div class="sbar" id="sbar">
+  <button class="btn bp" id="btnGoPre">&#x1F441; Vorschau &amp; Drucken</button>
+</div>
+<script>
+
+/* ===== Wortbasis Artikel (der/die/das) =====
+   NOMEN[artikel] = [ [wort, klasse], ... ]
+   klasse: 1 = Klasse 1-2 (einfach, konkret), 2 = zus&auml;tzlich ab Klasse 3-4 */
+var NOMEN = {
+  der: [
+    ["Hund",1],["Ball",1],["Tisch",1],["Stuhl",1],["Baum",1],["Vogel",1],["Apfel",1],["Mond",1],
+    ["Schrank",1],["L\u00f6ffel",1],["Teller",1],["Garten",1],["Schuh",1],["Finger",1],["Stern",1],
+    ["Mantel",2],["Schmetterling",2],["Roboter",2],["Kompass",2],["Kontinent",2],["Vulkan",2],
+    ["Planet",2],["Ozean",2],["Elefant",2],["Junge",2]
+  ],
+  die: [
+    ["Katze",1],["Blume",1],["Sonne",1],["Schule",1],["Tasche",1],["Lampe",1],["Wolke",1],
+    ["Stra\u00dfe",1],["Uhr",1],["Br\u00fccke",1],["Nase",1],["Kirche",1],["Puppe",1],["Banane",1],
+    ["Freiheit",2],["Bibliothek",2],["Zeitung",2],["Fabrik",2],["Meinung",2],["Wissenschaft",2],
+    ["Erfahrung",2],["Gesellschaft",2],["Katastrophe",2],["Firma",2]
+  ],
+  das: [
+    ["Haus",1],["Auto",1],["Buch",1],["Fenster",1],["Bett",1],["Kind",1],["Pferd",1],["Schaf",1],
+    ["Meer",1],["Brot",1],["Ei",1],["Blatt",1],["Boot",1],["Bild",1],
+    ["M\u00e4dchen",2],["Fahrrad",2],["Krokodil",2],["Instrument",2],["Gem\u00fcse",2],["Restaurant",2],
+    ["Museum",2],["Klavier",2],["Theater",2],["Talent",2]
+  ]
+};
+var GENDERS=['der','die','das'];
+
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+var diff='12';
+var numPages=1;
+var taskSets=[];
+var tasks=[];
+
+/* Feste Mengen pro Typ, so kalibriert dass eine gemischte Seite gut ausgefüllt ist */
+var COUNTS={ gap:{n:6}, sort:{nPer:3}, check:{n:6}, fix:{n:4} };
+
+function diffVal(){var b=document.querySelector('#diffSeg .seg-b.active');return b?b.dataset.v:'12';}
+function lineStyle(){var b=document.querySelector('#lineSeg .seg-b.active');return b?b.dataset.v:'2';}
+
+function allWordsFlat(maxK){
+  var out=[];
+  GENDERS.forEach(function(g){
+    NOMEN[g].forEach(function(it){ if(it[1]<=maxK) out.push({word:it[0], art:g}); });
+  });
+  return out;
+}
+function uniqWords(arr){
+  var seen={},uniq=[];
+  arr.forEach(function(it){ if(!seen[it.word]){seen[it.word]=1;uniq.push(it);} });
+  return uniq;
+}
+
+/* Baut EIN gemischtes Set (= eine Seite) mit allen vier Aufgabentypen.
+   used[] verhindert, dass dasselbe Wort auf derselben Seite mehrfach auftaucht. */
+function buildMixedSet(){
+  var maxK=diff==='34'?2:1;
+  var used={};
+
+  var sortWords=[];
+  GENDERS.forEach(function(g,ci){
+    var arr=shuffle(NOMEN[g].filter(function(it){return it[1]<=maxK;}));
+    var chosen=[];
+    for(var i=0;i<arr.length && chosen.length<COUNTS.sort.nPer;i++){
+      if(!used[arr[i][0]]){ used[arr[i][0]]=1; chosen.push(arr[i][0]); }
+    }
+    chosen.forEach(function(w){ sortWords.push({w:w, col:ci}); });
+  });
+  var sortTask={type:'sort', cols:GENDERS.slice(), words:shuffle(sortWords)};
+
+  var pool=uniqWords(shuffle(allWordsFlat(maxK)));
+  function takeUnique(n){
+    var out=[];
+    for(var i=0;i<pool.length && out.length<n;i++){
+      var it=pool[i];
+      if(!used[it.word]){ used[it.word]=1; out.push(it); }
+    }
+    return out;
+  }
+
+  var gapItems=takeUnique(COUNTS.gap.n).map(function(it){ return {type:'gap', word:it.word, art:it.art}; });
+  var checkItems=takeUnique(COUNTS.check.n).map(function(it){ return {type:'check', word:it.word, art:it.art}; });
+
+  var fixChosen=takeUnique(COUNTS.fix.n);
+  var wrongRatio=0.4+Math.random()*0.3;
+  var nWrong=Math.max(1, Math.min(fixChosen.length-1, Math.round(fixChosen.length*wrongRatio)));
+  var idxs=shuffle(fixChosen.map(function(_,i){return i;}));
+  var wrongSet={}; idxs.slice(0,nWrong).forEach(function(i){wrongSet[i]=1;});
+  var fixItems=fixChosen.map(function(it,i){
+    var wrong=!!wrongSet[i];
+    var disp = wrong ? rnd(GENDERS.filter(function(g){return g!==it.art;})) : it.art;
+    return {type:'fix', word:it.word, correctArt:it.art, dispArt:disp, wrong:wrong};
+  });
+
+  return [].concat([sortTask], gapItems, checkItems, fixItems);
+}
+
+function generate(){
+  diff=diffVal();
+  taskSets=[];
+  var nSets = numPages>=2 ? 2 : 1;
+  for(var p=0;p<nSets;p++){ taskSets.push(buildMixedSet()); }
+  tasks=taskSets[0];
+}
+function hasContent(){ return tasks.length>0; }
+
+function pdfSpec(){
+  return {
+    taskSets: taskSets,
+    diff: diff,
+    showRule: document.getElementById('showRule').checked,
+    showSol: document.getElementById('showSolution').checked,
+    lineStyle: lineStyle()
+  };
+}
+function pdfHeaderOpts(){
+  return {
+    showName:document.getElementById('showName').checked,
+    showDate:document.getElementById('showDate').checked,
+    showKl:document.getElementById('showKl').checked,
+    name:document.getElementById('nameF').value.trim()
+  };
+}
+async function makePDFBytes(){
+  if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
+  return await ArtikelPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
+}
+
+/* ===== Tabs + Sbar ===== */
+var sbar=document.getElementById('sbar');
+function showTab(name){
+  var map={gen:'s-gen',set:'s-set',pre:'s-pre'};
+  var tmap={gen:'t-gen',set:'t-set',pre:'t-pre'};
+  document.querySelectorAll('.screen').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active');});
+  document.getElementById(map[name]).classList.add('active');
+  document.getElementById(tmap[name]).classList.add('active');
+  if(name==='pre'){
+    generate();
+    sbar.innerHTML='';
+    var b1=document.createElement('button'),b2=document.createElement('button');
+    b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
+    b2.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#b91c1c,#dc2626);color:#fff;border:none';
+    b1.textContent='\u2190 Zur\u00fcck';b2.textContent='Drucken / PDF';
+    b1.onclick=function(){showTab('gen');};b2.onclick=doPrint;
+    sbar.appendChild(b1);sbar.appendChild(b2);
+    setTimeout(buildPreview,50);
+  }else{
+    sbar.innerHTML='';
+    var btn=document.createElement('button');btn.className='btn bp';btn.textContent='\ud83d\udc41 Vorschau & Drucken';
+    btn.onclick=function(){showTab('pre');};sbar.appendChild(btn);
+  }
+}
+function buildPreview(){
+  var wrap=document.getElementById('previewContent');
+  wrap.innerHTML='<p style="color:#6b7280;padding:16px;font-size:.8rem">Vorschau wird erstellt &hellip;</p>';
+  (async function(){
+    try{
+      if(!hasContent()){
+        wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Bitte zuerst Aufgaben generieren.</p>';
+        return;
+      }
+      var bytes=await makePDFBytes();
+      if(window.pdfjsLib){
+        var pdf=await window.pdfjsLib.getDocument({data:bytes}).promise;
+        wrap.innerHTML='';
+        var sw=Math.min(window.innerWidth,480)-28;
+        for(var p=1;p<=pdf.numPages;p++){
+          var page=await pdf.getPage(p);
+          var vp1=page.getViewport({scale:1});
+          var scale=sw/vp1.width;
+          var vp=page.getViewport({scale:scale*2});
+          var canvas=document.createElement('canvas');
+          canvas.style.cssText='display:block;width:'+sw+'px;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:10px;background:#fff';
+          canvas.width=vp.width;canvas.height=vp.height;
+          await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+          wrap.appendChild(canvas);
+        }
+      }else{
+        var blob=new Blob([bytes],{type:'application/pdf'});
+        wrap.innerHTML='<embed src="'+URL.createObjectURL(blob)+'" type="application/pdf" style="width:100%;height:70vh;border:1px solid #e2e8f0;border-radius:6px">';
+      }
+    }catch(e){
+      wrap.innerHTML='<p style="color:red;padding:20px">'+(e.message||String(e))+'</p>';
+      console.error(e);
+    }
+  })();
+}
+async function doPrint(){
+  try{
+    if(!hasContent()){alert('Bitte zuerst Aufgaben generieren.');return;}
+    var bytes=await makePDFBytes();
+    await PrintBridge.printPDF(bytes,'Artikel-zuordnen.pdf');
+  }catch(e){
+    alert('Druck fehlgeschlagen: '+(e.message||e));
+    console.error(e);
+  }
+}
+
+/* ===== Events ===== */
+document.getElementById('t-gen').addEventListener('click',function(){showTab('gen');});
+document.getElementById('t-set').addEventListener('click',function(){showTab('set');});
+document.getElementById('t-pre').addEventListener('click',function(){showTab('pre');});
+
+document.querySelectorAll('#diffSeg .seg-b').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#diffSeg .seg-b').forEach(function(x){x.classList.remove('active');});
+    b.classList.add('active');
+    var v=b.dataset.v;
+    document.getElementById('diffHint').textContent = v==='34'
+      ? 'Auch schwierigere und l\u00e4ngere Nomen (Freiheit, Fahrrad, M\u00e4dchen).'
+      : 'Einfache, bekannte Nomen (Hund, Katze, Haus).';
+  });
+});
+document.querySelectorAll('#lineSeg .seg-b').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#lineSeg .seg-b').forEach(function(x){x.classList.remove('active');});
+    b.classList.add('active');
+  });
+});
+function initPageSeg(){
+  var seg=document.getElementById('pageSeg'); if(!seg)return;
+  seg.querySelectorAll('.seg-b').forEach(function(b){
+    b.addEventListener('click',function(){
+      numPages=parseInt(b.getAttribute('data-pg'))||1;
+      seg.querySelectorAll('.seg-b').forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+    });
+  });
+}
+initPageSeg();
+showTab('gen');
+
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('selectstart',function(e){if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;e.preventDefault();});
+
+/* ===== PWA ===== */
+var manifest={name:'Artikel zuordnen Generator',short_name:'Artikel',start_url:'.',display:'standalone',background_color:'#fef2f2',theme_color:'#dc2626',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23dc2626'/%3E%3Ctext x='256' y='360' text-anchor='middle' font-size='300' font-family='sans-serif' fill='white'%3EA%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
+
+</script>
+<script src="ads.js"></script>
+</body>
+</html>
