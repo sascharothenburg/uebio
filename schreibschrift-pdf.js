@@ -35,7 +35,15 @@
   const LIN = {
     band: 5 * MM,                 // Mittelband (x-Höhen-Zone), wie Grundschrift-App
     XHEIGHT_RATIO: 0.2833,
-    get vfont() { return this.band / this.XHEIGHT_RATIO; },
+    // Bienchen SAS hat eine viel kleinere x-Höhen-Ratio als die Grundschrift (0.2833 vs. 0.428),
+    // d.h. bei exakter x-Höhen=Band-Anpassung wird die Nominal-Schriftgröße ~51% größer als bei
+    // der Grundschrift und wirkt dadurch optisch viel dichter/näher an den Linien. FIT_SCALE
+    // gleicht das gezielt aus. Am Gerät testen und bei Bedarf nachjustieren.
+    FIT_SCALE: 0.9,
+    get vfont() { return (this.band / this.XHEIGHT_RATIO) * this.FIT_SCALE; },
+    // Hebt die Grundlinie der Schrift leicht von der gezeichneten Grundlinie ab,
+    // damit auch am unteren Rand sichtbarer Abstand entsteht (nicht nur oben).
+    LIFT: 0.6 * MM,
     get oberWord() { return this.band * 1.05; },  // Oberzone Wörter/Sätze (Versalien, Ober­längen) - Marge ueber realer Glyphenhoehe, nicht nur ueber der nominalen Ascent-Metrik
     get oberLetter() { return this.oberWord; }, // Oberzone Einzelbuchstaben - identisch zu Woertern/Saetzen (echte Glyphenhoehen sind fuer Italic-Versalien nicht groesser als fuer Regular-Versalien, siehe Kommentar oben)
     get unter() { return this.band * 1.05; },     // Unterzone (Unterlängen g,j,y,q - beide Varianten gleich)
@@ -299,7 +307,7 @@
       const avail = width - LIN.textInset * 2;
       const w0 = measureRuns(ctx, runs, fontReg, fontIta, size);
       if (w0 > avail) size = size * (avail / w0);
-      drawRuns(ctx, runs, xLeft + LIN.textInset, grundY, size, fontReg, fontIta, C.vtext, 0.40);
+      drawRuns(ctx, runs, xLeft + LIN.textInset, grundY - LIN.LIFT, size, fontReg, fontIta, C.vtext, 0.40);
     }
   }
 
@@ -352,7 +360,7 @@
       const grundY = drawRow4(ctx, xLeft, rowTop, width, LIN.oberWord, LIN.unter);
       if (showV && line) {
         const runs = composePhrase(line);
-        drawRuns(ctx, runs, xLeft + LIN.textInset, grundY, plan.size, fontReg, fontIta, C.vtext, 0.40);
+        drawRuns(ctx, runs, xLeft + LIN.textInset, grundY - LIN.LIFT, plan.size, fontReg, fontIta, C.vtext, 0.40);
       }
       rowTop += LIN.totalWord + LINE_GAP;
     });
@@ -383,7 +391,7 @@
     let x = xLeft + LIN.textInset;
     const rightLimit = xLeft + width - LIN.textInset;
     while (x + inkW <= rightLimit) {
-      drawRuns(ctx, runs, x, grundY, size, fontReg, fontIta, C.vtext, 0.40);
+      drawRuns(ctx, runs, x, grundY - LIN.LIFT, size, fontReg, fontIta, C.vtext, 0.40);
       x += step;
     }
   }
@@ -392,7 +400,7 @@
     const grundY = drawRow4(ctx, xLeft, yTop, width, LIN.oberLetter, LIN.unter);
     const size = LIN.vfont;
     const runs = composeStandaloneLetter(letter);
-    drawRuns(ctx, runs, xLeft + LIN.textInset, grundY, size, fontReg, fontIta, C.vtext, 0.40);
+    drawRuns(ctx, runs, xLeft + LIN.textInset, grundY - LIN.LIFT, size, fontReg, fontIta, C.vtext, 0.40);
   }
 
   // =================================================================
