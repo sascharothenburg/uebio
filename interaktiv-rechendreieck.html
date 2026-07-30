@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="fonts.css">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rechendreiecke">
+<meta name="theme-color" content="#0369a1">
+<title>Rechendreiecke interaktiv üben – Grundschule | Übio</title>
+<meta name="description" content="Rechendreiecke interaktiv üben direkt im Browser. Kostenlos, ohne Anmeldung, für die Grundschule.">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#eff6ff;color:#0c2a43;-webkit-user-select:none;user-select:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+.app{display:flex;flex-direction:column;height:100%;max-width:560px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1);overflow:hidden}
+.hdr{background:linear-gradient(135deg,#075985,#0ea5e9);color:#fff;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));flex-shrink:0}
+.hdr h1{font-size:1.1rem;font-weight:900}
+.hdr p{font-size:.68rem;opacity:.85;margin-top:1px}
+.hdr-btns{display:flex;gap:8px;margin-top:6px;align-items:center}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(255,255,255,.25);border-radius:20px;color:#fff;font-family:Nunito,sans-serif;font-size:.72rem;font-weight:800;text-decoration:none;cursor:pointer;border:none}
+.main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column;animation:fade .25s ease}
+.screen.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Startbildschirm */
+.intro{font-size:.92rem;color:#5b7185;margin-bottom:18px;line-height:1.5;font-weight:600}
+.sect-label{font-size:.72rem;font-weight:900;color:#0369a1;text-transform:uppercase;letter-spacing:.6px;margin:14px 2px 9px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.choice{background:#f0f8ff;border:2px solid #dbeafe;border-radius:16px;padding:16px 12px;cursor:pointer;text-align:center;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:7px}
+.choice:hover{border-color:#7dd3fc;transform:translateY(-2px)}
+.choice.sel{border-color:#0ea5e9;background:#e0f2fe;box-shadow:0 4px 14px rgba(14,165,233,.18)}
+.choice .ico{font-size:1.9rem;line-height:1}
+.choice .nm{font-weight:800;font-size:.92rem}
+.choice .ds{font-size:.7rem;color:#6b8299;font-weight:600;line-height:1.25}
+.tabs-toggle{display:flex;gap:8px;margin:0 2px 12px}
+.tabs-toggle button{flex:1;padding:10px;border:2px solid #dbeafe;border-radius:12px;background:#f0f8ff;font-family:Nunito,sans-serif;font-weight:800;font-size:.85rem;color:#5b7185;cursor:pointer;transition:.15s}
+.tabs-toggle button.act{background:#0369a1;border-color:#0369a1;color:#fff}
+.topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.topic-b{background:#f0f8ff;border:2px solid #dbeafe;border-radius:13px;padding:11px 6px;cursor:pointer;text-align:center;font-weight:800;font-size:.82rem;color:#0c2a43;transition:.15s}
+.topic-b:hover{border-color:#7dd3fc}
+.topic-b.sel{border-color:#0ea5e9;background:#e0f2fe;color:#075985}
+.topic-b .te{display:block;font-size:1.3rem;margin-bottom:3px}
+.topic-b .td{display:block;font-size:.66rem;color:#6b8299;font-weight:700;margin-top:2px}
+.start-btn{margin-top:16px;width:100%;padding:16px;border:none;border-radius:15px;background:linear-gradient(135deg,#075985,#0ea5e9);color:#fff;font-family:Nunito,sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;box-shadow:0 6px 18px rgba(14,165,233,.3)}
+.start-btn:disabled{background:#c3ddf0;box-shadow:none;cursor:not-allowed}
+
+/* Fortschrittsleiste */
+.progress-wrap{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.progress-bar{flex:1;height:10px;background:#dbeafe;border-radius:6px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#0ea5e9,#7dd3fc);border-radius:6px;transition:width .35s ease;width:0%}
+.progress-txt{font-size:.78rem;font-weight:800;color:#0369a1;white-space:nowrap}
+.score-pill{font-size:.78rem;font-weight:800;color:#16a34a;white-space:nowrap}
+
+/* Aufgaben-Karten */
+.q-card{flex:1;display:flex;flex-direction:column}
+.q-prompt{font-size:.82rem;font-weight:800;color:#6b8299;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;text-align:center}
+
+/* Rechendreieck auf dem Bildschirm */
+.tri-wrap{position:relative;width:280px;height:268px;margin:6px auto 2px;flex-shrink:0}
+.tri-lines{position:absolute;inset:0;pointer-events:none}
+.tri-node{position:absolute;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.35rem;border:2.5px solid #dbeafe;background:#f8fbff;color:#0c2a43;transition:.12s}
+.tri-node.inner{border-radius:50%}
+.tri-node.outer{border-radius:14px}
+.tri-node.given{background:#e0f2fe;border-color:#0ea5e9;color:#075985}
+.tri-node.tapable{cursor:pointer}
+.tri-node.ask{border-color:#f59e0b;background:#fffbeb;color:#b45309}
+.tri-node.active{border-color:#0ea5e9;background:#e0f2fe;transform:scale(1.05)}
+.tri-node.filled{border-color:#0ea5e9;background:#e0f2fe;color:#075985}
+.tri-node.ok{border-color:#86efac;background:#f0fdf4;color:#16a34a}
+.tri-node.no{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+.tri-node.wrongshake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.tri-in{width:100%;height:100%;border:none;background:transparent;text-align:center;font-family:Nunito,sans-serif;font-weight:900;font-size:1.35rem;color:inherit;outline:none;padding:0;-webkit-user-select:text;user-select:text;border-radius:inherit}
+.tri-hint{text-align:center;font-size:.74rem;color:#6b8299;font-weight:700;margin-top:2px}
+
+/* Antwortoptionen */
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.quiz-opt{background:#f0f8ff;border:2.5px solid #dbeafe;border-radius:16px;padding:16px 12px;cursor:pointer;text-align:center;font-weight:900;font-size:1.5rem;color:#0c2a43;transition:.12s}
+.quiz-opt:hover{border-color:#7dd3fc}
+.quiz-opt.ok{border-color:#86efac;background:#f0fdf4;color:#16a34a}
+.quiz-opt.no{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+.quiz-opt.disabled{cursor:default;pointer-events:none}
+
+/* Zahlen-Chips */
+.chip-pool{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:10px}
+.num-chip{min-width:56px;height:52px;padding:0 12px;border-radius:12px;border:2.5px solid #dbeafe;background:#fff;font-weight:900;font-size:1.3rem;color:#0c2a43;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.12s}
+.num-chip:hover{border-color:#7dd3fc}
+.num-chip.used{opacity:.35;pointer-events:none}
+
+/* Feedback + Buttons */
+.feedback{text-align:center;font-weight:900;font-size:1.05rem;min-height:26px;margin:10px 0 2px;opacity:0;transition:.2s}
+.feedback.show{opacity:1}
+.feedback.ok{color:#16a34a}
+.feedback.no{color:#dc2626}
+.q-actions{display:flex;gap:10px;margin-top:auto;padding-top:12px}
+.act-btn{flex:1;padding:15px;border:none;border-radius:14px;font-family:Nunito,sans-serif;font-size:1rem;font-weight:900;cursor:pointer}
+.act-primary{background:linear-gradient(135deg,#075985,#0ea5e9);color:#fff}
+.act-primary:disabled{background:#c3ddf0;cursor:not-allowed}
+.act-ghost{background:#e0f2fe;color:#0369a1;border:2px solid #dbeafe}
+
+/* Ergebnis */
+.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+.result .big{font-size:4.5rem;line-height:1}
+.result .rscore{font-size:2.2rem;font-weight:900;color:#0369a1}
+.result .rtxt{font-size:1.05rem;font-weight:700;color:#5b7185;max-width:300px;line-height:1.5}
+.result .rstars{font-size:2rem;letter-spacing:4px}
+.result-actions{display:flex;flex-direction:column;gap:10px;width:100%;margin-top:10px}
+</style>
+<script src="rechendreieck-core.js"></script>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <h1>&#x1F53A; Rechendreiecke</h1>
+  <p>Interaktives &Uuml;ben</p>
+  <div class="hdr-btns">
+    <a class="hdr-btn" id="btnBack" href="interaktiv.html#acc-mathe">&#x2190; Zur&uuml;ck</a>
+    <a class="hdr-btn" href="index.html">&#x1F3E0; Hauptmen&uuml;</a>
+  </div>
+</div>
+<div class="main">
+
+  <!-- START -->
+  <div class="screen active" id="scr-start">
+    <p class="intro">Im Rechendreieck ist jedes Rechteck die <b>Summe der beiden Kreise daneben</b>. W&auml;hle eine &Uuml;bung, einen Zahlenraum und die Schwierigkeit. &#x1F31F;</p>
+    <div class="sect-label">&Uuml;bungsart</div>
+    <div class="cards" id="modeCards">
+      <div class="choice" data-mode="quiz"><span class="ico">&#x2714;&#xFE0F;</span><span class="nm">Antwort w&auml;hlen</span><span class="ds">Richtige Zahl antippen</span></div>
+      <div class="choice" data-mode="type"><span class="ico">&#x270F;&#xFE0F;</span><span class="nm">Eintippen</span><span class="ds">Alle Felder selbst f&uuml;llen</span></div>
+      <div class="choice" data-mode="chips"><span class="ico">&#x1F9E9;</span><span class="nm">Zahlen legen</span><span class="ds">Zahlen richtig einsetzen</span></div>
+      <div class="choice" data-mode="error"><span class="ico">&#x1F50D;</span><span class="nm">Fehler finden</span><span class="ds">Falsche Zahl entdecken</span></div>
+    </div>
+    <div class="sect-label">Zahlenraum</div>
+    <div class="tabs-toggle" id="rangeTabs">
+      <button data-r="10">bis 10</button>
+      <button data-r="20" class="act">bis 20</button>
+      <button data-r="100">bis 100</button>
+    </div>
+    <div class="sect-label">Schwierigkeit</div>
+    <div class="topic-grid" id="levelGrid"></div>
+    <button class="start-btn" id="startBtn" disabled>Los geht's!</button>
+  </div>
+
+  <!-- ÜBUNG -->
+  <div class="screen" id="scr-quiz">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+      <div class="progress-txt" id="progTxt">1/8</div>
+      <div class="score-pill" id="scorePill">&#x2713; 0</div>
+    </div>
+    <div class="q-card" id="qCard"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="q-actions" id="qActions"></div>
+  </div>
+
+  <!-- ERGEBNIS -->
+  <div class="screen" id="scr-result">
+    <div class="result">
+      <div class="big" id="rBig">&#x1F389;</div>
+      <div class="rstars" id="rStars"></div>
+      <div class="rscore" id="rScore">8 / 8</div>
+      <div class="rtxt" id="rTxt"></div>
+      <div class="result-actions">
+        <button class="act-btn act-primary" id="againBtn">Nochmal &uuml;ben</button>
+        <button class="act-btn act-ghost" id="menuBtn">Zur&uuml;ck zum Men&uuml;</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+<script>
+
+/* ===== Geometrie des Bildschirm-Dreiecks =====
+   Gleiche Proportionen wie im PDF-Modul (Entwurfsraster 160 x 155),
+   mit dem Faktor SC auf Bildschirmgroesse gebracht. 280px passen auch
+   auf schmale Geraete (320px Breite minus 2x18px Innenabstand). */
+var SC=1.75;
+var DESIGN={
+  T: {x:80, y:26,  s:'inner'},
+  L: {x:30, y:132, s:'inner'},
+  R: {x:130,y:132, s:'inner'},
+  TL:{x:55, y:79,  s:'outer'},
+  TR:{x:105,y:79,  s:'outer'},
+  LR:{x:80, y:132, s:'outer'}
+};
+var DIM={r:19, rw:42, rh:27};
+var EDGES=[['T','L'],['T','R'],['L','R']];
+var FIELDS=['T','L','R','TL','TR','LR'];
+
+/* ===== Hilfsfunktionen ===== */
+function shuffle(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+/* Baut das Dreieck als absolut positionierte Felder ueber einem SVG mit den
+   Verbindungslinien. opts.content(key) liefert den Inhalt eines Feldes,
+   opts.cls(key) zusaetzliche Klassen, opts.onTap(key,el) den Klickhandler. */
+function buildTriangle(opts){
+  var w=160*SC, h=155*SC;
+  var wrap=document.createElement('div');
+  wrap.className='tri-wrap';
+  wrap.style.width=w+'px';
+  wrap.style.height=Math.round(DESIGN.L.y*SC+DIM.r*SC+4)+'px';
+
+  var svgNS='http://www.w3.org/2000/svg';
+  var svg=document.createElementNS(svgNS,'svg');
+  svg.setAttribute('class','tri-lines');
+  svg.setAttribute('viewBox','0 0 160 155');
+  svg.setAttribute('preserveAspectRatio','none');
+  svg.style.width=w+'px';
+  svg.style.height=h+'px';
+  EDGES.forEach(function(e){
+    var a=DESIGN[e[0]],b=DESIGN[e[1]];
+    var ln=document.createElementNS(svgNS,'line');
+    ln.setAttribute('x1',a.x);ln.setAttribute('y1',a.y);
+    ln.setAttribute('x2',b.x);ln.setAttribute('y2',b.y);
+    ln.setAttribute('stroke','#bae6fd');ln.setAttribute('stroke-width','2');
+    svg.appendChild(ln);
+  });
+  wrap.appendChild(svg);
+
+  FIELDS.forEach(function(key){
+    var n=DESIGN[key];
+    var isC=(n.s==='inner');
+    var fw=(isC?DIM.r*2:DIM.rw)*SC, fh=(isC?DIM.r*2:DIM.rh)*SC;
+    var el=document.createElement('div');
+    el.className='tri-node '+(isC?'inner':'outer')+' '+(opts.cls?opts.cls(key):'');
+    el.dataset.k=key;
+    el.style.left=(n.x*SC-fw/2)+'px';
+    el.style.top=(n.y*SC-fh/2)+'px';
+    el.style.width=fw+'px';
+    el.style.height=fh+'px';
+    var c=opts.content?opts.content(key):'';
+    if(c && c.nodeType) el.appendChild(c); else el.innerHTML=c||'';
+    if(opts.onTap){
+      el.addEventListener('click',function(){ opts.onTap(key,el); });
+    }
+    wrap.appendChild(el);
+  });
+  return wrap;
+}
+function triNode(key){ return document.querySelector('.tri-wrap .tri-node[data-k="'+key+'"]'); }
+
+/* ===== Zustand ===== */
+var state={mode:null,range:20,level:null,queue:[],idx:0,score:0,total:0,answered:false};
+var TOTAL_TASKS=8;
+
+var LEVELS=[
+  {k:'leicht',  emoji:'\ud83d\udfe2', label:'Leicht',  desc:'Kreise gegeben'},
+  {k:'mittel',  emoji:'\ud83d\udfe1', label:'Mittel',  desc:'gemischt'},
+  {k:'schwer',  emoji:'\ud83d\udd34', label:'Schwer',  desc:'nur Rechtecke'},
+  {k:'gemischt',emoji:'\ud83c\udfb2', label:'Gemischt',desc:'bunt durcheinander'}
+];
+
+/* ===== Startbildschirm ===== */
+function buildLevelGrid(){
+  var g=document.getElementById('levelGrid'); g.innerHTML='';
+  LEVELS.forEach(function(m){
+    var b=document.createElement('div'); b.className='topic-b'; b.dataset.level=m.k;
+    b.innerHTML='<span class="te">'+m.emoji+'</span>'+m.label+'<span class="td">'+m.desc+'</span>';
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#levelGrid .topic-b').forEach(function(x){x.classList.remove('sel');});
+      b.classList.add('sel'); state.level=m.k; checkStartReady();
+    });
+    g.appendChild(b);
+  });
+}
+document.querySelectorAll('#rangeTabs button').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('#rangeTabs button').forEach(function(x){x.classList.remove('act');});
+    btn.classList.add('act'); state.range=parseInt(btn.dataset.r,10);
+  });
+});
+document.querySelectorAll('#modeCards .choice').forEach(function(c){
+  c.addEventListener('click',function(){
+    document.querySelectorAll('#modeCards .choice').forEach(function(x){x.classList.remove('sel');});
+    c.classList.add('sel'); state.mode=c.dataset.mode; checkStartReady();
+  });
+});
+function checkStartReady(){
+  document.getElementById('startBtn').disabled=!(state.mode&&state.level);
+}
+
+/* ===== Navigation =====
+   back-button.js loest beim Hardware-Back schlicht history.back() aus.
+   Damit der Zurueck-Weg zuerst auf den Startbildschirm der App fuehrt und
+   nicht direkt in die App-Auswahl, legen wir beim Verlassen des Start-
+   bildschirms genau EINEN zusaetzlichen History-Eintrag an. popstate holt
+   uns dann zurueck auf 'scr-start'; ein weiteres Zurueck verlaesst die App. */
+var curScreen='scr-start';
+var inSub=false;
+function show(scr){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(scr).classList.add('active');
+  curScreen=scr;
+  var sub=(scr!=='scr-start');
+  if(sub){
+    if(!inSub){ try{ history.pushState({rdSub:1},''); }catch(e){} inSub=true; }
+  }else{
+    inSub=false;
+  }
+}
+/* Eine Ebene nach oben: aus der Uebung zum Startbildschirm, sonst raus. */
+function goUp(){
+  if(curScreen!=='scr-start'){
+    if(inSub){ history.back(); }   /* popstate zeigt scr-start */
+    else show('scr-start');
+    return true;
+  }
+  return false;
+}
+window.addEventListener('popstate',function(){
+  if(inSub){ inSub=false; show('scr-start'); }
+});
+document.getElementById('menuBtn').addEventListener('click',function(){ goUp(); });
+document.getElementById('btnBack').addEventListener('click',function(e){
+  if(goUp()) e.preventDefault();   /* sonst greift der href auf die App-Auswahl */
+});
+document.getElementById('startBtn').addEventListener('click',startQuiz);
+document.getElementById('againBtn').addEventListener('click',function(){ startQuiz(); });
+
+/* ===== Aufgaben-Warteschlange ===== */
+function makeQueue(){
+  var out=[],seen={},guard=0;
+  while(out.length<TOTAL_TASKS && guard<TOTAL_TASKS*60){
+    guard++;
+    var t=Rechendreieck.makeTask(state.range, state.level);
+    var k=Rechendreieck.taskKey(t);
+    if(seen[k])continue; seen[k]=1;
+    /* "Fehler finden" braucht kein given-Muster, dafuer ein verfaelschtes Feld */
+    if(state.mode==='error') t=addError(t);
+    /* "Antwort waehlen" fragt genau eines der offenen Felder ab */
+    if(state.mode==='quiz') t.ask=shuffle(FIELDS.filter(function(f){return t.given.indexOf(f)===-1;}))[0];
+    out.push(t);
+  }
+  while(out.length<TOTAL_TASKS){
+    var x=Rechendreieck.makeTask(state.range, state.level);
+    if(state.mode==='error') x=addError(x);
+    if(state.mode==='quiz') x.ask=shuffle(FIELDS.filter(function(f){return x.given.indexOf(f)===-1;}))[0];
+    out.push(x);
+  }
+  return out;
+}
+/* Verfaelscht genau ein Feld um 1..3 (nie auf 0 oder darunter) */
+function addError(t){
+  var key=FIELDS[ri(0,FIELDS.length-1)];
+  var delta;
+  var guard=0;
+  do{ delta=ri(1,3)*(Math.random()<0.5?-1:1); guard++; }
+  while((t.vals[key]+delta)<1 && guard<20);
+  if((t.vals[key]+delta)<1) delta=Math.abs(delta);
+  t.errKey=key;
+  t.shown={};
+  FIELDS.forEach(function(f){ t.shown[f]=t.vals[f]; });
+  t.shown[key]=t.vals[key]+delta;
+  return t;
+}
+
+function startQuiz(){
+  state.queue=makeQueue();
+  state.idx=0; state.score=0; state.total=state.queue.length; state.answered=false;
+  show('scr-quiz');
+  renderQuestion();
+}
+
+function updateProgress(){
+  document.getElementById('progFill').style.width=Math.round(state.idx/state.total*100)+'%';
+  document.getElementById('progTxt').textContent=(state.idx+1)+'/'+state.total;
+  document.getElementById('scorePill').innerHTML='\u2713 '+state.score;
+}
+function setFeedback(ok,msg){
+  var f=document.getElementById('feedback');
+  f.className='feedback show '+(ok?'ok':'no');
+  f.textContent=msg||(ok?'\u2705 Richtig!':'\u274c Leider falsch');
+}
+function clearFeedback(){ var f=document.getElementById('feedback'); f.className='feedback'; f.textContent=''; }
+function nextButton(){
+  var act=document.getElementById('qActions'); act.innerHTML='';
+  var b=document.createElement('button'); b.className='act-btn act-primary';
+  b.textContent=(state.idx+1>=state.total)?'Ergebnis':'Weiter';
+  b.addEventListener('click',nextQuestion); act.appendChild(b);
+}
+function nextQuestion(){
+  state.idx++;
+  if(state.idx>=state.total){ showResult(); return; }
+  state.answered=false;
+  renderQuestion();
+}
+
+/* ===== Frage rendern (Dispatch) ===== */
+function renderQuestion(){
+  updateProgress();
+  clearFeedback();
+  var card=document.getElementById('qCard');
+  var actions=document.getElementById('qActions');
+  card.innerHTML=''; actions.innerHTML='';
+  if(state.mode==='quiz') renderQuiz(card,actions);
+  else if(state.mode==='type') renderType(card,actions);
+  else if(state.mode==='chips') renderChips(card,actions);
+  else if(state.mode==='error') renderError(card,actions);
+}
+function addPrompt(card,txt){
+  var p=document.createElement('div'); p.className='q-prompt'; p.innerHTML=txt; card.appendChild(p);
+}
+function addHint(card,txt){
+  var p=document.createElement('div'); p.className='tri-hint'; p.innerHTML=txt; card.appendChild(p);
+}
+
+/* ---------- 1) ANTWORT WÄHLEN ---------- */
+function distractors(res,want){
+  var set={}; set[res]=1; var out=[];
+  var cand=shuffle([res+1,res-1,res+2,res-2,res+10,res-10,res+3,res-3]);
+  for(var i=0;i<cand.length && out.length<want;i++){
+    var v=cand[i];
+    if(v>0 && !set[v]){ set[v]=1; out.push(v); }
+  }
+  var k=4;
+  while(out.length<want){ var v2=res+k; if(v2>0 && !set[v2]){ set[v2]=1; out.push(v2); } k++; if(k>60) break; }
+  return out;
+}
+function renderQuiz(card,actions){
+  var t=state.queue[state.idx];
+  var given={}; t.given.forEach(function(g){given[g]=1;});
+  addPrompt(card,'Welche Zahl geh&ouml;rt in das gelbe Feld?');
+  card.appendChild(buildTriangle({
+    cls:function(k){ return given[k]?'given':(k===t.ask?'ask':''); },
+    content:function(k){ return given[k]?String(t.vals[k]):(k===t.ask?'?':''); }
+  }));
+  var box=document.createElement('div'); box.className='quiz-opts';
+  shuffle(distractors(t.vals[t.ask],3).concat([t.vals[t.ask]])).forEach(function(v){
+    var d=document.createElement('div'); d.className='quiz-opt'; d.textContent=v;
+    d.addEventListener('click',function(){ checkQuiz(d,v,t); });
+    box.appendChild(d);
+  });
+  card.appendChild(box);
+}
+function checkQuiz(el,val,t){
+  if(state.answered) return;
+  state.answered=true;
+  var correct=t.vals[t.ask];
+  var ok=(val===correct);
+  if(ok) state.score++;
+  document.querySelectorAll('.quiz-opt').forEach(function(x){
+    x.classList.add('disabled');
+    if(parseInt(x.textContent,10)===correct) x.classList.add('ok');
+  });
+  if(!ok) el.classList.add('no');
+  var node=triNode(t.ask);
+  node.classList.remove('ask'); node.classList.add(ok?'ok':'no'); node.textContent=correct;
+  setFeedback(ok, ok?'\u2705 Richtig!':'\u274c Richtig w\u00e4re '+correct);
+  nextButton();
+}
+
+/* ---------- 2) EINTIPPEN ---------- */
+function renderType(card,actions){
+  var t=state.queue[state.idx];
+  var given={}; t.given.forEach(function(g){given[g]=1;});
+  addPrompt(card,'Trage die fehlenden Zahlen ein');
+  card.appendChild(buildTriangle({
+    cls:function(k){ return given[k]?'given':''; },
+    content:function(k){
+      if(given[k]) return String(t.vals[k]);
+      var inp=document.createElement('input');
+      inp.className='tri-in'; inp.type='text'; inp.inputMode='numeric';
+      inp.setAttribute('pattern','[0-9]*'); inp.autocomplete='off';
+      inp.dataset.k=k; inp.placeholder='?';
+      inp.addEventListener('input',function(){ inp.value=inp.value.replace(/[^0-9]/g,'').slice(0,4); });
+      return inp;
+    }
+  }));
+  addHint(card,'Rechteck = Summe der beiden Kreise daneben');
+  var b=document.createElement('button'); b.className='act-btn act-primary'; b.id='typeCheck'; b.textContent='Pr\u00fcfen';
+  b.addEventListener('click',function(){ checkType(t); });
+  actions.appendChild(b);
+}
+function checkType(t){
+  if(state.answered) return;
+  var answers={};
+  var anyEmpty=false;
+  document.querySelectorAll('.tri-in').forEach(function(inp){
+    answers[inp.dataset.k]=inp.value.trim();
+    if(!inp.value.trim()) anyEmpty=true;
+  });
+  if(anyEmpty){ setFeedback(false,'Bitte alle Felder ausf\u00fcllen'); return; }
+  state.answered=true;
+  var res=Rechendreieck.check(t,answers);
+  if(res.ok) state.score++;
+  for(var k in res.perField){
+    var node=triNode(k);
+    node.classList.add(res.perField[k]?'ok':'no');
+    if(!res.perField[k]) node.textContent=t.vals[k];
+    else { var i=node.querySelector('.tri-in'); if(i) i.readOnly=true; }
+  }
+  setFeedback(res.ok, res.ok?'\u2705 Alles richtig!':'\u274c '+res.richtig+' von '+res.gesamt+' richtig');
+  nextButton();
+}
+
+/* ---------- 3) ZAHLEN LEGEN ---------- */
+var chipState={};
+function renderChips(card,actions){
+  var t=state.queue[state.idx];
+  var given={}; t.given.forEach(function(g){given[g]=1;});
+  var open=FIELDS.filter(function(f){return !given[f];});
+  chipState={t:t, open:open, filled:{}, active:open[0]};
+  addPrompt(card,'Setze die Zahlen an die richtige Stelle');
+  card.appendChild(buildTriangle({
+    cls:function(k){ return given[k]?'given':'tapable'; },
+    content:function(k){ return given[k]?String(t.vals[k]):''; },
+    onTap:function(k){
+      if(state.answered||given[k]) return;
+      chipState.active=k; paintChips();
+    }
+  }));
+  var pool=document.createElement('div'); pool.className='chip-pool'; pool.id='chipPool';
+  card.appendChild(pool);
+  chipState.values=shuffle(open.map(function(k){return t.vals[k];}));
+  paintChips();
+}
+function paintChips(){
+  var cs=chipState;
+  FIELDS.forEach(function(k){
+    var node=triNode(k); if(!node) return;
+    if(cs.t.given.indexOf(k)!==-1) return;
+    node.classList.remove('active','filled');
+    if(cs.filled[k]!=null){ node.classList.add('filled'); node.textContent=cs.filled[k]; }
+    else { node.textContent=''; }
+    if(k===cs.active) node.classList.add('active');
+  });
+  var pool=document.getElementById('chipPool'); if(!pool) return;
+  pool.innerHTML='';
+  var placed={}; Object.keys(cs.filled).forEach(function(k){ var v=cs.filled[k]; placed[v]=(placed[v]||0)+1; });
+  var tally={};
+  cs.values.forEach(function(v){
+    var c=document.createElement('div'); c.className='num-chip'; c.textContent=v;
+    tally[v]=(tally[v]||0)+1;
+    if((placed[v]||0)>=tally[v]) c.classList.add('used');
+    else c.addEventListener('click',function(){
+      if(state.answered||cs.active==null) return;
+      cs.filled[cs.active]=v;
+      var next=cs.open.filter(function(k){return cs.filled[k]==null;})[0];
+      cs.active=(next!=null)?next:null;
+      paintChips();
+    });
+    pool.appendChild(c);
+  });
+  updateChipAction();
+}
+function updateChipAction(){
+  var act=document.getElementById('qActions'); if(!act||state.answered) return;
+  act.innerHTML='';
+  var cs=chipState;
+  var all=cs.open.every(function(k){return cs.filled[k]!=null;});
+  if(all){
+    var b=document.createElement('button'); b.className='act-btn act-primary'; b.textContent='Pr\u00fcfen';
+    b.addEventListener('click',checkChips); act.appendChild(b);
+  }else if(Object.keys(cs.filled).length){
+    var c=document.createElement('button'); c.className='act-btn act-ghost'; c.textContent='Letzte Zahl zur\u00fcck';
+    c.addEventListener('click',function(){
+      var f=cs.open.filter(function(k){return cs.filled[k]!=null;});
+      if(f.length){ var last=f[f.length-1]; delete cs.filled[last]; cs.active=last; paintChips(); }
+    });
+    act.appendChild(c);
+  }
+}
+function checkChips(){
+  if(state.answered) return;
+  state.answered=true;
+  var cs=chipState, t=cs.t;
+  var res=Rechendreieck.check(t,cs.filled);
+  if(res.ok) state.score++;
+  for(var k in res.perField){
+    var node=triNode(k);
+    node.classList.remove('active','filled');
+    node.classList.add(res.perField[k]?'ok':'no');
+    node.textContent=t.vals[k];
+  }
+  setFeedback(res.ok, res.ok?'\u2705 Alles richtig!':'\u274c '+res.richtig+' von '+res.gesamt+' richtig');
+  nextButton();
+}
+
+/* ---------- 4) FEHLER FINDEN ---------- */
+function renderError(card,actions){
+  var t=state.queue[state.idx];
+  addPrompt(card,'Eine Zahl ist falsch \u2013 tippe sie an');
+  card.appendChild(buildTriangle({
+    cls:function(){ return 'tapable'; },
+    content:function(k){ return String(t.shown[k]); },
+    onTap:function(k,el){ checkError(k,el,t); }
+  }));
+  addHint(card,'Rechteck = Summe der beiden Kreise daneben');
+}
+function checkError(k,el,t){
+  if(state.answered) return;
+  if(k!==t.errKey){
+    el.classList.add('no','wrongshake');
+    setTimeout(function(){ el.classList.remove('no','wrongshake'); },500);
+    if(!t.missed){ t.missed=true; }
+    return;
+  }
+  state.answered=true;
+  if(!t.missed) state.score++;
+  el.classList.add('ok');
+  el.textContent=t.vals[k];
+  setFeedback(!t.missed, t.missed
+    ? '\u2705 Gefunden \u2013 richtig w\u00e4re '+t.vals[k]
+    : '\u2705 Gefunden! Richtig ist '+t.vals[k]);
+  nextButton();
+}
+
+/* ===== Ergebnis ===== */
+function showResult(){
+  show('scr-result');
+  var pct=state.total?Math.round(state.score/state.total*100):0;
+  document.getElementById('rScore').textContent=state.score+' / '+state.total;
+  var stars = pct>=90?5 : pct>=75?4 : pct>=50?3 : pct>=30?2 : 1;
+  var s=''; for(var i=0;i<5;i++){ s+= i<stars?'\u2b50':'\u2606'; }
+  document.getElementById('rStars').textContent=s;
+  var big,txt;
+  if(pct>=90){ big='\ud83c\udf89'; txt='Super! Du hast die Rechendreiecke richtig gut drauf!'; }
+  else if(pct>=75){ big='\ud83d\ude04'; txt='Sehr gut! Fast alles richtig \u2013 weiter so!'; }
+  else if(pct>=50){ big='\ud83d\ude0a'; txt='Gut gemacht! \u00dcbe noch ein bisschen, dann sitzt es.'; }
+  else { big='\ud83d\udcaa'; txt='Weiter so! \u00dcbung macht den Meister \u2013 versuch es nochmal.'; }
+  document.getElementById('rBig').textContent=big;
+  document.getElementById('rTxt').textContent=txt;
+}
+
+/* ===== Init ===== */
+buildLevelGrid();
+
+/* ===== PWA ===== */
+var manifest={name:'Rechendreiecke',short_name:'Rechendreiecke',start_url:'.',display:'standalone',background_color:'#eff6ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Cpath d='M256 120L392 372H120Z' fill='none' stroke='white' stroke-width='28' stroke-linejoin='round'/%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
+
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

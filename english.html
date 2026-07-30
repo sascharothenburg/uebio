@@ -144,6 +144,7 @@ input{-webkit-user-select:text;user-select:text}
   <div class="card">
     <h2 id="listTitle">Generierte Aufgaben</h2>
     <div class="tag-list" id="tagList"><p style="color:#6b7280;font-size:.85rem">Bitte im Generator mindestens ein Themenfeld und einen Aufgabentyp w&auml;hlen.</p></div>
+    <button class="btn bp" style="margin-top:12px" onclick="regenerate()">&#x1F3B2; Neue Aufgaben w&uuml;rfeln</button>
   </div>
 </div>
 <div class="screen" id="s-set">
@@ -482,7 +483,6 @@ function generate(silent){
   }
   optsDirty=false;
   renderList();
-  showTab('list');
   return true;
 }
 
@@ -637,6 +637,18 @@ async function makePDFBytes(){
 }
 function hasContent(){ return tasks.length>0; }
 
+
+/* Bewusstes Neu-Wuerfeln per Knopf. Bleibt absichtlich manuell: sonst kaemen
+   in der Liste geloeschte Aufgaben unbemerkt zurueck und man koennte die
+   Wirkung geaenderter Einstellungen nicht vergleichen. */
+function regenerate(){
+  optsDirty=true;
+  var ok=generate(false);
+  if(!ok) return;
+  var pre=document.getElementById('s-pre');
+  if(pre && pre.classList.contains('active')) buildPreview();
+}
+
 /* ===== Tabs + Sbar ===== */
 var sbar=document.getElementById('sbar');
 function showTab(name){
@@ -647,9 +659,6 @@ function showTab(name){
       // Keine g\u00fcltigen Optionen \u2013 sanft auf Generator-Tab bleiben
       if(name==='pre'){ alert('Bitte zuerst Themenfeld und Aufgabentyp ausw\u00e4hlen.'); }
       name='gen';
-    } else if(name==='list'){
-      // generate() hat showTab('list') bereits ausgef\u00fchrt
-      return;
     }
   }
   var map={gen:'s-gen',list:'s-list',set:'s-set',pre:'s-pre'};
@@ -660,12 +669,14 @@ function showTab(name){
   document.getElementById(tmap[name]).classList.add('active');
   if(name==='pre'){
     sbar.innerHTML='';
-    var b1=document.createElement('button'),b2=document.createElement('button');
+    var b1=document.createElement('button'),bR=document.createElement('button'),b2=document.createElement('button');
     b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
+    bR.style.cssText='flex:0 0 auto;padding:13px 14px;border-radius:12px;font-family:Nunito,sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;background:#f5f3ff;color:#6d28d9;border:2px solid #ddd6fe';
     b2.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#6d28d9,#7c3aed);color:#fff;border:none';
     b1.textContent='\u2190 Zur\u00fcck';b2.textContent='Drucken / PDF';
-    b1.onclick=function(){showTab('list');};b2.onclick=doPrint;
-    sbar.appendChild(b1);sbar.appendChild(b2);
+    bR.textContent='\ud83c\udfb2'; bR.title='Neue Aufgaben w\u00fcrfeln';
+    b1.onclick=function(){showTab('list');};bR.onclick=regenerate;b2.onclick=doPrint;
+    sbar.appendChild(b1);sbar.appendChild(bR);sbar.appendChild(b2);
     setTimeout(buildPreview,50);
   }else{
     sbar.innerHTML='';

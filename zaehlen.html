@@ -411,6 +411,20 @@ function addEmptyTask(){
 }
 
 /* ===== Tabs + Bottom-Bar ===== */
+/* Bewusstes Neu-Wuerfeln per Knopf. Absichtlich manuell: sonst kaemen in der
+   Aufgabenliste geloeschte Eintraege unbemerkt zurueck und man koennte die
+   Wirkung geaenderter Einstellungen nicht vergleichen. */
+function regenerate(){
+  if(typeof manualEdited!=='undefined' && manualEdited){
+    if(!confirm('Neu w\u00fcrfeln verwirft deine selbst eingegebenen Aufgaben. Fortfahren?')) return;
+  }
+  optsDirty=true;
+  var ok=generate(false);
+  if(ok===false) return;
+  var pre=document.getElementById('s-pre');
+  if(pre && pre.classList.contains('active')) buildPreview();
+}
+
 function showTab(name){
   var map={gen:'s-gen',tasks:'s-tasks',set:'s-set',pre:'s-pre'};
   var tmap={gen:'t-gen',tasks:'t-tasks',set:'t-set',pre:'t-pre'};
@@ -423,11 +437,13 @@ function showTab(name){
     // Auto-Generierung: solange der Nutzer nicht selbst editiert hat, frisch erzeugen
     if(!manualEdited){ generate(); }
     sbar.innerHTML='';
-    var b1=document.createElement('button'),b2=document.createElement('button');
+    var b1=document.createElement('button'),bR=document.createElement('button'),b2=document.createElement('button');
     b1.className='btn bs';b2.className='btn bp';
     b1.textContent='\u2190 Zur\u00fcck';b2.textContent='Drucken / PDF';
     b1.onclick=function(){showTab('tasks');};b2.onclick=doPrint;
-    sbar.appendChild(b1);sbar.appendChild(b2);
+    bR.style.cssText='flex:0 0 auto;padding:13px 14px;border-radius:12px;font-family:Nunito,sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;background:#f8fafc;color:#0369a1;border:2px solid #e2e8f0';
+    bR.textContent='\ud83c\udfb2'; bR.title='Neue Aufgaben w\u00fcrfeln'; bR.onclick=regenerate;
+    sbar.appendChild(b1);sbar.appendChild(bR);sbar.appendChild(b2);
     setTimeout(buildPreview,50);
   } else {
     sbar.innerHTML='';

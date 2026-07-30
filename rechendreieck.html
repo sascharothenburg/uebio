@@ -5,10 +5,10 @@
 <link rel="stylesheet" href="fonts.css">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Stellenwerttafel">
+<meta name="apple-mobile-web-app-title" content="Rechendreiecke">
 <meta name="theme-color" content="#0369a1">
-<title>Stellenwerttafel – Übungen für die Grundschule | Übio</title>
-<meta name="description" content="Stellenwerte üben mit der Stellenwerttafel (ZE, HZE, T, ZT, HT). Kostenlose Arbeitsblätter zum Ausdrucken.">
+<title>Rechendreiecke üben – Arbeitsblätter für die Grundschule | Übio</title>
+<meta name="description" content="Rechendreiecke zum Üben von Addition und Subtraktion. Kostenlose Arbeitsblätter für die Grundschule, als PDF ausdruckbar.">
 <style>
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -54,41 +54,36 @@ input{-webkit-user-select:text;user-select:text}
   @page{size:A4 portrait;margin:12mm 14mm}
 }
 .printarea{display:none}
-/* App-spezifisch */
+/* Rechendreieck-spezifisch */
 .opt-row{display:flex;gap:6px;flex-wrap:wrap}
 .opt-btn{flex:1;min-width:60px;padding:9px 4px;border-radius:10px;border:2px solid #e2e8f0;background:#f8fafc;font-family:Nunito,sans-serif;font-size:.8rem;font-weight:800;color:#1e1b4b;cursor:pointer}
 .opt-btn.sel{background:#0369a1;color:#fff;border-color:#0369a1}
-.opt-btn.disabled{opacity:.4;pointer-events:none;background:#f1f5f9;color:#94a3b8;border-color:#e2e8f0}
-.tk-list{display:flex;flex-direction:column;gap:12px}
-.tk-item{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:12px;position:relative}
-.tk-item .del{position:absolute;top:8px;right:8px;background:none;border:none;color:#7dd3fc;font-size:1rem;cursor:pointer;padding:0}
-.tk-tbl{border-collapse:collapse;margin:4px auto 0}
-.tk-tbl th{font-size:.62rem;font-weight:800;color:#0369a1;padding:2px 0;text-align:center}
-.tk-tbl td{border:1.5px solid #0369a1;width:34px;height:30px;text-align:center;vertical-align:middle;font-weight:800;font-size:.85rem;background:#fff}
-.tk-num{text-align:center;font-weight:900;font-size:1rem;color:#1e1b4b;margin-bottom:4px}
-.tk-dots{display:flex;flex-wrap:wrap;gap:1px;align-items:center;justify-content:center;max-width:34px;margin:0 auto}
-.tk-dot{width:5px;height:5px;border-radius:50%;background:#0369a1}
+.rd-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rd-item{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:10px 8px 6px;position:relative}
+.rd-item .del{position:absolute;top:6px;right:7px;background:none;border:none;color:#7dd3fc;font-size:1rem;cursor:pointer;padding:0;line-height:1}
+.rd-cap{font-size:.66rem;font-weight:800;color:#0369a1;margin-bottom:4px}
 </style>
 <script src="pdf-lib.min.js"></script>
 <script src="fontkit.umd.min.js"></script>
 <script src="pdf.min.js"></script>
 <script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
-<script src="stellenwerttafel-pdf.js"></script>
+<script src="rechendreieck-core.js"></script>
+<script src="rechendreieck-pdf.js"></script>
 <script src="print-bridge.js"></script>
 <script src="back-button.js"></script>
 </head>
 <body>
 <div class="app">
 <div class="hdr">
-  <h1>&#x1F522; Stellenwerttafel</h1>
+  <h1>&#x1F53A; Rechendreiecke</h1>
   <div class="hdr-btns">
-    <a href="mathe.html#acc-zahlverstaendnis" class="hdr-btn">&#x2190; Zur&uuml;ck</a>
+    <a href="mathe.html#acc-grundrechnen" id="btnBack" class="hdr-btn">&#x2190; Zur&uuml;ck</a>
     <a href="index.html" class="hdr-btn">&#x1F3E0; Hauptmen&uuml;</a>
   </div>
 </div>
 <div class="tabs">
   <button class="tab active" id="t-gen"><span class="ti">&#x26A1;</span>Generator</button>
-  <button class="tab" id="t-list"><span class="ti">&#x1F522;</span>Aufgaben</button>
+  <button class="tab" id="t-list"><span class="ti">&#x1F53A;</span>Dreiecke</button>
   <button class="tab" id="t-set"><span class="ti">&#x2699;</span>Einst.</button>
   <button class="tab" id="t-pre"><span class="ti">&#x1F441;</span>Vorschau</button>
 </div>
@@ -97,42 +92,47 @@ input{-webkit-user-select:text;user-select:text}
   <div class="card">
     <h2>Einstellungen</h2>
     <div style="margin-bottom:12px">
-      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Stellen (gr&ouml;&szlig;te Stelle)</label>
-      <div class="opt-row" id="placeOpts">
-        <button class="opt-btn" data-v="2">ZE</button>
-        <button class="opt-btn sel" data-v="3">HZE</button>
-        <button class="opt-btn" data-v="4">T</button>
-        <button class="opt-btn" data-v="5">ZT</button>
-        <button class="opt-btn" data-v="6">HT</button>
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Zahlenraum</label>
+      <div class="opt-row" id="rangeOpts">
+        <button class="opt-btn" data-v="10">bis 10</button>
+        <button class="opt-btn sel" data-v="20">bis 20</button>
+        <button class="opt-btn" data-v="100">bis 100</button>
       </div>
-      <div class="ss" style="margin-top:6px">Bestimmt die Spaltenzahl der Tafel (E bis Hunderttausender).</div>
+      <div class="ss" style="margin-top:6px">Gilt f&uuml;r die gr&ouml;&szlig;te Zahl im Dreieck (Au&szlig;enfeld).</div>
     </div>
     <div style="margin-bottom:12px">
-      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Aufgabentyp</label>
-      <div class="opt-row" id="typeOpts">
-        <button class="opt-btn sel" data-v="num2tab">Zahl &rarr; Tafel<br><span style="font-weight:600;font-size:.66rem">eintragen</span></button>
-        <button class="opt-btn sel" data-v="tab2num">Tafel &rarr; Zahl<br><span style="font-weight:600;font-size:.66rem">ablesen</span></button>
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Schwierigkeit</label>
+      <div class="opt-row" id="levelOpts">
+        <button class="opt-btn sel" data-v="leicht">Leicht<br><span style="font-weight:600;font-size:.66rem">Kreise gegeben</span></button>
+        <button class="opt-btn" data-v="mittel">Mittel<br><span style="font-weight:600;font-size:.66rem">gemischt</span></button>
+        <button class="opt-btn" data-v="schwer">Schwer<br><span style="font-weight:600;font-size:.66rem">nur Au&szlig;enfelder</span></button>
       </div>
+      <div class="ss" style="margin-top:6px">Mehrfachauswahl m&ouml;glich &ndash; die Aufgaben werden dann gemischt.</div>
     </div>
     <div style="margin-bottom:12px">
       <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Seitenzahl</label>
       <div class="opt-row" id="pageChips"></div>
-      <p style="font-size:.7rem;color:#6b7280;margin-top:6px">Die Aufgabenzahl pro Seite ist passend zur Stellenzahl festgelegt.</p>
+      <p style="font-size:.7rem;color:#6b7280;margin-top:6px">Die Anzahl der Dreiecke pro Seite ist druckgetestet festgelegt.</p>
     </div>
-    <p style="font-size:.72rem;color:#6b7280;margin-top:8px;line-height:1.5">Die Aufgaben werden beim &#214;ffnen der Vorschau automatisch erstellt.</p>
+    <p style="font-size:.72rem;color:#6b7280;margin-top:8px;line-height:1.5">Die Dreiecke werden beim &Ouml;ffnen der Vorschau automatisch erstellt.</p>
+  </div>
+  <div class="card">
+    <h2>So funktioniert es</h2>
+    <p style="font-size:.78rem;color:#6b7280;line-height:1.55">In jedem Rechendreieck gilt: Die Zahl im Rechteck ist die <b>Summe der beiden Kreise daneben</b>. Rot umrandete Felder sind auszuf&uuml;llen.</p>
   </div>
 </div>
 <div class="screen" id="s-list">
   <div class="card">
-    <h2>Generierte Aufgaben</h2>
-    <div class="tk-list" id="tkList"><p style="color:#6b7280;font-size:.85rem">Die Aufgaben werden beim &Ouml;ffnen der Vorschau erstellt.</p></div>
+    <h2>Generierte Dreiecke</h2>
+    <div class="rd-list" id="rdList"><p style="color:#6b7280;font-size:.85rem">Die Dreiecke werden beim &Ouml;ffnen der Vorschau erstellt.</p></div>
   </div>
 </div>
 <div class="screen" id="s-set">
   <div class="card">
     <h2>Layout</h2>
     <div class="sr"><div class="sl">Aufgaben-Nummer</div><label class="tgl"><input type="checkbox" id="showNr" checked><span class="tgl-s"></span></label></div>
-    <div class="sr"><div class="sl">L&ouml;sungsblatt anh&auml;ngen</div><label class="tgl"><input type="checkbox" id="showSol"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">L&ouml;sungen anzeigen</div><label class="tgl"><input type="checkbox" id="showSol"><span class="tgl-s"></span></label></div>
+    <p class="ss" style="margin-top:8px">Mit L&ouml;sungen werden alle fehlenden Zahlen gr&uuml;n eingetragen &ndash; ideal als Kontrollblatt.</p>
   </div>
   <div class="card">
     <h2>&#x1F4D0; Kopfzeile</h2>
@@ -153,8 +153,7 @@ input{-webkit-user-select:text;user-select:text}
 var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 var IS_SAFARI = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
 
-
-/* ===== Multi/Single-Select ===== */
+/* ===== Multi-Select Optionen ===== */
 function setupMulti(id){
   document.querySelectorAll('#'+id+' .opt-btn').forEach(function(b){
     b.addEventListener('click',function(){
@@ -175,16 +174,21 @@ function setupSingle(id){
 }
 function getMultiStr(id){return Array.from(document.querySelectorAll('#'+id+' .opt-btn.sel')).map(function(b){return b.dataset.v;});}
 function getSingle(id){var b=document.querySelector('#'+id+' .opt-btn.sel');return b?parseInt(b.dataset.v):null;}
-setupSingle('placeOpts');setupMulti('typeOpts');
+setupSingle('rangeOpts');setupMulti('levelOpts');
 
-/* ===== Automatische Aufgabenanzahl je Stellenzahl (seitenfüllend A4) =====
-   places: 2=ZE, 3=HZE, 4=T, 5=ZT, 6=HT */
-/* ===== Seitenzahl-Steuerung (feste Aufgabenzahl pro Seite, druckgetestet) =====
-   p1 = Seite 1 (mit Header), p2 = GESAMTzahl bei 2 Seiten. Lookup nach Stellenzahl.
-   p2-Werte sind Startwerte und werden am iPad nachjustiert. */
+/* ===== Seitenzahl-Steuerung (feste Anzahl Dreiecke pro Seite, druckgetestet) =====
+   p1 = Seite 1 (mit Header), p2 = GESAMTzahl bei 2 Seiten.
+   3 Spalten x 4 Zeilen; Werte sind Startwerte und werden am Geraet nachjustiert. */
+var PER_PAGE={
+  10:{p1:12,p2:24},
+  20:{p1:12,p2:24},
+  100:{p1:12,p2:24}
+};
 var numPages=1;
-var PER_PAGE={2:{p1:36,p2:76},3:{p1:36,p2:76},4:{p1:27,p2:57},5:{p1:18,p2:38},6:{p1:18,p2:38}};
-function pageCfg(){ var p=getSingle('placeOpts')||3; return PER_PAGE[p]||PER_PAGE[3]; }
+function pageCfg(){
+  var range=getSingle('rangeOpts')||20;
+  return PER_PAGE[range]||PER_PAGE[20];
+}
 function totalCount(){ var c=pageCfg(); return numPages<=1?c.p1:(c.p2!=null?c.p2:c.p1*2); }
 function pageSplits(){ var c=pageCfg(); if(numPages<=1)return [c.p1]; var t=(c.p2!=null?c.p2:c.p1*2); return [c.p1,t-c.p1]; }
 function initPageChips(){
@@ -197,92 +201,92 @@ function initPageChips(){
     pc.appendChild(el);
   });
 }
+initPageChips();
 
-/* ===== Generator ===== */
-var tasks=[];
-var optsDirty=true;   // true -> Vorschau generiert neu; Loeschen einzelner Aufgaben setzt das NICHT
-var PLACE_LABELS={1:'E',2:'Z',3:'H',4:'T',5:'ZT',6:'HT'};
-var PLACE_FULL={1:'Einer',2:'Zehner',3:'Hunderter',4:'Tausender',5:'Zehntausender',6:'Hunderttausender'};
+/* ===== Generator-Logik ===== */
+var tris=[];
+var optsDirty=true;   // true -> Vorschau generiert neu; nach Generierung false
 function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 
-function makeNumber(places){
-  // erzeugt eine Zahl mit genau 'places' Stellen (führende Stelle 1-9), Rest 0-9
-  var s=''+ri(1,9);
-  for(var i=1;i<places;i++) s+=ri(0,9);
-  return parseInt(s);
-}
-function digitsArray(num,places){
-  var s=(''+num).padStart(places,'0');
-  return s.split('').map(Number); // [höchste ... E]
+/* Buttonwert -> tatsaechliche Stufe der Kernlogik.
+   "Mittel" fasst die beiden mittleren Stufen zusammen. */
+function pickLevel(v){
+  if(v==='mittel') return Math.random()<0.5?'mittel':'mittel2';
+  return v;
 }
 
 function generate(){
-  var places=getSingle('placeOpts')||3;
-  var cnt=(window.StellenwerttafelPDF&&StellenwerttafelPDF.capacityForPages)
-    ? StellenwerttafelPDF.capacityForPages(numPages, places)
-    : totalCount();
-  var types=getMultiStr('typeOpts'); if(!types.length)types=['num2tab'];
-  var reprs=['digit'];
-  tasks=[];
-  for(var i=0;i<cnt;i++){
-    var type=types[ri(0,types.length-1)];
-    var repr=reprs[ri(0,reprs.length-1)];
-    var num=makeNumber(places);
-    tasks.push({num:num,places:places,type:type,repr:repr});
+  var cnt=totalCount();
+  var range=getSingle('rangeOpts')||20;
+  var levels=getMultiStr('levelOpts'); if(!levels.length)levels=['leicht'];
+  tris=[];
+  var seen={},guard=0;
+  while(tris.length<cnt && guard<cnt*60){
+    guard++;
+    var t=Rechendreieck.makeTask(range, pickLevel(levels[ri(0,levels.length-1)]));
+    var k=Rechendreieck.taskKey(t);
+    if(seen[k])continue;
+    seen[k]=1;
+    tris.push(t);
   }
+  /* Bei sehr kleinem Zahlenraum reichen die verschiedenen Aufgaben nicht aus */
+  while(tris.length<cnt) tris.push(Rechendreieck.makeTask(range, pickLevel(levels[0])));
   renderList();
   optsDirty=false;
 }
 
-/* ===== Listenansicht (Bildschirm) ===== */
-function dotsHTML(n){
-  var h='<div class="tk-dots">';
-  for(var i=0;i<n;i++) h+='<span class="tk-dot"></span>';
-  h+='</div>';
-  return n===0?'<span style="color:#94a3b8">0</span>':h;
-}
-function miniTable(t,showSolution){
-  var labels=[];
-  for(var p=t.places;p>=1;p--) labels.push(PLACE_LABELS[p]);
-  var dig=digitsArray(t.num,t.places);
-  var filled; // soll die Tafel Werte zeigen?
-  var showNum; // soll die Zahl gezeigt werden?
-  if(t.type==='num2tab'){ filled=showSolution; showNum=true; }
-  else { filled=true; showNum=showSolution; } // tab2num: Tafel immer gefüllt, Zahl nur in Lösung
-  var h='';
-  if(showNum) h+='<div class="tk-num">'+t.num.toLocaleString('de-DE')+'</div>';
-  else h+='<div class="tk-num" style="color:#d97706">____</div>';
-  h+='<table class="tk-tbl"><tr>';
-  labels.forEach(function(l){h+='<th>'+l+'</th>';});
-  h+='</tr><tr>';
-  dig.forEach(function(d){
-    if(!filled){h+='<td></td>';}
-    else if(t.repr==='dots' && t.type==='tab2num'){h+='<td>'+dotsHTML(d)+'</td>';}
-    else {h+='<td>'+d+'</td>';}
+/* ===== Mini-Dreieck fuer die Listenansicht =====
+   Nutzt dieselbe Geometrie wie das PDF-Modul, damit Liste und Ausdruck
+   nicht auseinanderlaufen. */
+function triSVG(t,showSol,w){
+  var N=RechendreieckPDF.NODES, G=RechendreieckPDF.GEO;
+  w=w||150;
+  var given={}; t.given.forEach(function(k){given[k]=1;});
+  var s='<svg viewBox="0 0 '+G.designW+' '+G.blockH+'" width="'+w+'" height="'+Math.round(w*G.blockH/G.designW)+'" style="display:block;margin:0 auto;max-width:100%">';
+  [['T','L'],['T','R'],['L','R']].forEach(function(e){
+    var a=N[e[0]],b=N[e[1]];
+    s+='<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="#7dd3fc" stroke-width="1.6"/>';
   });
-  h+='</tr></table>';
-  return h;
+  Object.keys(N).forEach(function(k){
+    var n=N[k], isGap=!given[k], isC=(n.shape==='circle');
+    var base=isC?'#e0f2fe':'#ffffff';
+    var fill=(isGap&&showSol)?'#dcfce7':base;
+    var stroke=isGap?((showSol)?'#16a34a':'#dc2626'):(isC?'#0ea5e9':'#0369a1');
+    var sw=isGap?1.6:1.2;
+    if(isC) s+='<circle cx="'+n.x+'" cy="'+n.y+'" r="'+G.r+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"/>';
+    else    s+='<rect x="'+(n.x-G.rw/2)+'" y="'+(n.y-G.rh/2)+'" width="'+G.rw+'" height="'+G.rh+'" rx="4" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"/>';
+    if(!isGap||showSol){
+      var c=(isGap&&showSol)?'#16a34a':'#1e1b4b';
+      s+='<text x="'+n.x+'" y="'+n.y+'" text-anchor="middle" dominant-baseline="central" font-family="Nunito,sans-serif" font-weight="800" font-size="15" fill="'+c+'">'+t.vals[k]+'</text>';
+    }
+  });
+  s+='</svg>';
+  return s;
 }
+
+var LEVEL_LBL={leicht:'leicht',mittel:'mittel',mittel2:'mittel',schwer:'schwer'};
 function renderList(){
-  var el=document.getElementById('tkList');el.innerHTML='';
-  if(!tasks.length){el.innerHTML='<p style="color:#6b7280;font-size:.85rem">Noch keine Aufgaben.</p>';return;}
-  tasks.forEach(function(t,i){
-    var d=document.createElement('div');d.className='tk-item';
-    var typeLbl=t.type==='num2tab'?'Zahl &rarr; Tafel':'Tafel &rarr; Zahl';
-    d.innerHTML='<div style="font-size:.7rem;font-weight:800;color:#0369a1;margin-bottom:4px">Aufgabe '+(i+1)+' &middot; '+typeLbl+'</div>'+miniTable(t,false);
+  var el=document.getElementById('rdList');
+  el.innerHTML='';
+  if(!tris.length){el.innerHTML='<p style="color:#6b7280;font-size:.85rem">Noch keine Dreiecke.</p>';return;}
+  tris.forEach(function(t,i){
+    var d=document.createElement('div');d.className='rd-item';
+    d.innerHTML='<div class="rd-cap">Dreieck '+(i+1)+' &middot; '+(LEVEL_LBL[t.level]||t.level)+'</div>'+triSVG(t,false,130);
     var b=document.createElement('button');b.className='del';b.textContent='\u2715';
-    b.addEventListener('click',(function(idx){return function(){tasks.splice(idx,1);renderList();};})(i));
-    d.appendChild(b);el.appendChild(d);
+    b.addEventListener('click',(function(idx){return function(){tris.splice(idx,1);renderList();};})(i));
+    d.appendChild(b);
+    el.appendChild(d);
   });
 }
 
-/* ===== Druck-Arbeitsblatt (A4) ===== */
-
-
-
-/* ===== Kopfzeile ===== */
-
-
+/* ===== Tabs + Sbar =====
+   back-button.js loest beim Hardware-Back schlicht history.back() aus.
+   Damit der Zurueck-Weg zuerst auf den Generator-Tab (die Startseite der
+   App) fuehrt und nicht direkt in die App-Auswahl, legen wir beim Verlassen
+   des Generator-Tabs genau EINEN zusaetzlichen History-Eintrag an. */
+var sbar=document.getElementById('sbar');
+var curTab='gen';
+var inSub=false;
 /* Bewusstes Neu-Wuerfeln per Knopf. Absichtlich manuell: sonst kaemen in der
    Aufgabenliste geloeschte Eintraege unbemerkt zurueck und man koennte die
    Wirkung geaenderter Einstellungen nicht vergleichen. */
@@ -294,8 +298,6 @@ function regenerate(){
   if(pre && pre.classList.contains('active')) buildPreview();
 }
 
-/* ===== Tabs + Sbar ===== */
-var sbar=document.getElementById('sbar');
 function showTab(name){
   var map={gen:'s-gen',list:'s-list',set:'s-set',pre:'s-pre'};
   var tmap={gen:'t-gen',list:'t-list',set:'t-set',pre:'t-pre'};
@@ -303,9 +305,15 @@ function showTab(name){
   document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active');});
   document.getElementById(map[name]).classList.add('active');
   document.getElementById(tmap[name]).classList.add('active');
+  curTab=name;
+  if(name!=='gen'){
+    if(!inSub){ try{ history.pushState({rdTab:1},''); }catch(e){} inSub=true; }
+  }else{
+    inSub=false;
+  }
   if(name==='pre'){
-    // Auto-Generierung: bei geaenderten Optionen (oder noch leer) frische Aufgaben erzeugen
-    if(optsDirty || !tasks.length){ generate(); }
+    /* Auto-Generierung: bei geaenderten Optionen (oder noch leer) frisch erzeugen */
+    if(optsDirty || !tris.length){ generate(); }
     sbar.innerHTML='';
     var b1=document.createElement('button'),bR=document.createElement('button'),b2=document.createElement('button');
     b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
@@ -317,6 +325,7 @@ function showTab(name){
     sbar.appendChild(b1);sbar.appendChild(bR);sbar.appendChild(b2);
     setTimeout(buildPreview,50);
   }else{
+    if(name==='list' && (optsDirty || !tris.length)){ generate(); }
     sbar.innerHTML='';
     var btn=document.createElement('button');
     btn.className='btn bp';btn.textContent='\ud83d\udc41 Vorschau & Drucken';
@@ -327,9 +336,8 @@ function showTab(name){
 
 function pdfSpec(){
   return {
-    tasks: tasks,
+    tris: tris,
     numPages: numPages,
-    places: (tasks[0]?tasks[0].places:(getSingle('placeOpts')||3)),
     showSol: document.getElementById('showSol').checked,
     showNr: document.getElementById('showNr').checked
   };
@@ -343,15 +351,15 @@ function pdfHeaderOpts(){
 }
 async function makePDFBytes(){
   if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
-  return await StellenwerttafelPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
+  return await RechendreieckPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
 }
 function buildPreview(){
   var wrap=document.getElementById('previewContent');
   wrap.innerHTML='<p style="color:#6b7280;padding:16px;font-size:.8rem">Vorschau wird erstellt &hellip;</p>';
   (async function(){
     try{
-      if(!tasks.length){
-        wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Keine Aufgaben erstellt &ndash; bitte Einstellungen pr&uuml;fen.</p>';
+      if(!tris.length){
+        wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Keine Dreiecke erstellt &ndash; bitte Einstellungen pr&uuml;fen.</p>';
         return;
       }
       var bytes=await makePDFBytes();
@@ -382,10 +390,10 @@ function buildPreview(){
 }
 async function doPrint(){
   try{
-    if(!tasks.length){ generate(); }
-    if(!tasks.length){alert('Keine Aufgaben erstellt \u2013 bitte Einstellungen pr\u00fcfen.');return;}
+    if(!tris.length){ generate(); }
+    if(!tris.length){alert('Keine Dreiecke erstellt \u2013 bitte Einstellungen pr\u00fcfen.');return;}
     var bytes=await makePDFBytes();
-    await PrintBridge.printPDF(bytes,'Stellenwerttafel.pdf');
+    await PrintBridge.printPDF(bytes,'Rechendreiecke.pdf');
   }catch(e){
     alert('Druck fehlgeschlagen: '+(e.message||e));
     console.error(e);
@@ -398,14 +406,29 @@ document.getElementById('t-list').addEventListener('click',function(){showTab('l
 document.getElementById('t-set').addEventListener('click',function(){showTab('set');});
 document.getElementById('t-pre').addEventListener('click',function(){showTab('pre');});
 
-initPageChips();
+/* Eine Ebene nach oben: aus einem Tab zum Generator, sonst raus aus der App. */
+function goUp(){
+  if(curTab!=='gen'){
+    if(inSub){ history.back(); }   /* popstate zeigt den Generator-Tab */
+    else showTab('gen');
+    return true;
+  }
+  return false;
+}
+window.addEventListener('popstate',function(){
+  if(inSub){ inSub=false; showTab('gen'); }
+});
+document.getElementById('btnBack').addEventListener('click',function(e){
+  if(goUp()) e.preventDefault();   /* sonst greift der href auf die App-Auswahl */
+});
+
 document.getElementById('btnGoPre').addEventListener('click',function(){showTab('pre');});
 
 document.addEventListener('contextmenu',function(e){e.preventDefault();});
 document.addEventListener('selectstart',function(e){if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;e.preventDefault();});
 
 /* ===== PWA Manifest ===== */
-var manifest={name:'Stellenwerttafel Generator',short_name:'Stellenwert',start_url:'.',display:'standalone',background_color:'#f0f9ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='260' font-family='sans-serif' fill='white'%3E123%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var manifest={name:'Rechendreiecke Generator',short_name:'Rechendreiecke',start_url:'.',display:'standalone',background_color:'#f0f9ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Cpath d='M256 120L392 372H120Z' fill='none' stroke='white' stroke-width='28' stroke-linejoin='round'/%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
 var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
 var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
 </script>

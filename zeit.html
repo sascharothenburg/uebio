@@ -190,7 +190,6 @@ function genZeit(){
       function(){return{q:'1 Tag = '+BL+' Stunden',s:'24 Stunden'};},
       function(){return{q:'1 Woche = '+BL+' Tage',s:'7 Tage'};},
       function(){return{q:'Wie viele Wochen hat ein Jahr? '+BL,s:'52 Wochen'};},
-      function(){var mo=Math.floor(Math.random()*12);return{q:'Wie viele Tage hat der '+MONTHS[mo]+'? '+BL,s:String(MDAYS[mo])+' Tage'};},
     ];
     return Object.assign(pool[Math.floor(Math.random()*pool.length)](),{type:'Umrechnen'});
   } else {
@@ -198,6 +197,7 @@ function genZeit(){
       function(){var mo=Math.floor(Math.random()*11);var d=Math.floor(Math.random()*(MDAYS[mo]-7))+1;return{q:'7 Tage nach dem '+d+'. '+MONTHS[mo]+': '+BL,s:String(d+7)+'. '+MONTHS[mo]};},
       function(){var mo=Math.floor(Math.random()*12);return{q:'Nach dem '+MONTHS[mo]+' kommt: '+BL,s:MONTHS[(mo+1)%12]};},
       function(){return{q:'Wie viele Monate hat ein Jahr? '+BL,s:'12 Monate'};},
+      function(){var mo=Math.floor(Math.random()*12);return{q:'Wie viele Tage hat der '+MONTHS[mo]+'? '+BL,s:String(MDAYS[mo])+' Tage'};},
     ];
     return Object.assign(pool[Math.floor(Math.random()*pool.length)](),{type:'Kalender'});
   }
@@ -215,9 +215,36 @@ function makeTaskGen(){
   if(activeZT.length===0) return null;
   return function(i){ return genZeit(); };
 }
+/* ===== Aufgaben-Zwischenspeicher =====
+   Vorher wurden die Aufgaben erst beim PDF-Bau erzeugt (gen: makeTaskGen()).
+   Weil Vorschau und Drucken makePDFBytes() getrennt aufrufen, wurde jedes Mal
+   neu gewuerfelt -> das gedruckte Blatt war ein anderes als das in der Vorschau.
+   Jetzt liefert der Generator zu jedem Index immer dasselbe Ergebnis. Geleert
+   wird der Speicher nur, wenn sich eine aufgabenrelevante Einstellung aendert
+   oder man bewusst neu wuerfelt. Die Seitenzahl gehoert absichtlich NICHT dazu:
+   beim Wechsel auf 2 Seiten bleibt Seite 1 so, wie sie in der Vorschau stand. */
+var taskCache=[], cacheKey='';
+function no(id){ var e=document.getElementById(id); return e?!!e.checked:false; }
+function settingsKey(){ return [activeZT.join(','), zdiff].join('|'); }
+function makeTaskGenCached(){
+  var k=settingsKey();
+  if(k!==cacheKey){ taskCache=[]; cacheKey=k; }
+  var g=makeTaskGen();
+  if(!g) return null;
+  return function(i){
+    if(taskCache[i]===undefined){ taskCache[i]=g(i); }
+    return taskCache[i];
+  };
+}
+function regenerate(){
+  taskCache=[]; cacheKey=settingsKey();
+  var pre=document.getElementById('s-pre');
+  if(pre && pre.classList.contains('active')) buildPreview();
+}
+
 function pdfSpec(){
   return {
-    gen: makeTaskGen(),
+    gen: makeTaskGenCached(),
     numPages: numPages,
     showSol: document.getElementById('showSol').checked
   };
@@ -286,12 +313,14 @@ function showTab(n){
   var tEl=document.getElementById('t-'+n);if(tEl)tEl.classList.add('active');
   if(n==='pre'){
     sbar.innerHTML='';
-    var b1=document.createElement('button'),b2=document.createElement('button');
+    var b1=document.createElement('button'),bR=document.createElement('button'),b2=document.createElement('button');
     b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
     b2.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;border:none';
     b1.textContent='\u2190 Zur\u00fcck';b2.textContent='Drucken / PDF';
     b1.onclick=function(){showTab('gen');};b2.onclick=doPrint;
-    sbar.appendChild(b1);sbar.appendChild(b2);
+    bR.style.cssText='flex:0 0 auto;padding:13px 14px;border-radius:12px;font-family:Nunito,sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;background:#f8fafc;color:#0369a1;border:2px solid #e2e8f0';
+    bR.textContent='\ud83c\udfb2'; bR.title='Neue Aufgaben w\u00fcrfeln'; bR.onclick=regenerate;
+    sbar.appendChild(b1);sbar.appendChild(bR);sbar.appendChild(b2);
     setTimeout(buildPreview,50);
   }else{
     sbar.innerHTML='';var btn=document.createElement('button');

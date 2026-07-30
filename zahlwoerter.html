@@ -5,10 +5,10 @@
 <link rel="stylesheet" href="fonts.css">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Stellenwerttafel">
+<meta name="apple-mobile-web-app-title" content="Zahlwörter">
 <meta name="theme-color" content="#0369a1">
-<title>Stellenwerttafel – Übungen für die Grundschule | Übio</title>
-<meta name="description" content="Stellenwerte üben mit der Stellenwerttafel (ZE, HZE, T, ZT, HT). Kostenlose Arbeitsblätter zum Ausdrucken.">
+<title>Zahlwörter und römische Zahlen üben – Grundschule | Übio</title>
+<meta name="description" content="Zahlen als Wort schreiben, Zahlwörter lesen, Zahlendreher üben und römische Zahlen bis 1000. Kostenlose Arbeitsblätter zum Ausdrucken.">
 <style>
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -32,7 +32,6 @@ input{-webkit-user-select:text;user-select:text}
 .card h2{font-size:.72rem;font-weight:800;color:#0369a1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
 .btn{width:100%;padding:12px;border:none;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer}
 .bp{background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff}
-.bs{background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0}
 .tgl{position:relative;width:44px;height:24px;flex-shrink:0}
 .tgl input{opacity:0;width:0;height:0}
 .tgl-s{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.2s}
@@ -43,8 +42,6 @@ input{-webkit-user-select:text;user-select:text}
 .sr:last-child{border-bottom:none}
 .sl{font-size:.88rem;font-weight:600}
 .ss{font-size:.73rem;color:#6b7280;margin-top:1px}
-.ni{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:9px;font-family:Nunito,sans-serif;font-size:.9rem;font-weight:600;color:#1e1b4b;background:#f0f9ff;outline:none}
-.ni:focus{border-color:#0369a1}
 .sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;z-index:100}
 @media print{
   .app,.sbar{display:none!important}
@@ -54,33 +51,37 @@ input{-webkit-user-select:text;user-select:text}
   @page{size:A4 portrait;margin:12mm 14mm}
 }
 .printarea{display:none}
-/* App-spezifisch */
+/* Zahlwörter-spezifisch */
 .opt-row{display:flex;gap:6px;flex-wrap:wrap}
 .opt-btn{flex:1;min-width:60px;padding:9px 4px;border-radius:10px;border:2px solid #e2e8f0;background:#f8fafc;font-family:Nunito,sans-serif;font-size:.8rem;font-weight:800;color:#1e1b4b;cursor:pointer}
 .opt-btn.sel{background:#0369a1;color:#fff;border-color:#0369a1}
-.opt-btn.disabled{opacity:.4;pointer-events:none;background:#f1f5f9;color:#94a3b8;border-color:#e2e8f0}
-.tk-list{display:flex;flex-direction:column;gap:12px}
-.tk-item{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:12px;position:relative}
-.tk-item .del{position:absolute;top:8px;right:8px;background:none;border:none;color:#7dd3fc;font-size:1rem;cursor:pointer;padding:0}
-.tk-tbl{border-collapse:collapse;margin:4px auto 0}
-.tk-tbl th{font-size:.62rem;font-weight:800;color:#0369a1;padding:2px 0;text-align:center}
-.tk-tbl td{border:1.5px solid #0369a1;width:34px;height:30px;text-align:center;vertical-align:middle;font-weight:800;font-size:.85rem;background:#fff}
-.tk-num{text-align:center;font-weight:900;font-size:1rem;color:#1e1b4b;margin-bottom:4px}
-.tk-dots{display:flex;flex-wrap:wrap;gap:1px;align-items:center;justify-content:center;max-width:34px;margin:0 auto}
-.tk-dot{width:5px;height:5px;border-radius:50%;background:#0369a1}
+.typ-list{display:flex;flex-direction:column;gap:7px}
+.typ-btn{width:100%;text-align:left;padding:10px 12px;border-radius:11px;border:2px solid #e2e8f0;background:#f8fafc;font-family:Nunito,sans-serif;cursor:pointer;display:flex;align-items:center;gap:10px}
+.typ-btn.sel{background:#e0f2fe;border-color:#0ea5e9}
+.typ-btn .te{font-size:1.25rem;line-height:1;flex-shrink:0}
+.typ-btn .tt{flex:1;min-width:0;display:flex;flex-direction:column}
+.typ-btn .tn{display:block;font-weight:800;font-size:.85rem;color:#1e1b4b}
+.typ-btn .td{display:block;font-size:.68rem;color:#6b7280;font-weight:700;margin-top:2px;line-height:1.3}
+.typ-btn.dis{opacity:.45;cursor:not-allowed}
+.zw-list{display:flex;flex-direction:column;gap:6px}
+.zw-item{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:9px;padding:7px 10px;font-size:.82rem;display:flex;justify-content:space-between;gap:8px}
+.zw-q{font-weight:800;color:#1e1b4b;overflow-wrap:anywhere}
+.zw-a{color:#16a34a;font-weight:800;white-space:nowrap}
 </style>
 <script src="pdf-lib.min.js"></script>
 <script src="fontkit.umd.min.js"></script>
 <script src="pdf.min.js"></script>
 <script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
-<script src="stellenwerttafel-pdf.js"></script>
+<script src="grundschrift-font.js"></script>
+<script src="zahlwoerter-core.js"></script>
+<script src="zahlwoerter-pdf.js"></script>
 <script src="print-bridge.js"></script>
 <script src="back-button.js"></script>
 </head>
 <body>
 <div class="app">
 <div class="hdr">
-  <h1>&#x1F522; Stellenwerttafel</h1>
+  <h1>&#x1F524; Zahlw&ouml;rter &amp; r&ouml;mische Zahlen</h1>
   <div class="hdr-btns">
     <a href="mathe.html#acc-zahlverstaendnis" class="hdr-btn">&#x2190; Zur&uuml;ck</a>
     <a href="index.html" class="hdr-btn">&#x1F3E0; Hauptmen&uuml;</a>
@@ -88,51 +89,52 @@ input{-webkit-user-select:text;user-select:text}
 </div>
 <div class="tabs">
   <button class="tab active" id="t-gen"><span class="ti">&#x26A1;</span>Generator</button>
-  <button class="tab" id="t-list"><span class="ti">&#x1F522;</span>Aufgaben</button>
+  <button class="tab" id="t-list"><span class="ti">&#x1F4CB;</span>Aufgaben</button>
   <button class="tab" id="t-set"><span class="ti">&#x2699;</span>Einst.</button>
   <button class="tab" id="t-pre"><span class="ti">&#x1F441;</span>Vorschau</button>
 </div>
 <div class="screens">
 <div class="screen active" id="s-gen">
   <div class="card">
-    <h2>Einstellungen</h2>
-    <div style="margin-bottom:12px">
-      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Stellen (gr&ouml;&szlig;te Stelle)</label>
-      <div class="opt-row" id="placeOpts">
-        <button class="opt-btn" data-v="2">ZE</button>
-        <button class="opt-btn sel" data-v="3">HZE</button>
-        <button class="opt-btn" data-v="4">T</button>
-        <button class="opt-btn" data-v="5">ZT</button>
-        <button class="opt-btn" data-v="6">HT</button>
-      </div>
-      <div class="ss" style="margin-top:6px">Bestimmt die Spaltenzahl der Tafel (E bis Hunderttausender).</div>
+    <h2>Was soll auf das Blatt?</h2>
+    <div class="opt-row" id="artOpts">
+      <button class="opt-btn sel" data-v="aufgaben">&#x1F4DD; Aufgaben</button>
+      <button class="opt-btn" data-v="merkblatt">&#x1F3DB;&#xFE0F; Merkblatt r&ouml;misch</button>
     </div>
-    <div style="margin-bottom:12px">
-      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Aufgabentyp</label>
-      <div class="opt-row" id="typeOpts">
-        <button class="opt-btn sel" data-v="num2tab">Zahl &rarr; Tafel<br><span style="font-weight:600;font-size:.66rem">eintragen</span></button>
-        <button class="opt-btn sel" data-v="tab2num">Tafel &rarr; Zahl<br><span style="font-weight:600;font-size:.66rem">ablesen</span></button>
-      </div>
+    <div class="ss" id="artHint" style="margin-top:6px"></div>
+  </div>
+  <div class="card" id="cardTyp">
+    <h2>Aufgabentyp</h2>
+    <div class="typ-list" id="typList"></div>
+    <div class="ss" style="margin-top:8px">Mehrfachauswahl m&ouml;glich &ndash; die Aufgaben wechseln sich dann ab.</div>
+  </div>
+  <div class="card" id="cardRange">
+    <h2>Zahlenraum</h2>
+    <div class="opt-row" id="rangeOpts">
+      <button class="opt-btn" data-v="20">bis 20</button>
+      <button class="opt-btn sel" data-v="100">bis 100</button>
+      <button class="opt-btn" data-v="1000">bis 1000</button>
     </div>
-    <div style="margin-bottom:12px">
-      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Seitenzahl</label>
-      <div class="opt-row" id="pageChips"></div>
-      <p style="font-size:.7rem;color:#6b7280;margin-top:6px">Die Aufgabenzahl pro Seite ist passend zur Stellenzahl festgelegt.</p>
-    </div>
-    <p style="font-size:.72rem;color:#6b7280;margin-top:8px;line-height:1.5">Die Aufgaben werden beim &#214;ffnen der Vorschau automatisch erstellt.</p>
+    <div class="ss" id="rangeHint" style="margin-top:6px"></div>
+  </div>
+  <div class="card" id="cardPages">
+    <h2>Seitenzahl</h2>
+    <div class="opt-row" id="pageChips"></div>
+    <p class="ss" id="colHint" style="margin-top:6px"></p>
   </div>
 </div>
 <div class="screen" id="s-list">
   <div class="card">
-    <h2>Generierte Aufgaben</h2>
-    <div class="tk-list" id="tkList"><p style="color:#6b7280;font-size:.85rem">Die Aufgaben werden beim &Ouml;ffnen der Vorschau erstellt.</p></div>
+    <h2>Erzeugte Aufgaben</h2>
+    <div class="zw-list" id="zwList"><p style="color:#6b7280;font-size:.85rem">Die Aufgaben werden beim &Ouml;ffnen der Vorschau erstellt.</p></div>
   </div>
 </div>
 <div class="screen" id="s-set">
   <div class="card">
     <h2>Layout</h2>
     <div class="sr"><div class="sl">Aufgaben-Nummer</div><label class="tgl"><input type="checkbox" id="showNr" checked><span class="tgl-s"></span></label></div>
-    <div class="sr"><div class="sl">L&ouml;sungsblatt anh&auml;ngen</div><label class="tgl"><input type="checkbox" id="showSol"><span class="tgl-s"></span></label></div>
+    <div class="sr"><div class="sl">L&ouml;sungen anzeigen</div><label class="tgl"><input type="checkbox" id="showSol"><span class="tgl-s"></span></label></div>
+    <p class="ss" style="margin-top:8px">Mit L&ouml;sungen werden alle Antworten gr&uuml;n eingetragen &ndash; ideal als Kontrollblatt.</p>
   </div>
   <div class="card">
     <h2>&#x1F4D0; Kopfzeile</h2>
@@ -149,138 +151,113 @@ input{-webkit-user-select:text;user-select:text}
   <button class="btn bp" id="btnGoPre">&#x1F441; Vorschau &amp; Drucken</button>
 </div>
 <script>
-/* ===== Plattform-Erkennung (iOS/Safari Druck-Eigenheiten) ===== */
+/* Blattart: normale Aufgaben oder das einseitige Merkblatt */
+var blattArt='aufgaben';
+function istMerkblatt(){ return blattArt==='merkblatt'; }
+
 var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 var IS_SAFARI = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
 
+/* ===== Aufgabentypen =====
+   "dreher" gibt es nur zweistellig, römische Zahlen kennen keine Null.
+   minRange sperrt Typen, die im gewählten Zahlenraum keinen Sinn ergeben. */
+var TYPEN=[
+  {k:'zahl2wort', e:'\u270F\uFE0F', n:'Ziffer \u2192 Zahlwort', d:'27 schreiben als "siebenundzwanzig"'},
+  {k:'wort2zahl', e:'\uD83D\uDD22', n:'Zahlwort \u2192 Ziffer', d:'"siebenundzwanzig" schreiben als 27'},
+  {k:'dreher',    e:'\uD83D\uDD00', n:'Zahlendreher',           d:'12 oder 21? Die richtige einkreisen'},
+  {k:'zahl2rom',  e:'\uD83C\uDFDB\uFE0F', n:'Ziffer \u2192 r\u00f6misch', d:'27 schreiben als XXVII'},
+  {k:'rom2zahl',  e:'\uD83C\uDFDB\uFE0F', n:'R\u00f6misch \u2192 Ziffer', d:'XXVII schreiben als 27'}
+];
+var selTypen={zahl2wort:true};
 
-/* ===== Multi/Single-Select ===== */
-function setupMulti(id){
-  document.querySelectorAll('#'+id+' .opt-btn').forEach(function(b){
+function buildTypList(){
+  var el=document.getElementById('typList'); el.innerHTML='';
+  TYPEN.forEach(function(t){
+    var b=document.createElement('button');
+    b.className='typ-btn'+(selTypen[t.k]?' sel':'');
+    b.dataset.k=t.k;
+    b.innerHTML='<span class="te">'+t.e+'</span><span class="tt"><span class="tn">'+t.n+'</span><span class="td">'+t.d+'</span></span>';
     b.addEventListener('click',function(){
-      b.classList.toggle('sel');
-      if(!document.querySelectorAll('#'+id+' .opt-btn.sel').length) b.classList.add('sel');
-      optsDirty=true;
+      if(b.classList.contains('dis'))return;
+      selTypen[t.k]=!selTypen[t.k];
+      if(!Object.keys(selTypen).filter(function(k){return selTypen[k];}).length) selTypen[t.k]=true;
+      optsDirty=true; buildTypList(); initPageChips(); updateHints();
     });
+    el.appendChild(b);
   });
+  applyTypLocks();
 }
-function setupSingle(id){
-  document.querySelectorAll('#'+id+' .opt-btn').forEach(function(b){
-    b.addEventListener('click',function(){
-      document.querySelectorAll('#'+id+' .opt-btn').forEach(function(x){x.classList.remove('sel');});
-      b.classList.add('sel');
-      optsDirty=true;
-    });
+/* Sperrt Typen, die im gewählten Zahlenraum keine Aufgaben liefern */
+function applyTypLocks(){
+  var max=getRange();
+  document.querySelectorAll('#typList .typ-btn').forEach(function(b){
+    var t=Zahlwoerter.TYPEN[b.dataset.k];
+    var moeglich = t && t.min <= Math.min(t.max,max);
+    b.classList.toggle('dis', !moeglich);
+    if(!moeglich && selTypen[b.dataset.k]){ selTypen[b.dataset.k]=false; b.classList.remove('sel'); }
   });
+  if(!getTypen().length){ selTypen.zahl2wort=true; buildTypList(); }
 }
-function getMultiStr(id){return Array.from(document.querySelectorAll('#'+id+' .opt-btn.sel')).map(function(b){return b.dataset.v;});}
-function getSingle(id){var b=document.querySelector('#'+id+' .opt-btn.sel');return b?parseInt(b.dataset.v):null;}
-setupSingle('placeOpts');setupMulti('typeOpts');
+function getTypen(){ return TYPEN.map(function(t){return t.k;}).filter(function(k){return selTypen[k];}); }
 
-/* ===== Automatische Aufgabenanzahl je Stellenzahl (seitenfüllend A4) =====
-   places: 2=ZE, 3=HZE, 4=T, 5=ZT, 6=HT */
-/* ===== Seitenzahl-Steuerung (feste Aufgabenzahl pro Seite, druckgetestet) =====
-   p1 = Seite 1 (mit Header), p2 = GESAMTzahl bei 2 Seiten. Lookup nach Stellenzahl.
-   p2-Werte sind Startwerte und werden am iPad nachjustiert. */
+/* ===== Zahlenraum ===== */
+function getRange(){ var b=document.querySelector('#rangeOpts .opt-btn.sel'); return b?parseInt(b.dataset.v):100; }
+document.querySelectorAll('#rangeOpts .opt-btn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#rangeOpts .opt-btn').forEach(function(x){x.classList.remove('sel');});
+    b.classList.add('sel'); optsDirty=true;
+    buildTypList(); initPageChips(); updateHints();
+  });
+});
+
+function updateHints(){
+  var max=getRange();
+  var h=document.getElementById('rangeHint');
+  h.textContent = (selTypen.dreher && max<20)
+    ? 'Zahlendreher gibt es erst ab 13 \u2013 im Zahlenraum bis 20 sind es nur wenige.'
+    : 'R\u00f6mische Zahlen beginnen bei I (1), eine Null gibt es dort nicht.';
+  var cols=ZahlwoerterPDF.colsFor(getTypen());
+  document.getElementById('colHint').textContent = (cols===1)
+    ? 'Einspaltig, weil ausgeschriebene Zahlw\u00f6rter die ganze Zeilenbreite brauchen.'
+    : 'Zweispaltig \u2013 die gew\u00e4hlten Aufgaben brauchen nur kurze Antworten.';
+}
+
+/* ===== Seitenzahl ===== */
 var numPages=1;
-var PER_PAGE={2:{p1:36,p2:76},3:{p1:36,p2:76},4:{p1:27,p2:57},5:{p1:18,p2:38},6:{p1:18,p2:38}};
-function pageCfg(){ var p=getSingle('placeOpts')||3; return PER_PAGE[p]||PER_PAGE[3]; }
-function totalCount(){ var c=pageCfg(); return numPages<=1?c.p1:(c.p2!=null?c.p2:c.p1*2); }
-function pageSplits(){ var c=pageCfg(); if(numPages<=1)return [c.p1]; var t=(c.p2!=null?c.p2:c.p1*2); return [c.p1,t-c.p1]; }
+function cols(){ return ZahlwoerterPDF.colsFor(getTypen()); }
+function totalCount(){ return ZahlwoerterPDF.capacityForPages(cols(), numPages); }
 function initPageChips(){
   var pc=document.getElementById('pageChips'); if(!pc)return; pc.innerHTML='';
   [{n:1,l:'1 Seite'},{n:2,l:'2 Seiten'}].forEach(function(o){
     var el=document.createElement('div');
     el.className='opt-btn'+(o.n===numPages?' sel':'');
-    el.textContent=o.l;
-    el.onclick=function(){ numPages=o.n; optsDirty=true; document.querySelectorAll('#pageChips .opt-btn').forEach(function(x){x.classList.remove('sel');}); el.classList.add('sel'); };
+    el.innerHTML=o.l+'<br><span style="font-weight:600;font-size:.66rem">'+ZahlwoerterPDF.capacityForPages(cols(),o.n)+' Aufgaben</span>';
+    el.onclick=function(){ numPages=o.n; optsDirty=true; initPageChips(); };
     pc.appendChild(el);
   });
 }
 
 /* ===== Generator ===== */
 var tasks=[];
-var optsDirty=true;   // true -> Vorschau generiert neu; Loeschen einzelner Aufgaben setzt das NICHT
-var PLACE_LABELS={1:'E',2:'Z',3:'H',4:'T',5:'ZT',6:'HT'};
-var PLACE_FULL={1:'Einer',2:'Zehner',3:'Hunderter',4:'Tausender',5:'Zehntausender',6:'Hunderttausender'};
-function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
-
-function makeNumber(places){
-  // erzeugt eine Zahl mit genau 'places' Stellen (führende Stelle 1-9), Rest 0-9
-  var s=''+ri(1,9);
-  for(var i=1;i<places;i++) s+=ri(0,9);
-  return parseInt(s);
-}
-function digitsArray(num,places){
-  var s=(''+num).padStart(places,'0');
-  return s.split('').map(Number); // [höchste ... E]
-}
-
+var optsDirty=true;
 function generate(){
-  var places=getSingle('placeOpts')||3;
-  var cnt=(window.StellenwerttafelPDF&&StellenwerttafelPDF.capacityForPages)
-    ? StellenwerttafelPDF.capacityForPages(numPages, places)
-    : totalCount();
-  var types=getMultiStr('typeOpts'); if(!types.length)types=['num2tab'];
-  var reprs=['digit'];
-  tasks=[];
-  for(var i=0;i<cnt;i++){
-    var type=types[ri(0,types.length-1)];
-    var repr=reprs[ri(0,reprs.length-1)];
-    var num=makeNumber(places);
-    tasks.push({num:num,places:places,type:type,repr:repr});
-  }
+  tasks=Zahlwoerter.makeTasks(totalCount(), getTypen(), getRange());
   renderList();
   optsDirty=false;
 }
-
-/* ===== Listenansicht (Bildschirm) ===== */
-function dotsHTML(n){
-  var h='<div class="tk-dots">';
-  for(var i=0;i<n;i++) h+='<span class="tk-dot"></span>';
-  h+='</div>';
-  return n===0?'<span style="color:#94a3b8">0</span>':h;
-}
-function miniTable(t,showSolution){
-  var labels=[];
-  for(var p=t.places;p>=1;p--) labels.push(PLACE_LABELS[p]);
-  var dig=digitsArray(t.num,t.places);
-  var filled; // soll die Tafel Werte zeigen?
-  var showNum; // soll die Zahl gezeigt werden?
-  if(t.type==='num2tab'){ filled=showSolution; showNum=true; }
-  else { filled=true; showNum=showSolution; } // tab2num: Tafel immer gefüllt, Zahl nur in Lösung
-  var h='';
-  if(showNum) h+='<div class="tk-num">'+t.num.toLocaleString('de-DE')+'</div>';
-  else h+='<div class="tk-num" style="color:#d97706">____</div>';
-  h+='<table class="tk-tbl"><tr>';
-  labels.forEach(function(l){h+='<th>'+l+'</th>';});
-  h+='</tr><tr>';
-  dig.forEach(function(d){
-    if(!filled){h+='<td></td>';}
-    else if(t.repr==='dots' && t.type==='tab2num'){h+='<td>'+dotsHTML(d)+'</td>';}
-    else {h+='<td>'+d+'</td>';}
-  });
-  h+='</tr></table>';
-  return h;
-}
+var TYPLBL={};
+TYPEN.forEach(function(t){TYPLBL[t.k]=t.n;});
 function renderList(){
-  var el=document.getElementById('tkList');el.innerHTML='';
+  var el=document.getElementById('zwList');
+  el.innerHTML='';
   if(!tasks.length){el.innerHTML='<p style="color:#6b7280;font-size:.85rem">Noch keine Aufgaben.</p>';return;}
   tasks.forEach(function(t,i){
-    var d=document.createElement('div');d.className='tk-item';
-    var typeLbl=t.type==='num2tab'?'Zahl &rarr; Tafel':'Tafel &rarr; Zahl';
-    d.innerHTML='<div style="font-size:.7rem;font-weight:800;color:#0369a1;margin-bottom:4px">Aufgabe '+(i+1)+' &middot; '+typeLbl+'</div>'+miniTable(t,false);
-    var b=document.createElement('button');b.className='del';b.textContent='\u2715';
-    b.addEventListener('click',(function(idx){return function(){tasks.splice(idx,1);renderList();};})(i));
-    d.appendChild(b);el.appendChild(d);
+    var d=document.createElement('div');d.className='zw-item';
+    var frage = (t.typ==='dreher') ? t.frage+' \u2192 '+t.wahl.join(' / ') : t.frage+' =';
+    d.innerHTML='<span class="zw-q">'+(i+1)+'. '+frage+'</span><span class="zw-a">'+t.loesung+'</span>';
+    el.appendChild(d);
   });
 }
-
-/* ===== Druck-Arbeitsblatt (A4) ===== */
-
-
-
-/* ===== Kopfzeile ===== */
 
 
 /* Bewusstes Neu-Wuerfeln per Knopf. Absichtlich manuell: sonst kaemen in der
@@ -304,8 +281,7 @@ function showTab(name){
   document.getElementById(map[name]).classList.add('active');
   document.getElementById(tmap[name]).classList.add('active');
   if(name==='pre'){
-    // Auto-Generierung: bei geaenderten Optionen (oder noch leer) frische Aufgaben erzeugen
-    if(optsDirty || !tasks.length){ generate(); }
+    if(!istMerkblatt() && (optsDirty || !tasks.length)){ generate(); }
     sbar.innerHTML='';
     var b1=document.createElement('button'),bR=document.createElement('button'),b2=document.createElement('button');
     b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
@@ -317,6 +293,12 @@ function showTab(name){
     sbar.appendChild(b1);sbar.appendChild(bR);sbar.appendChild(b2);
     setTimeout(buildPreview,50);
   }else{
+    if(name==='list'){
+      if(istMerkblatt()){
+        document.getElementById('zwList').innerHTML='<p style="color:#6b7280;font-size:.85rem">'+
+          'Das Merkblatt enth\u00e4lt keine Aufgaben \u2013 schau es dir in der Vorschau an.</p>';
+      } else if(optsDirty || !tasks.length){ generate(); }
+    }
     sbar.innerHTML='';
     var btn=document.createElement('button');
     btn.className='btn bp';btn.textContent='\ud83d\udc41 Vorschau & Drucken';
@@ -325,33 +307,36 @@ function showTab(name){
   }
 }
 
+/* ===== PDF ===== */
+function getFontBytes(key){
+  var b64=window[key]; if(!b64)return null;
+  var bin=atob(b64), arr=new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+  return arr;
+}
 function pdfSpec(){
-  return {
-    tasks: tasks,
-    numPages: numPages,
-    places: (tasks[0]?tasks[0].places:(getSingle('placeOpts')||3)),
-    showSol: document.getElementById('showSol').checked,
-    showNr: document.getElementById('showNr').checked
-  };
+  return { tasks:tasks, numPages:numPages, cols:cols(),
+           showSol:document.getElementById('showSol').checked,
+           showNr:document.getElementById('showNr').checked };
 }
 function pdfHeaderOpts(){
-  return {
-    showName:document.getElementById('showName').checked,
-    showDate:document.getElementById('showDate').checked,
-    showKl:document.getElementById('showKl').checked
-  };
+  return { showName:document.getElementById('showName').checked,
+           showDate:document.getElementById('showDate').checked,
+           showKl:document.getElementById('showKl').checked };
 }
 async function makePDFBytes(){
   if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
-  return await StellenwerttafelPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
+  var font=getFontBytes('GRUNDSCHRIFT_B64');
+  if(istMerkblatt()) return await ZahlwoerterPDF.buildMerkblattPDF(pdfHeaderOpts(), font);
+  return await ZahlwoerterPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), font);
 }
 function buildPreview(){
   var wrap=document.getElementById('previewContent');
   wrap.innerHTML='<p style="color:#6b7280;padding:16px;font-size:.8rem">Vorschau wird erstellt &hellip;</p>';
   (async function(){
     try{
-      if(!tasks.length){
-        wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Keine Aufgaben erstellt &ndash; bitte Einstellungen pr&uuml;fen.</p>';
+      if(!istMerkblatt() && !tasks.length){
+        wrap.innerHTML='<p style="color:#b91c1c;padding:20px;font-family:Nunito,sans-serif">Keine Aufgaben erstellt &ndash; bitte Aufgabentyp w&auml;hlen.</p>';
         return;
       }
       var bytes=await makePDFBytes();
@@ -382,10 +367,12 @@ function buildPreview(){
 }
 async function doPrint(){
   try{
-    if(!tasks.length){ generate(); }
-    if(!tasks.length){alert('Keine Aufgaben erstellt \u2013 bitte Einstellungen pr\u00fcfen.');return;}
+    if(!istMerkblatt()){
+      if(!tasks.length){ generate(); }
+      if(!tasks.length){alert('Keine Aufgaben erstellt \u2013 bitte Aufgabentyp w\u00e4hlen.');return;}
+    }
     var bytes=await makePDFBytes();
-    await PrintBridge.printPDF(bytes,'Stellenwerttafel.pdf');
+    await PrintBridge.printPDF(bytes, istMerkblatt()?'Roemische-Zahlen-Merkblatt.pdf':'Zahlwoerter.pdf');
   }catch(e){
     alert('Druck fehlgeschlagen: '+(e.message||e));
     console.error(e);
@@ -397,18 +384,40 @@ document.getElementById('t-gen').addEventListener('click',function(){showTab('ge
 document.getElementById('t-list').addEventListener('click',function(){showTab('list');});
 document.getElementById('t-set').addEventListener('click',function(){showTab('set');});
 document.getElementById('t-pre').addEventListener('click',function(){showTab('pre');});
-
-initPageChips();
 document.getElementById('btnGoPre').addEventListener('click',function(){showTab('pre');});
 
 document.addEventListener('contextmenu',function(e){e.preventDefault();});
 document.addEventListener('selectstart',function(e){if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;e.preventDefault();});
 
+/* ===== Blattart-Umschalter ===== */
+document.querySelectorAll('#artOpts .opt-btn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#artOpts .opt-btn').forEach(function(x){x.classList.remove('sel');});
+    b.classList.add('sel');
+    blattArt=b.dataset.v; optsDirty=true; applyArt();
+  });
+});
+/* Beim Merkblatt sind Aufgabentyp, Zahlenraum und Seitenzahl gegenstandslos */
+function applyArt(){
+  var m=istMerkblatt();
+  ['cardTyp','cardRange','cardPages'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.style.display = m ? 'none' : '';
+  });
+  document.getElementById('artHint').textContent = m
+    ? 'Ein einseitiges Lernblatt zum Anschauen oder Aufh\u00e4ngen \u2013 ohne Aufgaben.'
+    : 'Arbeitsblatt mit Aufgaben zum Ausf\u00fcllen.';
+  if(!m) updateHints();
+}
+
+/* ===== Init ===== */
+buildTypList(); initPageChips(); updateHints(); applyArt();
+
 /* ===== PWA Manifest ===== */
-var manifest={name:'Stellenwerttafel Generator',short_name:'Stellenwert',start_url:'.',display:'standalone',background_color:'#f0f9ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='260' font-family='sans-serif' fill='white'%3E123%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var manifest={name:'Zahlw\u00f6rter & r\u00f6mische Zahlen',short_name:'Zahlw\u00f6rter',start_url:'.',display:'standalone',background_color:'#f0f9ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Ctext x='256' y='330' text-anchor='middle' font-size='190' font-family='sans-serif' fill='white'%3EXVII%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
 var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
 var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
 </script>
+<script src="app-back.js"></script>
 <script src="ads.js"></script>
 </body>
 </html>

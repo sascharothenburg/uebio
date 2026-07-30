@@ -253,6 +253,18 @@ async function makePDFBytes(){
   return await ArtikelPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
 }
 
+
+/* Bewusstes Neu-Wuerfeln per Knopf. Absichtlich manuell: sonst kaemen in der
+   Aufgabenliste geloeschte Eintraege unbemerkt zurueck und man koennte die
+   Wirkung geaenderter Einstellungen nicht vergleichen. */
+function regenerate(){
+  optsDirty=true;
+  var ok=generate(false);
+  if(ok===false) return;
+  var pre=document.getElementById('s-pre');
+  if(pre && pre.classList.contains('active')) buildPreview();
+}
+
 /* ===== Tabs + Sbar ===== */
 var sbar=document.getElementById('sbar');
 function showTab(name){
@@ -265,12 +277,14 @@ function showTab(name){
   if(name==='pre'){
     generate();
     sbar.innerHTML='';
-    var b1=document.createElement('button'),b2=document.createElement('button');
+    var b1=document.createElement('button'),bR=document.createElement('button'),b2=document.createElement('button');
     b1.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:#f0f4f8;color:#6b7280;border:2px solid #e2e8f0';
     b2.style.cssText='flex:1;padding:13px 0;border-radius:12px;font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#b91c1c,#dc2626);color:#fff;border:none';
     b1.textContent='\u2190 Zur\u00fcck';b2.textContent='Drucken / PDF';
     b1.onclick=function(){showTab('gen');};b2.onclick=doPrint;
-    sbar.appendChild(b1);sbar.appendChild(b2);
+    bR.style.cssText='flex:0 0 auto;padding:13px 14px;border-radius:12px;font-family:Nunito,sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;background:#f8fafc;color:#b91c1c;border:2px solid #e2e8f0';
+    bR.textContent='\ud83c\udfb2'; bR.title='Neue Aufgaben w\u00fcrfeln'; bR.onclick=regenerate;
+    sbar.appendChild(b1);sbar.appendChild(bR);sbar.appendChild(b2);
     setTimeout(buildPreview,50);
   }else{
     sbar.innerHTML='';
