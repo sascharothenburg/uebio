@@ -483,9 +483,24 @@ function makeCtx(page, font, fontB, fontGS){
 }
 function topY(ctx,yTop){ return ctx.H - yTop; } // PDF y von unten
 
+/* Nur die Icons einbetten, die in den Aufgaben wirklich vorkommen.
+   Sonst landen ALLE 19 PNGs (38 Bild-Streams, ~140 KB) in jedem PDF –
+   das laesst die Vorschau auf dem Geraet minutenlang haengen. */
+function usedIconKeys(){
+  var need={};
+  for(var i=0;i<tasks.length;i++){
+    var t=tasks[i];
+    if(t.k && COUNT_ICONS[t.k])   need[t.k]=1;
+    if(t.ka && COUNT_ICONS[t.ka]) need[t.ka]=1;
+    if(t.kb && COUNT_ICONS[t.kb]) need[t.kb]=1;
+  }
+  var ks=Object.keys(need);
+  return ks.length?ks:['apple'];
+}
+
 async function embedAllIcons(pdf){
   var map={};
-  var keys=Object.keys(COUNT_ICONS);
+  var keys=usedIconKeys();
   for(var i=0;i<keys.length;i++){
     var k=keys[i];
     try{
@@ -679,7 +694,7 @@ function renderTask(ctx, t, iconMap, xTL, yTL, colW, opts, showSol){
     P.drawText(numTxt, {x:xTL+mm(8), y:topY(ctx,yTL+11), size:13, font:FN, color:numColor});
     var nw=FN.widthOfTextAtSize(numTxt,13);
     var objde=COUNT_ICONS[t.k]?COUNT_ICONS[t.k].de:'';
-    P.drawText(esc(objde)+':', {x:xTL+mm(8)+nw+mm(2), y:topY(ctx,yTL+9), size:8.5, font:F, color:PDFLib.rgb(0.42,0.45,0.5)});
+    P.drawText(objde+':', {x:xTL+mm(8)+nw+mm(2), y:topY(ctx,yTL+9), size:8.5, font:F, color:PDFLib.rgb(0.42,0.45,0.5)});
     // kleines Referenz-Icon
     drawIcon(ctx, iconMap[t.k], xTL+colW-mm(10), yTL, mm(8.5));
     var ftop=yTL+15;
@@ -788,7 +803,14 @@ async function makePDFBytes(){
   var fontGS=null;
   var gsBytes=getFontBytes();
   if(gsBytes){
-    try{ fontGS=await pdf.embedFont(gsBytes, {subset:true}); }
+    /* WICHTIG: subset:false.
+       Mit {subset:true} baut fontkit einen CFF-Subset. Wird im fertigen PDF kein
+       einziges Zeichen mit der Grundschrift gesetzt (z.B. Modus "Vergleichen",
+       oder "Anzahl bestimmen" ohne Loesungen), enthaelt der Subset nur .notdef
+       und CFFSubset.encode wirft einen RangeError. Der fliegt aus einem internen
+       Callback und ist NICHT fangbar - pdf.save() wird nie erfuellt und die
+       Vorschau haengt endlos. Ohne Subsetting tritt das Problem nicht auf. */
+    try{ fontGS=await pdf.embedFont(gsBytes, {subset:false}); }
     catch(e){ console.warn('Grundschrift konnte nicht eingebettet werden, falle zurueck auf Helvetica.', e); }
   }
   var iconMap=await embedAllIcons(pdf);
@@ -849,7 +871,28 @@ async function makePDFBytes(){
 function hasContent(){ return tasks.length>0; }
 
 /* ===== Vorschau (pdf.js -> Canvas) ===== */
+/* Notbremse: ein nie erfuelltes Promise (z.B. defekter Font) darf die Vorschau
+   nicht endlos blockieren - lieber eine sichtbare Fehlermeldung. */
+function withTimeout(promise, ms, label){
+  return Promise.race([promise, new Promise(function(_,rej){
+    setTimeout(function(){ rej(new Error(label+' dauert zu lange - bitte Einstellungen pruefen.')); }, ms);
+  })]);
+}
+
+/* Schutz gegen Mehrfachstart: mehrmaliges Tippen auf "Vorschau" wuerde sonst
+   mehrere PDF-Erzeugungen parallel starten und das Geraet blockieren. */
+var _previewBusy=false, _previewPending=false;
 async function buildPreview(){
+  if(_previewBusy){ _previewPending=true; return; }
+  _previewBusy=true;
+  try{ await _buildPreviewInner(); }
+  finally{
+    _previewBusy=false;
+    if(_previewPending){ _previewPending=false; buildPreview(); }
+  }
+}
+
+async function _buildPreviewInner(){
   var wrap=document.getElementById('previewContent');
   wrap.innerHTML='<p style="color:#6b7280;padding:16px;font-size:.8rem">Vorschau wird erstellt &hellip;</p>';
   try{
@@ -857,7 +900,7 @@ async function buildPreview(){
       wrap.innerHTML='<p style="color:#0369a1;padding:20px;font-family:Nunito,sans-serif">Keine Aufgaben erstellt – bitte Einstellungen prüfen.</p>';
       return;
     }
-    var bytes=await makePDFBytes();
+    var bytes=await withTimeout(makePDFBytes(), 20000, 'PDF-Erzeugung');
     if(window.pdfjsLib){
       var loadingTask=window.pdfjsLib.getDocument({data:bytes.slice(0)});
       var pdfDoc=await loadingTask.promise;

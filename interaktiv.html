@@ -8,14 +8,14 @@
 <meta name="apple-mobile-web-app-title" content="Übio">
 <meta name="theme-color" content="#8b5cf6">
 <title>Interaktiv üben – Spielerisch lernen am Bildschirm | Übio</title>
-<meta name="description" content="Mathe und Englisch interaktiv üben direkt im Browser. Kostenlos, ohne Anmeldung, mit sofortiger Rückmeldung.">
+<meta name="description" content="Mathe, Deutsch und Englisch interaktiv üben direkt im Browser. Kostenlos, ohne Anmeldung, mit sofortiger Rückmeldung.">
 <link rel="canonical" href="https://uebio.de/interaktiv.html">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="de_DE">
 <meta property="og:site_name" content="Übio">
 <meta property="og:url" content="https://uebio.de/interaktiv.html">
 <meta property="og:title" content="Interaktiv üben – Spielerisch lernen am Bildschirm | Übio">
-<meta property="og:description" content="Mathe und Englisch interaktiv üben direkt im Browser. Kostenlos, ohne Anmeldung, mit sofortiger Rückmeldung.">
+<meta property="og:description" content="Mathe, Deutsch und Englisch interaktiv üben direkt im Browser. Kostenlos, ohne Anmeldung, mit sofortiger Rückmeldung.">
 <meta property="og:image" content="https://uebio.de/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <style>
@@ -52,6 +52,8 @@ body{font-family:Nunito,system-ui,sans-serif;background:#faf5ff;color:#1e293b;-w
 .acc-head .hi{width:34px;height:34px;flex-shrink:0;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.15rem}
 .acc-head .hi.m{background:#e0f2fe}
 .acc-head .hi.e{background:#ede9fe}
+.acc-head .hi.d{background:#fee2e2}
+.acc-head .hi.s{background:#dcfce7}
 .acc-head .ht{flex:1;text-align:left;font-size:.92rem;font-weight:900;color:#1e293b;letter-spacing:0}
 .acc-head .hc{font-size:.72rem;font-weight:800;color:#94a3b8;background:#f1f5f9;border-radius:20px;padding:2px 9px}
 .acc-head .hv{color:#a78bfa;font-size:1rem;font-weight:900;transition:transform .18s ease;flex-shrink:0}
@@ -129,6 +131,14 @@ body{font-family:Nunito,system-ui,sans-serif;background:#faf5ff;color:#1e293b;-w
       </div></div>
     </div>
 
+    <div class="group">
+      <button class="acc-head" type="button" id="acc-deutsch" aria-expanded="false" onclick="toggleAcc(this)">
+        <span class="hi d">&#x270F;&#xFE0F;</span><span class="ht">Deutsch</span><span class="hc">1</span><span class="hv">&#x203A;</span>
+      </button>
+      <div class="acc-panel"><div class="acc-inner">
+        <a class="app" href="interaktiv-grossklein.html"><span class="ai d">&#x1F520;</span><span class="at"><span class="an">Gro&szlig;- und Kleinschreibung</span><span class="ad">Nomen finden &amp; S&auml;tze berichtigen</span></span><span class="ar">&#x203A;</span></a>
+      </div></div>
+    </div>
     <div class="group">
       <button class="acc-head" type="button" id="acc-englisch" aria-expanded="false" onclick="toggleAcc(this)">
         <span class="hi e">&#x1F1EC;&#x1F1E7;</span><span class="ht">Englisch</span><span class="hc">1</span><span class="hv">&#x203A;</span>

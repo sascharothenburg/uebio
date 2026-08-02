@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Zahlenstrahl">
+<meta name="theme-color" content="#0369a1">
+<title>Zahlenstrahl &middot; Interaktives Üben &middot; Sascha Rothenburg</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#eff6ff;color:#0c2a43;-webkit-user-select:none;user-select:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+.app{display:flex;flex-direction:column;min-height:100%;max-width:560px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1)}
+.hdr{background:linear-gradient(135deg,#075985,#0ea5e9);color:#fff;padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top,0px));flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hdr h1{font-size:1.15rem;font-weight:900;display:flex;align-items:center;gap:8px}
+.hdr .sub{font-size:.66rem;opacity:.85;margin-top:1px;font-weight:600}
+.hdr-back{background:rgba(255,255,255,.22);border:none;color:#fff;font-family:Nunito,sans-serif;font-size:.78rem;font-weight:800;padding:7px 13px;border-radius:20px;cursor:pointer;display:none}
+.hdr-back.show{display:inline-block}
+.main{flex:1;padding:18px;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column;animation:fade .25s ease}
+.screen.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Startbildschirm */
+.intro{font-size:.92rem;color:#5b7185;margin-bottom:18px;line-height:1.5;font-weight:600}
+.sect-label{font-size:.72rem;font-weight:900;color:#0369a1;text-transform:uppercase;letter-spacing:.6px;margin:14px 2px 9px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.choice{background:#f0f8ff;border:2px solid #dbeafe;border-radius:16px;padding:16px 12px;cursor:pointer;text-align:center;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:7px}
+.choice:hover{border-color:#7dd3fc;transform:translateY(-2px)}
+.choice.sel{border-color:#0ea5e9;background:#e0f2fe;box-shadow:0 4px 14px rgba(14,165,233,.18)}
+.choice .ico{font-size:1.9rem;line-height:1}
+.choice .nm{font-weight:800;font-size:.92rem}
+.choice .ds{font-size:.7rem;color:#6b8299;font-weight:600;line-height:1.25}
+.tabs-toggle{display:flex;gap:8px;margin:0 2px 12px}
+.tabs-toggle button{flex:1;padding:10px;border:2px solid #dbeafe;border-radius:12px;background:#f0f8ff;font-family:Nunito,sans-serif;font-weight:800;font-size:.85rem;color:#5b7185;cursor:pointer;transition:.15s}
+.tabs-toggle button.act{background:#0369a1;border-color:#0369a1;color:#fff}
+.topic-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.topic-grid.steps{grid-template-columns:1fr 1fr}
+.topic-b{background:#f0f8ff;border:2px solid #dbeafe;border-radius:13px;padding:11px 6px;cursor:pointer;text-align:center;font-weight:800;font-size:.82rem;color:#0c2a43;transition:.15s}
+.topic-b:hover{border-color:#7dd3fc}
+.topic-b.sel{border-color:#0ea5e9;background:#e0f2fe;color:#075985}
+.topic-b .te{display:block;font-size:1.3rem;margin-bottom:3px}
+.topic-b .td{display:block;font-size:.66rem;color:#6b8299;font-weight:700;margin-top:2px}
+.start-btn{margin-top:auto;width:100%;padding:16px;border:none;border-radius:15px;background:linear-gradient(135deg,#075985,#0ea5e9);color:#fff;font-family:Nunito,sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;box-shadow:0 6px 18px rgba(14,165,233,.3)}
+.start-btn:disabled{background:#c3ddf0;box-shadow:none;cursor:not-allowed}
+
+/* Fortschrittsleiste */
+.progress-wrap{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.progress-bar{flex:1;height:10px;background:#dbeafe;border-radius:6px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#0ea5e9,#7dd3fc);border-radius:6px;transition:width .35s ease;width:0%}
+.progress-txt{font-size:.78rem;font-weight:800;color:#0369a1;white-space:nowrap}
+.score-pill{font-size:.78rem;font-weight:800;color:#16a34a;white-space:nowrap}
+
+/* Aufgaben-Karten */
+.q-card{flex:1;display:flex;flex-direction:column}
+.q-prompt{font-size:.82rem;font-weight:800;color:#6b8299;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+
+/* Großes Aufgabendisplay */
+.task-big{text-align:center;font-size:3.2rem;font-weight:900;color:#075985;margin:18px 0 4px;letter-spacing:1px}
+.task-sub{text-align:center;font-size:.9rem;color:#6b8299;font-weight:700;margin-bottom:8px}
+
+/* Quiz: Antwortoptionen */
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.quiz-opt{background:#f0f8ff;border:2.5px solid #dbeafe;border-radius:16px;padding:22px 12px;cursor:pointer;text-align:center;font-weight:900;font-size:1.7rem;color:#0c2a43;transition:.12s}
+.quiz-opt:hover{border-color:#7dd3fc}
+.quiz-opt.sel{border-color:#0ea5e9;background:#e0f2fe;transform:scale(1.03)}
+.quiz-opt.ok{border-color:#86efac;background:#f0fdf4;color:#16a34a}
+.quiz-opt.no{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+.quiz-opt.disabled{cursor:default;pointer-events:none}
+
+/* Zuordnen */
+.match-cols{display:flex;gap:14px;flex:1}
+.match-col{flex:1;display:flex;flex-direction:column;gap:9px}
+.match-item{background:#f0f8ff;border:2.5px solid #dbeafe;border-radius:13px;padding:11px 12px;cursor:pointer;font-weight:800;font-size:1.05rem;text-align:center;display:flex;align-items:center;justify-content:center;min-height:54px;transition:.12s}
+.match-item.sel{border-color:#0ea5e9;background:#e0f2fe;transform:scale(1.03)}
+.match-item.done{border-color:#86efac;background:#f0fdf4;color:#16a34a;cursor:default;opacity:.75}
+.match-item.wrong{border-color:#fca5a5;background:#fef2f2;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* Reihe füllen */
+.row-head{text-align:center;font-weight:900;font-size:1.15rem;color:#075985;margin-bottom:14px}
+.row-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.row-line{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:1.15rem;color:#0c2a43}
+.row-line .eq{color:#6b8299}
+.row-gap{min-width:64px;height:46px;border:2.5px solid #dbeafe;border-radius:11px;background:#f0f8ff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.25rem;color:#0369a1;cursor:pointer;transition:.12s}
+.row-gap.active{border-color:#0ea5e9;background:#e0f2fe}
+.row-gap.filled{border-color:#0ea5e9;background:#e0f2fe;color:#075985}
+.row-gap.ok{border-color:#86efac;background:#f0fdf4;color:#16a34a}
+.row-gap.no{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+.row-fixed{font-weight:900;color:#075985}
+.chip-pool{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:10px}
+.num-chip{min-width:52px;height:50px;padding:0 10px;border-radius:12px;border:2.5px solid #dbeafe;background:#fff;font-weight:900;font-size:1.3rem;color:#0c2a43;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.12s}
+.num-chip:hover{border-color:#7dd3fc}
+.num-chip.used{opacity:.35;pointer-events:none}
+
+/* Eintippen */
+.type-input{width:100%;padding:15px;border:2.5px solid #dbeafe;border-radius:14px;font-family:Nunito,sans-serif;font-size:1.6rem;font-weight:900;text-align:center;color:#0c2a43;background:#f0f8ff;outline:none;-webkit-user-select:text;user-select:text}
+.type-input:focus{border-color:#0ea5e9}
+.type-input.ok{border-color:#86efac;background:#f0fdf4;color:#16a34a}
+.type-input.no{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+
+/* Feedback + Buttons */
+.feedback{text-align:center;font-weight:900;font-size:1.15rem;min-height:30px;margin:14px 0 4px;opacity:0;transition:.2s}
+.feedback.show{opacity:1}
+.feedback.ok{color:#16a34a}
+.feedback.no{color:#dc2626}
+.q-actions{display:flex;gap:10px;margin-top:auto;padding-top:14px}
+.act-btn{flex:1;padding:15px;border:none;border-radius:14px;font-family:Nunito,sans-serif;font-size:1rem;font-weight:900;cursor:pointer}
+.act-primary{background:linear-gradient(135deg,#075985,#0ea5e9);color:#fff}
+.act-primary:disabled{background:#c3ddf0;cursor:not-allowed}
+.act-ghost{background:#e0f2fe;color:#0369a1;border:2px solid #dbeafe}
+
+/* Ergebnis */
+.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+.result .big{font-size:4.5rem;line-height:1}
+.result .rscore{font-size:2.2rem;font-weight:900;color:#0369a1}
+.result .rtxt{font-size:1.05rem;font-weight:700;color:#5b7185;max-width:300px;line-height:1.5}
+.result .rstars{font-size:2rem;letter-spacing:4px}
+.result-actions{display:flex;flex-direction:column;gap:10px;width:100%;margin-top:10px}
+
+.foot{text-align:center;font-size:.66rem;color:#9cc0db;padding:10px;font-weight:600}
+
+/* Zahlenstrahl */
+.zs-wrap{margin:10px 0;overflow-x:auto}
+.zs-svg{width:100%;height:auto;display:block;touch-action:manipulation}
+.zs-interactive{cursor:pointer}
+.zs-hint{text-align:center;font-size:.8rem;color:#6b8299;font-weight:700;margin:4px 0 2px}
+/* Antwort-Optionen Ablesen (Zahlen) bereits via .quiz-opts vorhanden */
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <div>
+    <h1>📏 Zahlenstrahl</h1>
+    <div class="sub">Interaktives Üben &middot; Sascha Rothenburg</div>
+  </div>
+  <button class="hdr-back" id="backBtn">&#x2190; Menü</button>
+</div>
+<div class="main">
+
+  <!-- START -->
+  <div class="screen active" id="scr-start">
+    <p class="intro">Wähle eine Übung und einen Zahlenraum. Du bekommst sofort Rückmeldung, ob deine Antwort richtig ist. 🌟</p>
+    <div class="sect-label">Übungsart</div>
+    <div class="cards" id="modeCards">
+      <div class="choice" data-mode="quiz"><span class="ico">✔️</span><span class="nm">Zahl wählen</span><span class="ds">Welche Zahl zeigt der Pfeil?</span></div>
+      <div class="choice" data-mode="type"><span class="ico">✏️</span><span class="nm">Zahl eintippen</span><span class="ds">Lies den Pfeil ab</span></div>
+      <div class="choice" data-mode="mark"><span class="ico">📍</span><span class="nm">Pfeil setzen</span><span class="ds">Tippe die richtige Stelle an</span></div>
+    </div>
+    <div class="sect-label">Zahlenraum</div>
+    <div class="topic-grid steps" id="topicGrid"></div>
+    <div class="sect-label">Strahl beginnt bei</div>
+    <div class="tabs-toggle" id="sectionTabs">
+      <button data-sec="zero" class="act">Immer bei 0</button>
+      <button data-sec="cut">Ausschnitt</button>
+    </div>
+    <button class="start-btn" id="startBtn" disabled>Los geht's!</button>
+  </div>
+
+  <!-- ÜBUNG -->
+  <div class="screen" id="scr-quiz">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+      <div class="progress-txt" id="progTxt">1/10</div>
+      <div class="score-pill" id="scorePill">&#x2713; 0</div>
+    </div>
+    <div class="q-card" id="qCard"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="q-actions" id="qActions"></div>
+  </div>
+
+  <!-- ERGEBNIS -->
+  <div class="screen" id="scr-result">
+    <div class="result">
+      <div class="big" id="rBig">🎉</div>
+      <div class="rstars" id="rStars"></div>
+      <div class="rscore" id="rScore">8 / 10</div>
+      <div class="rtxt" id="rTxt"></div>
+      <div class="result-actions">
+        <button class="act-btn act-primary" id="againBtn">Nochmal üben</button>
+        <button class="act-btn act-ghost" id="menuBtn">Zurück zum Menü</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="foot">&#169; 2026 Sascha Rothenburg &middot; Zahlenstrahl</div>
+</div>
+<script>
+/* ===== Zahlenstrahl interaktiv ===== */
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+/* ----- Bereichs-/Wert-Logik (originalgetreu aus dem Generator) ----- */
+function scaleFor(max){
+  if(max<=20) return {major:5,minor:1};
+  if(max<=100) return {major:10,minor:5};
+  return {major:100,minor:50};
+}
+function makeRange(max,section){
+  var sc=scaleFor(max);
+  if(section==='zero'){ return {start:0,end:max,major:sc.major,minor:sc.minor}; }
+  var span, major, minor, start;
+  if(max<=20){ span=10; major=5; minor=1; start=ri(0,2)*5; if(start+span>20)start=10; }
+  else if(max<=100){ span=ri(2,4)*10; major=10; minor=5; var maxStart=100-span; start=ri(0,maxStart/10)*10; }
+  else { span=ri(2,4)*100; major=100; minor=50; var ms=1000-span; start=ri(0,ms/100)*100; }
+  return {start:start,end:start+span,major:major,minor:minor};
+}
+function pickValue(r,type){
+  var steps=Math.round((r.end-r.start)/r.minor);
+  var cands=[];
+  for(var s=1;s<steps;s++){ cands.push(r.start+s*r.minor); }
+  if(type==='read' || type==='quiz' || type==='type'){
+    var nonMajor=cands.filter(function(v){return (v % r.major)!==0;});
+    if(nonMajor.length) cands=nonMajor;
+  }
+  return cands[ri(0,cands.length-1)];
+}
+
+/* ----- SVG (originalgetreu, mit interaktivem Modus) -----
+   mode: 'read' = Pfeil gegeben, Zahl gefragt
+         'mark' = Zahl gegeben (oben), Strahl leer; Kind tippt -> userVal markiert
+   showSolution: zeigt korrekte Markierung gruen
+   userVal: bei 'mark' aktuell gesetzte Position (oder null)
+*/
+function strahlSVG(t,opts){
+  opts=opts||{};
+  var showSolution=opts.showSolution, userVal=opts.userVal, interactive=opts.interactive;
+  var W=opts.W||540, H=78;
+  var padL=26, padR=26, padTop=38, axisY=padTop+8;
+  var x0=padL, x1=W-padR;
+  var span=t.end-t.start;
+  function px(v){ return x0 + (v-t.start)/span*(x1-x0); }
+  var cls=interactive?'zs-svg zs-interactive':'zs-svg';
+  var s='<svg class="'+cls+'" id="zsSvg" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,sans-serif" data-x0="'+x0+'" data-x1="'+x1+'" data-w="'+W+'">';
+  // Achse mit Pfeilspitze rechts
+  s+='<line x1="'+x0+'" y1="'+axisY+'" x2="'+(x1+10)+'" y2="'+axisY+'" stroke="#0369a1" stroke-width="2"/>';
+  s+='<polygon points="'+(x1+10)+','+(axisY-4)+' '+(x1+18)+','+axisY+' '+(x1+10)+','+(axisY+4)+'" fill="#0369a1"/>';
+  // Striche
+  var v=t.start;
+  while(v<=t.end+0.0001){
+    var X=px(v);
+    var isMajor = (v % t.major === 0);
+    if(isMajor){
+      s+='<line x1="'+X+'" y1="'+(axisY-9)+'" x2="'+X+'" y2="'+(axisY+9)+'" stroke="#0369a1" stroke-width="2"/>';
+      s+='<text x="'+X+'" y="'+(axisY+22)+'" text-anchor="middle" font-size="12" font-weight="800" fill="#0c2a43">'+v+'</text>';
+    }else{
+      s+='<line x1="'+X+'" y1="'+(axisY-5)+'" x2="'+X+'" y2="'+(axisY+5)+'" stroke="#0369a1" stroke-width="1.3"/>';
+    }
+    v+=t.minor;
+  }
+  if(t.type==='read'){
+    // roter Pfeil auf den Wert
+    var mx=px(t.value);
+    s+='<polygon points="'+mx+','+(axisY-2)+' '+(mx-5)+','+(axisY-13)+' '+(mx+5)+','+(axisY-13)+'" fill="#dc2626"/>';
+    s+='<line x1="'+mx+'" y1="'+(axisY-13)+'" x2="'+mx+'" y2="'+(padTop-22)+'" stroke="#dc2626" stroke-width="2"/>';
+    if(showSolution){
+      s+='<text x="'+mx+'" y="'+(padTop-24)+'" text-anchor="middle" font-size="14" font-weight="900" fill="#dc2626">'+t.value+'</text>';
+    }
+  }else{
+    // 'mark': Kind setzt Pfeil
+    if(userVal!=null && !showSolution){
+      var ux=px(userVal);
+      s+='<polygon points="'+ux+','+(axisY-2)+' '+(ux-5)+','+(axisY-13)+' '+(ux+5)+','+(axisY-13)+'" fill="#0ea5e9"/>';
+      s+='<line x1="'+ux+'" y1="'+(axisY-13)+'" x2="'+ux+'" y2="'+(padTop-22)+'" stroke="#0ea5e9" stroke-width="2"/>';
+    }
+    if(showSolution){
+      var sx=px(t.value);
+      s+='<polygon points="'+sx+','+(axisY-2)+' '+(sx-5)+','+(axisY-13)+' '+(sx+5)+','+(axisY-13)+'" fill="#16a34a"/>';
+      s+='<line x1="'+sx+'" y1="'+(axisY-13)+'" x2="'+sx+'" y2="'+(padTop-22)+'" stroke="#16a34a" stroke-width="2"/>';
+      s+='<text x="'+sx+'" y="'+(padTop-24)+'" text-anchor="middle" font-size="14" font-weight="900" fill="#16a34a">'+t.value+'</text>';
+      // falls falsch gesetzt: eigenen Pfeil grau zeigen
+      if(userVal!=null && userVal!==t.value){
+        var ux2=px(userVal);
+        s+='<polygon points="'+ux2+','+(axisY-2)+' '+(ux2-5)+','+(axisY-13)+' '+(ux2+5)+','+(axisY-13)+'" fill="#cbd5e1"/>';
+        s+='<line x1="'+ux2+'" y1="'+(axisY-13)+'" x2="'+ux2+'" y2="'+(padTop-22)+'" stroke="#cbd5e1" stroke-width="2"/>';
+      }
+    }
+  }
+  s+='</svg>';
+  return s;
+}
+
+/* ----- Distraktoren fuer Quiz (benachbarte Minor-Werte) ----- */
+function valDistractors(t,want){
+  var seen={}; seen[t.value]=1; var out=[];
+  var cand=[t.value+t.minor, t.value-t.minor, t.value+2*t.minor, t.value-2*t.minor, t.value+t.major, t.value-t.major];
+  cand=shuffle(cand);
+  for(var i=0;i<cand.length && out.length<want;i++){
+    var v=cand[i];
+    if(v>t.start && v<t.end && !seen[v] && v%t.minor===0){ seen[v]=1; out.push(v); }
+  }
+  var dn=3;
+  while(out.length<want){ var v=t.value + dn*t.minor; if(v>t.start&&v<t.end&&!seen[v]){seen[v]=1;out.push(v);} else {v=t.value-dn*t.minor; if(v>t.start&&v<t.end&&!seen[v]){seen[v]=1;out.push(v);}} dn++; if(dn>30)break; }
+  // Notfall: einfach +/- minor*irgendwas auch ausserhalb erlauben, damit 3 Optionen existieren
+  while(out.length<want){ var v=t.value + (out.length+1)*t.minor; if(!seen[v]){seen[v]=1;out.push(v);} else break; }
+  return out;
+}
+
+/* ----- Zustand ----- */
+var state={mode:null,max:null,section:'zero',queue:[],idx:0,score:0,total:0,answered:false};
+
+var RANGES=[
+  {v:20,label:'bis 20',desc:'Zehnerschritte'},
+  {v:100,label:'bis 100',desc:'Fünfer/Zehner'},
+  {v:1000,label:'bis 1000',desc:'Große Zahlen'}
+];
+
+function buildTopicGrid(){
+  var g=document.getElementById('topicGrid'); g.innerHTML='';
+  RANGES.forEach(function(rg){
+    var b=document.createElement('div'); b.className='topic-b'; b.dataset.max=rg.v;
+    b.innerHTML='<span class="te">'+rg.v+'</span>'+rg.label+'<span class="td">'+rg.desc+'</span>';
+    b.addEventListener('click',function(){ selRange(b,rg.v); });
+    g.appendChild(b);
+  });
+}
+function selRange(el,v){
+  document.querySelectorAll('#topicGrid .topic-b').forEach(function(x){x.classList.remove('sel');});
+  el.classList.add('sel'); state.max=v; checkStartReady();
+}
+document.querySelectorAll('#sectionTabs button').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('#sectionTabs button').forEach(function(x){x.classList.remove('act');});
+    btn.classList.add('act'); state.section=btn.dataset.sec;
+  });
+});
+document.querySelectorAll('#modeCards .choice').forEach(function(c){
+  c.addEventListener('click',function(){
+    document.querySelectorAll('#modeCards .choice').forEach(function(x){x.classList.remove('sel');});
+    c.classList.add('sel'); state.mode=c.dataset.mode; checkStartReady();
+  });
+});
+function checkStartReady(){ document.getElementById('startBtn').disabled=!(state.mode&&state.max); }
+
+/* ----- Navigation ----- */
+function show(scr){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(scr).classList.add('active');
+  document.getElementById('backBtn').classList.toggle('show', scr!=='scr-start');
+}
+function toMenu(){ show('scr-start'); }
+document.getElementById('backBtn').addEventListener('click',toMenu);
+document.getElementById('menuBtn').addEventListener('click',toMenu);
+document.getElementById('startBtn').addEventListener('click',startQuiz);
+document.getElementById('againBtn').addEventListener('click',function(){ startQuiz(); });
+
+/* Aufgaben-Typ je Modus: quiz/type -> 'read'; mark -> 'mark' */
+function taskTypeForMode(m){ return m==='mark' ? 'mark' : 'read'; }
+
+function startQuiz(){
+  var n=10;
+  state.queue=[];
+  var ttype=taskTypeForMode(state.mode);
+  for(var i=0;i<n;i++){
+    var r=makeRange(state.max, state.section);
+    var val=pickValue(r, ttype);
+    state.queue.push({start:r.start,end:r.end,major:r.major,minor:r.minor,type:ttype,value:val,max:state.max});
+  }
+  state.idx=0; state.score=0; state.total=n; state.answered=false;
+  show('scr-quiz'); renderQuestion();
+}
+function updateProgress(){
+  document.getElementById('progFill').style.width=Math.round(state.idx/state.total*100)+'%';
+  document.getElementById('progTxt').textContent=(state.idx+1)+'/'+state.total;
+  document.getElementById('scorePill').innerHTML='✓ '+state.score;
+}
+function setFeedback(ok,msg){var f=document.getElementById('feedback');f.className='feedback show '+(ok?'ok':'no');f.innerHTML=msg||(ok?'✅ Richtig!':'❌ Leider falsch');}
+function clearFeedback(){var f=document.getElementById('feedback');f.className='feedback';f.textContent='';}
+function nextQuestion(){state.idx++;if(state.idx>=state.total){showResult();return;}state.answered=false;renderQuestion();}
+
+function renderQuestion(){
+  updateProgress(); clearFeedback();
+  var card=document.getElementById('qCard'), actions=document.getElementById('qActions');
+  card.innerHTML=''; actions.innerHTML='';
+  if(state.mode==='quiz') renderQuiz(card,actions);
+  else if(state.mode==='type') renderType(card,actions);
+  else if(state.mode==='mark') renderMark(card,actions);
+}
+
+/* ---------- 1) ZAHL WÄHLEN (Quiz) ---------- */
+function renderQuiz(card,actions){
+  var t=state.queue[state.idx];
+  var opts=shuffle(valDistractors(t,3).concat([t.value]));
+  var html='<div class="q-prompt">Welche Zahl zeigt der Pfeil?</div>';
+  html+='<div class="zs-wrap">'+strahlSVG(t,{W:540})+'</div>';
+  html+='<div class="quiz-opts" id="quizOpts"></div>';
+  card.innerHTML=html;
+  var box=card.querySelector('#quizOpts');
+  opts.forEach(function(v){
+    var d=document.createElement('div'); d.className='quiz-opt'; d.textContent=v;
+    d.addEventListener('click',function(){ checkQuiz(d,v,t); });
+    box.appendChild(d);
+  });
+}
+function checkQuiz(el,val,t){
+  if(state.answered) return; state.answered=true;
+  var ok=(val===t.value); if(ok) state.score++;
+  document.querySelectorAll('#quizOpts .quiz-opt').forEach(function(x){
+    x.classList.add('disabled');
+    if(parseInt(x.textContent,10)===t.value) x.classList.add('ok');
+  });
+  if(!ok) el.classList.add('no');
+  setFeedback(ok, ok?'✅ Richtig! Der Pfeil zeigt auf '+t.value : '❌ Der Pfeil zeigt auf '+t.value);
+  var b=document.createElement('button'); b.className='act-btn act-primary';
+  b.textContent=(state.idx+1>=state.total)?'Ergebnis':'Weiter';
+  b.addEventListener('click',nextQuestion);
+  document.getElementById('qActions').innerHTML=''; document.getElementById('qActions').appendChild(b);
+}
+
+/* ---------- 2) ZAHL EINTIPPEN ---------- */
+function renderType(card,actions){
+  var t=state.queue[state.idx];
+  var html='<div class="q-prompt">Welche Zahl zeigt der Pfeil? Tippe sie ein.</div>';
+  html+='<div class="zs-wrap">'+strahlSVG(t,{W:540})+'</div>';
+  html+='<input class="type-input" id="typeInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="?">';
+  card.innerHTML=html;
+  var inp=card.querySelector('#typeInput');
+  setTimeout(function(){inp.focus();},100);
+  inp.addEventListener('input',function(){inp.value=inp.value.replace(/[^0-9]/g,'');});
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter')checkType(t,inp);});
+  var b=document.createElement('button'); b.className='act-btn act-primary'; b.id='typeCheck'; b.textContent='Prüfen';
+  b.addEventListener('click',function(){ checkType(t,inp); });
+  actions.appendChild(b);
+}
+function checkType(t,inp){
+  if(state.answered) return;
+  var val=inp.value.trim(); if(!val) return;
+  var ok=(parseInt(val,10)===t.value); state.answered=true;
+  if(ok){state.score++;inp.className='type-input ok';} else {inp.className='type-input no';}
+  inp.blur();
+  setFeedback(ok, ok?'✅ Richtig!':'❌ Der Pfeil zeigt auf '+t.value);
+  var b=document.getElementById('typeCheck');
+  b.textContent=(state.idx+1>=state.total)?'Ergebnis':'Weiter'; b.onclick=nextQuestion;
+}
+
+/* ---------- 3) PFEIL SETZEN ---------- */
+var markState={};
+function renderMark(card,actions){
+  var t=state.queue[state.idx];
+  markState={t:t, userVal:null};
+  var html='<div class="q-prompt">Setze den Pfeil bei der '+t.value+'.</div>';
+  html+='<div class="zs-hint">Tippe auf die richtige Stelle des Strahls</div>';
+  html+='<div class="zs-wrap" id="markWrap"></div>';
+  card.innerHTML=html;
+  renderMarkSvg();
+  var b=document.createElement('button'); b.className='act-btn act-primary act-primary'; b.id='markCheck'; b.textContent='Prüfen';
+  b.disabled=true; b.style.opacity='.5';
+  b.addEventListener('click',checkMark); actions.appendChild(b);
+}
+function renderMarkSvg(){
+  var wrap=document.getElementById('markWrap');
+  wrap.innerHTML=strahlSVG(markState.t,{W:540, interactive:true, userVal:markState.userVal});
+  var svg=document.getElementById('zsSvg');
+  function handle(ev){
+    if(state.answered) return;
+    var rect=svg.getBoundingClientRect();
+    var clientX=(ev.touches&&ev.touches[0])?ev.touches[0].clientX:ev.clientX;
+    var relX=(clientX-rect.left)/rect.width; // 0..1 in viewBox-Breite
+    var W=parseFloat(svg.dataset.w), x0=parseFloat(svg.dataset.x0), x1=parseFloat(svg.dataset.x1);
+    var vbX=relX*W;
+    var t=markState.t, span=t.end-t.start;
+    var raw=t.start + (vbX-x0)/(x1-x0)*span;
+    // auf naechste Minor-Position snappen
+    var snapped=Math.round((raw-t.start)/t.minor)*t.minor + t.start;
+    snapped=Math.max(t.start, Math.min(t.end, snapped));
+    markState.userVal=snapped;
+    renderMarkSvg();
+    var cb=document.getElementById('markCheck'); cb.disabled=false; cb.style.opacity='1';
+  }
+  var touched=false;
+  svg.addEventListener('touchend',function(e){e.preventDefault();touched=true;handle(e.changedTouches&&e.changedTouches[0]?{clientX:e.changedTouches[0].clientX}:e);setTimeout(function(){touched=false;},400);},{passive:false});
+  svg.addEventListener('click',function(e){if(touched)return;handle(e);});
+}
+function checkMark(){
+  if(state.answered) return;
+  if(markState.userVal==null) return;
+  state.answered=true;
+  var ok=(markState.userVal===markState.t.value); if(ok) state.score++;
+  var wrap=document.getElementById('markWrap');
+  wrap.innerHTML=strahlSVG(markState.t,{W:540, showSolution:true, userVal:markState.userVal});
+  setFeedback(ok, ok?'✅ Genau richtig gesetzt!':'❌ Du hast '+markState.userVal+' gesetzt – richtig ist '+markState.t.value);
+  var b=document.getElementById('markCheck');
+  b.textContent=(state.idx+1>=state.total)?'Ergebnis':'Weiter'; b.disabled=false; b.style.opacity='1'; b.onclick=nextQuestion;
+}
+
+/* ===== Ergebnis ===== */
+function showResult(){
+  show('scr-result');
+  var pct=state.total?Math.round(state.score/state.total*100):0;
+  document.getElementById('rScore').textContent=state.score+' / '+state.total;
+  var stars=pct>=90?5:pct>=75?4:pct>=50?3:pct>=30?2:1;
+  var s='';for(var i=0;i<5;i++){s+=i<stars?'⭐':'☆';}
+  document.getElementById('rStars').textContent=s;
+  var big,txt;
+  if(pct>=90){big='🎉';txt='Super! Du findest dich auf dem Zahlenstrahl bestens zurecht!';}
+  else if(pct>=75){big='😄';txt='Sehr gut! Fast alles richtig – weiter so!';}
+  else if(pct>=50){big='😊';txt='Gut gemacht! Übe noch ein bisschen, dann sitzt es.';}
+  else{big='💪';txt='Weiter so! Übung macht den Meister – versuch es nochmal.';}
+  document.getElementById('rBig').textContent=big;
+  document.getElementById('rTxt').innerHTML=txt;
+}
+
+/* ===== Init ===== */
+buildTopicGrid();
+
+/* ===== PWA ===== */
+var manifest={name:'Zahlenstrahl',short_name:'Zahlenstrahl',start_url:'.',display:'standalone',background_color:'#eff6ff',theme_color:'#0369a1',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230369a1'/%3E%3Cline x1='70' y1='300' x2='442' y2='300' stroke='white' stroke-width='12'/%3E%3Cline x1='120' y1='275' x2='120' y2='325' stroke='white' stroke-width='10'/%3E%3Cline x1='256' y1='275' x2='256' y2='325' stroke='white' stroke-width='10'/%3E%3Cline x1='392' y1='275' x2='392' y2='325' stroke='white' stroke-width='10'/%3E%3Cpolygon points='256,250 240,210 272,210' fill='%23fca5a5'/%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+
+</script>
+</body>
+</html>

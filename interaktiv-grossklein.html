@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="fonts.css">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Einmaleins">
+<meta name="theme-color" content="#b91c1c">
+<title>Groß- und Kleinschreibung interaktiv üben – Grundschule | Übio</title>
+<meta name="description" content="Groß- und Kleinschreibung interaktiv üben: Nomen finden, Sätze berichtigen, Wortpaare. Kostenlos und ohne Anmeldung.">
+<link rel="canonical" href="https://uebio.de/interaktiv-grossklein.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<meta property="og:site_name" content="Übio">
+<meta property="og:url" content="https://uebio.de/interaktiv-grossklein.html">
+<meta property="og:title" content="Groß- und Kleinschreibung interaktiv üben – Grundschule | Übio">
+<meta property="og:description" content="Groß- und Kleinschreibung interaktiv üben: Nomen finden, Sätze berichtigen, Wortpaare.">
+<meta property="og:image" content="https://uebio.de/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Nunito,sans-serif;background:#fef2f2;color:#0c2a43;-webkit-user-select:none;user-select:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+.app{display:flex;flex-direction:column;height:100%;max-width:560px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1);overflow:hidden}
+.hdr{background:linear-gradient(135deg,#075985,#dc2626);color:#fff;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));flex-shrink:0}
+.hdr h1{font-size:1.1rem;font-weight:900}
+.hdr p{font-size:.68rem;opacity:.85;margin-top:1px}
+.hdr-btns{display:flex;gap:8px;margin-top:6px;align-items:center}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(255,255,255,.25);border-radius:20px;color:#fff;font-family:Nunito,sans-serif;font-size:.72rem;font-weight:800;text-decoration:none;cursor:pointer;border:none}
+.hdr-btn.hide{display:none}
+.main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column;animation:fade .25s ease}
+.screen.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Startbildschirm */
+.intro{font-size:.92rem;color:#5b7185;margin-bottom:18px;line-height:1.5;font-weight:600}
+.sect-label{font-size:.72rem;font-weight:900;color:#b91c1c;text-transform:uppercase;letter-spacing:.6px;margin:14px 2px 9px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.choice{background:#f0f8ff;border:2px solid #fee2e2;border-radius:16px;padding:16px 12px;cursor:pointer;text-align:center;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:7px}
+.choice:hover{border-color:#7dd3fc;transform:translateY(-2px)}
+.choice.sel{border-color:#dc2626;background:#fef2f2;box-shadow:0 4px 14px rgba(14,165,233,.18)}
+.choice .ico{font-size:1.9rem;line-height:1}
+.choice .nm{font-weight:800;font-size:.92rem}
+.choice .ds{font-size:.7rem;color:#6b8299;font-weight:600;line-height:1.25}
+.tabs-toggle{display:flex;gap:8px;margin:0 2px 12px}
+.tabs-toggle button{flex:1;padding:10px;border:2px solid #fee2e2;border-radius:12px;background:#f0f8ff;font-family:Nunito,sans-serif;font-weight:800;font-size:.85rem;color:#5b7185;cursor:pointer;transition:.15s}
+.tabs-toggle button.act{background:#b91c1c;border-color:#b91c1c;color:#fff}
+.topic-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.topic-grid.steps{grid-template-columns:1fr 1fr}
+.topic-b{background:#f0f8ff;border:2px solid #fee2e2;border-radius:13px;padding:11px 6px;cursor:pointer;text-align:center;font-weight:800;font-size:.82rem;color:#0c2a43;transition:.15s}
+.topic-b:hover{border-color:#7dd3fc}
+.topic-b.sel{border-color:#dc2626;background:#fef2f2;color:#075985}
+.topic-b .te{display:block;font-size:1.3rem;margin-bottom:3px}
+.topic-b .td{display:block;font-size:.66rem;color:#6b8299;font-weight:700;margin-top:2px}
+.start-btn{margin-top:16px;width:100%;padding:16px;border:none;border-radius:15px;background:linear-gradient(135deg,#075985,#dc2626);color:#fff;font-family:Nunito,sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;box-shadow:0 6px 18px rgba(14,165,233,.3)}
+.start-btn:disabled{background:#c3ddf0;box-shadow:none;cursor:not-allowed}
+
+/* Fortschrittsleiste */
+.progress-wrap{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.progress-bar{flex:1;height:10px;background:#fee2e2;border-radius:6px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#dc2626,#7dd3fc);border-radius:6px;transition:width .35s ease;width:0%}
+.progress-txt{font-size:.78rem;font-weight:800;color:#b91c1c;white-space:nowrap}
+.score-pill{font-size:.78rem;font-weight:800;color:#16a34a;white-space:nowrap}
+
+/* Aufgaben-Karten */
+.q-card{flex:1;display:flex;flex-direction:column}
+.q-prompt{font-size:.82rem;font-weight:800;color:#6b8299;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+
+/* Großes Aufgabendisplay */
+.task-big{text-align:center;font-size:3.2rem;font-weight:900;color:#075985;margin:18px 0 4px;letter-spacing:1px}
+.task-sub{text-align:center;font-size:.9rem;color:#6b8299;font-weight:700;margin-bottom:8px}
+
+/* Quiz: Antwortoptionen */
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.quiz-opt{background:#f0f8ff;border:2.5px solid #fee2e2;border-radius:16px;padding:22px 12px;cursor:pointer;text-align:center;font-weight:900;font-size:1.7rem;color:#0c2a43;transition:.12s}
+.quiz-opt:hover{border-color:#7dd3fc}
+.quiz-opt.sel{border-color:#dc2626;background:#fef2f2;transform:scale(1.03)}
+.quiz-opt.ok{border-color:#86efac;background:#f0fdf4;color:#16a34a}
+.quiz-opt.no{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+.quiz-opt.disabled{cursor:default;pointer-events:none}
+
+/* Zuordnen */
+.match-cols{display:flex;gap:14px;flex:1}
+.match-col{flex:1;display:flex;flex-direction:column;gap:7px}
+.match-item{background:#f0f8ff;border:2.5px solid #fee2e2;border-radius:13px;padding:7px 12px;cursor:pointer;font-weight:800;font-size:1.05rem;text-align:center;display:flex;align-items:center;justify-content:center;min-height:46px;transition:.12s}
+.match-item.sel{border-color:#dc2626;background:#fef2f2;transform:scale(1.03)}
+.match-item.done{border-color:#86efac;background:#f0fdf4;color:#16a34a;cursor:default;opacity:.75}
+.match-item.wrong{border-color:#fca5a5;background:#fef2f2;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* Reihe füllen */
+.row-head{text-align:center;font-weight:900;font-size:1.15rem;color:#075985;margin-bottom:14px}
+.row-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.row-line{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:1.15rem;color:#0c2a43}
+.row-line .eq{color:#6b8299}
+.row-gap{min-width:64px;height:46px;border:2.5px solid #fee2e2;border-radius:11px;background:#f0f8ff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.25rem;color:#b91c1c;cursor:pointer;transition:.12s}
+.row-gap.active{border-color:#dc2626;background:#fef2f2}
+.row-gap.filled{border-color:#dc2626;background:#fef2f2;color:#075985}
+.row-gap.ok{border-color:#86efac;background:#f0fdf4;color:#16a34a}
+.row-gap.no{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+.row-fixed{font-weight:900;color:#075985}
+.chip-pool{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:10px}
+.num-chip{min-width:52px;height:50px;padding:0 10px;border-radius:12px;border:2.5px solid #fee2e2;background:#fff;font-weight:900;font-size:1.3rem;color:#0c2a43;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.12s}
+.num-chip:hover{border-color:#7dd3fc}
+.num-chip.used{opacity:.35;pointer-events:none}
+
+/* Eintippen */
+.type-input{width:100%;padding:15px;border:2.5px solid #fee2e2;border-radius:14px;font-family:Nunito,sans-serif;font-size:1.6rem;font-weight:900;text-align:center;color:#0c2a43;background:#f0f8ff;outline:none;-webkit-user-select:text;user-select:text}
+.type-input:focus{border-color:#dc2626}
+.type-input.ok{border-color:#86efac;background:#f0fdf4;color:#16a34a}
+.type-input.no{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+
+/* Feedback + Buttons */
+.feedback{text-align:center;font-weight:900;font-size:1.15rem;min-height:30px;margin:14px 0 4px;opacity:0;transition:.2s}
+.feedback.show{opacity:1}
+.feedback.ok{color:#16a34a}
+.feedback.no{color:#dc2626}
+.q-actions{display:flex;gap:10px;margin-top:auto;padding-top:14px}
+.act-btn{flex:1;padding:15px;border:none;border-radius:14px;font-family:Nunito,sans-serif;font-size:1rem;font-weight:900;cursor:pointer}
+.act-primary{background:linear-gradient(135deg,#075985,#dc2626);color:#fff}
+.act-primary:disabled{background:#c3ddf0;cursor:not-allowed}
+.act-ghost{background:#fef2f2;color:#b91c1c;border:2px solid #fee2e2}
+
+/* Ergebnis */
+.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+.result .big{font-size:4.5rem;line-height:1}
+.result .rscore{font-size:2.2rem;font-weight:900;color:#b91c1c}
+.result .rtxt{font-size:1.05rem;font-weight:700;color:#5b7185;max-width:300px;line-height:1.5}
+.result .rstars{font-size:2rem;letter-spacing:4px}
+.result-actions{display:flex;flex-direction:column;gap:10px;width:100%;margin-top:10px}
+
+.foot{text-align:center;font-size:.66rem;color:#9cc0db;padding:10px;font-weight:600}
+</style>
+<script src="back-button.js"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <h1>&#x270F;&#xFE0F; Gro&szlig;- und Kleinschreibung</h1>
+  <p>Interaktives &Uuml;ben</p>
+  <div class="hdr-btns">
+    <a class="hdr-btn" href="interaktiv.html#acc-deutsch">&#x2190; Zur&uuml;ck</a>
+    <a class="hdr-btn" href="index.html">&#x1F3E0; Hauptmen&uuml;</a>
+  </div>
+</div>
+<div class="main">
+
+  <!-- START -->
+  <div class="screen active" id="scr-start">
+    <p class="intro">W&auml;hle eine &Uuml;bung und eine Stufe. Du bekommst sofort R&uuml;ckmeldung, ob deine Antwort richtig ist. &#x1F31F;</p>
+    <div class="sect-label">&Uuml;bungsart</div>
+    <div class="cards" id="modeCards">
+      <div class="choice" data-mode="pair"><span class="ico">&#x2714;&#xFE0F;</span><span class="nm">Gro&szlig; oder klein?</span><span class="ds">Richtige Schreibweise antippen</span></div>
+      <div class="choice" data-mode="find"><span class="ico">&#x1F50D;</span><span class="nm">Nomen finden</span><span class="ds">Alle Nomen im Satz antippen</span></div>
+      <div class="choice" data-mode="fix"><span class="ico">&#x1F527;</span><span class="nm">Satz berichtigen</span><span class="ds">W&ouml;rter antippen, die gro&szlig; m&uuml;ssen</span></div>
+    </div>
+    <div class="sect-label">Stufe</div>
+    <div class="topic-grid" id="topicGrid"></div>
+    <button class="start-btn" id="startBtn" disabled>Los geht's!</button>
+  </div>
+
+  <!-- ÜBUNG -->
+  <div class="screen" id="scr-quiz">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+      <div class="progress-txt" id="progTxt">1/10</div>
+      <div class="score-pill" id="scorePill">&#x2713; 0</div>
+    </div>
+    <div class="q-card" id="qCard"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="q-actions" id="qActions"></div>
+  </div>
+
+  <!-- ERGEBNIS -->
+  <div class="screen" id="scr-result">
+    <div class="result">
+      <div class="big" id="rBig">&#x1F389;</div>
+      <div class="rstars" id="rStars"></div>
+      <div class="rscore" id="rScore">8 / 10</div>
+      <div class="rtxt" id="rTxt"></div>
+      <div class="result-actions">
+        <button class="act-btn act-primary" id="againBtn">Nochmal &uuml;ben</button>
+        <button class="act-btn act-ghost" id="menuBtn">Zur&uuml;ck zum Men&uuml;</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+<script>
+
+/* ===== Wortbasis (identisch zu grossklein.html) ===== */
+var CORPUS_12 = [
+  [["Der","S"],["Hund","N"],["bellt",null],["laut",null]],
+  [["Die","S"],["Katze","N"],["trinkt",null],["Milch","N"]],
+  [["Mein","S"],["Bruder","N"],["spielt",null],["im",null],["Garten","N"]],
+  [["Die","S"],["Sonne","N"],["scheint",null],["am",null],["Himmel","N"]],
+  [["Das","S"],["Kind","N"],["malt",null],["ein",null],["Bild","N"]],
+  [["Ein","S"],["Vogel","N"],["sitzt",null],["auf",null],["dem",null],["Baum","N"]],
+  [["Die","S"],["Blume","N"],["bl\u00fcht",null],["im",null],["Beet","N"]],
+  [["Der","S"],["Ball","N"],["rollt",null],["unter",null],["den",null],["Tisch","N"]],
+  [["Wir","S"],["gehen",null],["zur",null],["Schule","N"]],
+  [["Die","S"],["Maus","N"],["versteckt",null],["sich",null],["im",null],["Loch","N"]],
+  [["Mein","S"],["Vater","N"],["liest",null],["ein",null],["Buch","N"]],
+  [["Die","S"],["Kinder","N"],["bauen",null],["eine",null],["Burg","N"]],
+  [["Der","S"],["Fisch","N"],["schwimmt",null],["im",null],["Wasser","N"]],
+  [["Eine","S"],["Biene","N"],["sammelt",null],["Honig","N"]],
+  [["Das","S"],["Pferd","N"],["l\u00e4uft",null],["\u00fcber",null],["die",null],["Wiese","N"]],
+  [["Meine","S"],["Oma","N"],["backt",null],["einen",null],["Kuchen","N"]],
+  [["Der","S"],["Lehrer","N"],["schreibt",null],["an",null],["die",null],["Tafel","N"]],
+  [["Die","S"],["Lampe","N"],["steht",null],["auf",null],["dem",null],["Tisch","N"]],
+  [["Ein","S"],["Schiff","N"],["f\u00e4hrt",null],["\u00fcber",null],["das",null],["Meer","N"]],
+  [["Der","S"],["Apfel","N"],["liegt",null],["im",null],["Korb","N"]]
+];
+var CORPUS_34 = [
+  [["Beim","S"],["Spielen","X"],["vergisst",null],["sie",null],["die",null],["Zeit","N"]],
+  [["Das","S"],["Lesen","X"],["macht",null],["meinem",null],["Freund","N"],["Freude","N"]],
+  [["Nach","S"],["dem",null],["Essen","X"],["r\u00e4umen",null],["wir",null],["den",null],["Tisch","N"],["ab",null]],
+  [["Das","S"],["Sch\u00f6ne","X"],["an",null],["dem",null],["Tag","N"],["war",null],["der",null],["Ausflug","N"]],
+  [["Beim","S"],["Schwimmen","X"],["tr\u00e4gt",null],["er",null],["eine",null],["Brille","N"]],
+  [["Das","S"],["laute",null],["Lachen","X"],["der",null],["Kinder","N"],["freut",null],["mich",null]],
+  [["Im","S"],["Winter","N"],["ist",null],["das",null],["Wandern","X"],["anstrengend",null]],
+  [["Die","S"],["Mannschaft","N"],["gewann",null],["das",null],["wichtige",null],["Spiel","N"]],
+  [["Beim","S"],["Kochen","X"],["braucht",null],["meine",null],["Mutter","N"],["frische",null],["Kr\u00e4uter","N"]],
+  [["Das","S"],["Gute","X"],["an",null],["der",null],["Reise","N"],["war",null],["das",null],["Wetter","N"]],
+  [["Vor","S"],["dem",null],["Schlafen","X"],["putzt",null],["das",null],["Kind","N"],["die",null],["Z\u00e4hne","N"]],
+  [["Die","S"],["fleißigen",null],["Sch\u00fcler","N"],["\u00fcben",null],["das",null],["Schreiben","X"]],
+  [["Beim","S"],["Malen","X"],["benutzt",null],["er",null],["bunte",null],["Stifte","N"]],
+  [["Das","S"],["schnelle",null],["Auto","N"],["f\u00e4hrt",null],["durch",null],["die",null],["Stadt","N"]],
+  [["Am","S"],["Wochenende","N"],["gehen",null],["wir",null],["zum",null],["Schwimmen","X"]],
+  [["Das","S"],["Wichtige","X"],["ist",null],["eine",null],["gute",null],["Vorbereitung","N"]],
+  [["Beim","S"],["Wandern","X"],["entdeckten",null],["sie",null],["einen",null],["Wasserfall","N"]],
+  [["Der","S"],["Hund","N"],["freut",null],["sich",null],["\u00fcber",null],["das",null],["Spazierengehen","X"]],
+  [["Nach","S"],["dem",null],["Aufstehen",  "X"],["macht",null],["er",null],["sein",null],["Bett","N"]],
+  [["Das","S"],["Singen","X"],["im",null],["Chor","N"],["macht",null],["allen",null],["Spa\u00df","N"]]
+];
+
+/* ===== Wortpaare (gro\u00df vs. klein) ===== */
+var PAIRS_12 = [
+  {w:"Hund",cap:true},{w:"laufen",cap:false},{w:"Tisch",cap:true},{w:"schnell",cap:false},
+  {w:"Schule",cap:true},{w:"spielen",cap:false},{w:"Blume",cap:true},{w:"sch\u00f6n",cap:false},
+  {w:"Auto",cap:true},{w:"essen",cap:false},{w:"Katze",cap:true},{w:"klein",cap:false},
+  {w:"Baum",cap:true},{w:"singen",cap:false},{w:"Fenster",cap:true},{w:"warm",cap:false},
+  {w:"Vogel",cap:true},{w:"lesen",cap:false},{w:"Garten",cap:true},{w:"bunt",cap:false},
+  {w:"Buch",cap:true},{w:"springen",cap:false},{w:"Maus",cap:true},{w:"kalt",cap:false}
+];
+var PAIRS_34 = PAIRS_12.concat([
+  {w:"Laufen",cap:true,note:"das Laufen"},{w:"Sch\u00f6ne",cap:true,note:"das Sch\u00f6ne"},
+  {w:"Spielen",cap:true,note:"beim Spielen"},{w:"Gute",cap:true,note:"das Gute"},
+  {w:"Lesen",cap:true,note:"das Lesen"},{w:"Wichtige",cap:true,note:"das Wichtige"},
+  {w:"Schwimmen",cap:true,note:"beim Schwimmen"},{w:"Singen",cap:true,note:"das Singen"}
+]);
+
+/* ===== Helpers ===== */
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function lc(w){return w.charAt(0).toLowerCase()+w.slice(1);}
+function uc(w){return w.charAt(0).toUpperCase()+w.slice(1);}
+
+/* Marker im Korpus:
+   "N" = Nomen, "X" = substantiviertes Verb/Adjektiv (nur Klasse 3/4),
+   "S" = Satzanfang, null = normales kleines Wort.
+   Grossgeschrieben wird ein Wort, wenn es N, X oder S ist. */
+function isNoun(tag){ return tag==='N' || tag==='X'; }
+function mustCap(tag, idx){ return isNoun(tag) || idx===0; }
+
+/* ===== Zustand ===== */
+var state={mode:null, topic:null, queue:[], idx:0, score:0, total:0, answered:false};
+
+var STUFEN=[
+  {key:'12', name:'Klasse 1/2', ds:'Nomen in einfachen S\u00e4tzen'},
+  {key:'34', name:'Klasse 3/4', ds:'auch das Lesen, das Sch\u00f6ne \u2026'}
+];
+function corpusFor(k){ return k==='34' ? CORPUS_34 : CORPUS_12; }
+function pairsFor(k){ return k==='34' ? PAIRS_34 : PAIRS_12; }
+
+function buildTopicGrid(){
+  var g=document.getElementById('topicGrid');
+  g.innerHTML='';
+  STUFEN.forEach(function(st){
+    var d=document.createElement('div');
+    d.className='choice'; d.dataset.topic=st.key;
+    d.innerHTML='<span class="nm">'+st.name+'</span><span class="ds">'+st.ds+'</span>';
+    d.addEventListener('click',function(){
+      g.querySelectorAll('.choice').forEach(function(x){x.classList.remove('sel');});
+      d.classList.add('sel'); state.topic=st.key; checkStartReady();
+    });
+    g.appendChild(d);
+  });
+}
+document.querySelectorAll('#modeCards .choice').forEach(function(c){
+  c.addEventListener('click',function(){
+    document.querySelectorAll('#modeCards .choice').forEach(function(x){x.classList.remove('sel');});
+    c.classList.add('sel'); state.mode=c.dataset.mode; checkStartReady();
+  });
+});
+function checkStartReady(){
+  document.getElementById('startBtn').disabled=!(state.mode&&state.topic);
+}
+
+/* ===== Navigation ===== */
+function show(scr){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(scr).classList.add('active');
+}
+function toMenu(){ show('scr-start'); }
+document.getElementById('menuBtn').addEventListener('click',toMenu);
+document.getElementById('startBtn').addEventListener('click',startQuiz);
+document.getElementById('againBtn').addEventListener('click',function(){ startQuiz(); });
+
+function startQuiz(){
+  var n;
+  if(state.mode==='pair'){
+    /* Wortpaare: ohne Zuruecklegen ziehen -> auf einer Runde keine Dubletten */
+    var pool=shuffle(pairsFor(state.topic));
+    n=Math.min(10,pool.length);
+    state.queue=pool.slice(0,n);
+  } else {
+    var c=shuffle(corpusFor(state.topic));
+    n=Math.min(8,c.length);
+    state.queue=c.slice(0,n);
+  }
+  state.idx=0; state.score=0; state.total=n; state.answered=false;
+  show('scr-quiz');
+  renderQuestion();
+}
+
+function updateProgress(){
+  document.getElementById('progFill').style.width=Math.round(state.idx/state.total*100)+'%';
+  document.getElementById('progTxt').textContent=(state.idx+1)+'/'+state.total;
+  document.getElementById('scorePill').innerHTML='\u2713 '+state.score;
+}
+function setFeedback(ok,msg){
+  var f=document.getElementById('feedback');
+  f.className='feedback show '+(ok?'ok':'no');
+  f.innerHTML=msg||(ok?'\u2705 Richtig!':'\u274c Leider falsch');
+}
+function clearFeedback(){ var f=document.getElementById('feedback'); f.className='feedback'; f.textContent=''; }
+function nextQuestion(){
+  state.idx++;
+  if(state.idx>=state.total){ showResult(); return; }
+  state.answered=false;
+  renderQuestion();
+}
+function weiterBtn(){
+  var b=document.createElement('button'); b.className='act-btn act-primary';
+  b.textContent=(state.idx+1>=state.total)?'Ergebnis':'Weiter';
+  b.addEventListener('click',nextQuestion);
+  var a=document.getElementById('qActions'); a.innerHTML=''; a.appendChild(b);
+}
+
+function renderQuestion(){
+  updateProgress();
+  clearFeedback();
+  var card=document.getElementById('qCard');
+  var actions=document.getElementById('qActions');
+  card.innerHTML=''; actions.innerHTML='';
+  if(state.mode==='pair') renderPair(card,actions);
+  else if(state.mode==='find') renderSentence(card,actions,'find');
+  else renderSentence(card,actions,'fix');
+}
+
+/* ---------- 1) GROSS ODER KLEIN? ---------- */
+function renderPair(card,actions){
+  var p=state.queue[state.idx];
+  var richtig = p.cap ? uc(p.w) : lc(p.w);
+  var falsch  = p.cap ? lc(p.w) : uc(p.w);
+  var opts=shuffle([richtig,falsch]);
+  var hint = p.note ? '<div class="q-prompt" style="font-size:.8rem;opacity:.75">Tipp: '+p.note+'</div>' : '';
+  card.innerHTML='<div class="q-prompt">Wie schreibt man das Wort richtig?</div>'+hint+
+                 '<div class="quiz-opts" id="quizOpts"></div>';
+  var box=card.querySelector('#quizOpts');
+  opts.forEach(function(v){
+    var d=document.createElement('div'); d.className='quiz-opt'; d.textContent=v;
+    d.addEventListener('click',function(){ checkPair(d,v,richtig,p); });
+    box.appendChild(d);
+  });
+}
+function checkPair(el,val,richtig,p){
+  if(state.answered) return;
+  state.answered=true;
+  var ok=(val===richtig);
+  if(ok) state.score++;
+  document.querySelectorAll('#quizOpts .quiz-opt').forEach(function(x){
+    x.classList.add('disabled');
+    if(x.textContent===richtig) x.classList.add('ok');
+  });
+  if(!ok) el.classList.add('no');
+  var grund = p.note ? ' ('+p.note+')' : (p.cap?' \u2013 Nomen werden gro\u00dfgeschrieben.':' \u2013 das ist kein Nomen.');
+  setFeedback(ok, (ok?'\u2705 Richtig! ':'\u274c Richtig ist: ')+'<b>'+richtig+'</b>'+grund);
+  weiterBtn();
+}
+
+/* ---------- 2+3) NOMEN FINDEN / SATZ BERICHTIGEN ---------- */
+/* find: Satz korrekt geschrieben, Kind tippt die Nomen an.
+   fix : Satz komplett klein, Kind tippt an, was gross muss (inkl. Satzanfang). */
+var sentState={};
+function renderSentence(card,actions,kind){
+  var sent=state.queue[state.idx];
+  var soll=[];
+  sent.forEach(function(w,i){
+    var treffer = (kind==='find') ? isNoun(w[1]) : mustCap(w[1],i);
+    if(treffer) soll.push(i);
+  });
+  sentState={kind:kind, sel:{}, soll:soll, sent:sent};
+  var prompt = (kind==='find')
+    ? 'Tippe alle <b>Nomen</b> im Satz an.'
+    : 'Der Satz ist ganz klein geschrieben. Tippe alle W&ouml;rter an, die <b>gro&szlig;</b> geschrieben werden.';
+  var html='<div class="q-prompt">'+prompt+'</div><div class="chip-pool" id="wordPool"></div>';
+  card.innerHTML=html;
+  var pool=card.querySelector('#wordPool');
+  sent.forEach(function(w,i){
+    var d=document.createElement('div');
+    d.className='num-chip';
+    d.textContent = (kind==='find') ? w[0] : lc(w[0]);
+    d.dataset.i=i;
+    d.addEventListener('click',function(){ toggleWord(d,i); });
+    pool.appendChild(d);
+  });
+  var b=document.createElement('button'); b.className='act-btn act-primary'; b.id='sentCheck';
+  b.textContent='Pr\u00fcfen';
+  b.addEventListener('click',checkSentence);
+  actions.appendChild(b);
+}
+function toggleWord(el,i){
+  if(state.answered) return;
+  if(sentState.sel[i]){ delete sentState.sel[i]; el.classList.remove('filled'); }
+  else { sentState.sel[i]=1; el.classList.add('filled'); }
+}
+function checkSentence(){
+  if(state.answered) return;
+  state.answered=true;
+  var soll=sentState.soll, sent=sentState.sent;
+  var sollSet={}; soll.forEach(function(i){sollSet[i]=1;});
+  var richtig=0, fehlend=0, zuviel=0;
+  document.querySelectorAll('#wordPool .num-chip').forEach(function(el){
+    var i=parseInt(el.dataset.i,10);
+    var gewaehlt=!!sentState.sel[i], soll_=!!sollSet[i];
+    el.classList.add('disabled');
+    if(soll_ && gewaehlt){ el.classList.add('ok'); richtig++; }
+    else if(soll_ && !gewaehlt){ el.classList.add('ok'); el.style.opacity='.65'; fehlend++; }
+    else if(!soll_ && gewaehlt){ el.classList.add('no'); zuviel++; }
+    if(soll_) el.textContent=uc(sent[i][0]);
+  });
+  var allesRichtig=(fehlend===0 && zuviel===0);
+  if(allesRichtig) state.score++;
+  var satz=sent.map(function(w,i){ return (sentState.kind==='find') ? w[0] : (mustCap(w[1],i)?uc(w[0]):lc(w[0])); }).join(' ');
+  var msg;
+  if(allesRichtig){ msg='\u2705 Alles richtig! <b>'+satz+'</b>'; }
+  else {
+    var teile=[];
+    if(fehlend) teile.push(fehlend+(fehlend===1?' Wort fehlt':' W\u00f6rter fehlen'));
+    if(zuviel) teile.push(zuviel+(zuviel===1?' Wort zu viel':' W\u00f6rter zu viel'));
+    msg='\u274c '+teile.join(', ')+'. Richtig: <b>'+satz+'</b>';
+  }
+  setFeedback(allesRichtig,msg);
+  var b=document.getElementById('sentCheck');
+  b.textContent=(state.idx+1>=state.total)?'Ergebnis':'Weiter';
+  b.onclick=nextQuestion;
+}
+
+/* ===== Ergebnis ===== */
+function showResult(){
+  show('scr-result');
+  var pct=state.total?Math.round(state.score/state.total*100):0;
+  document.getElementById('rScore').textContent=state.score+' / '+state.total;
+  var stars = pct>=90?5 : pct>=75?4 : pct>=50?3 : pct>=30?2 : 1;
+  var s=''; for(var i=0;i<5;i++){ s+= i<stars?'\u2b50':'\u2606'; }
+  document.getElementById('rStars').textContent=s;
+  var big, txt;
+  if(pct>=90){ big='\ud83c\udf89'; txt='Super! Du kennst dich mit der Gro\u00df- und Kleinschreibung richtig gut aus!'; }
+  else if(pct>=75){ big='\ud83d\ude04'; txt='Sehr gut! Fast alles richtig \u2013 weiter so!'; }
+  else if(pct>=50){ big='\ud83d\ude0a'; txt='Gut gemacht! \u00dcbe noch ein bisschen, dann sitzt es.'; }
+  else { big='\ud83d\udcaa'; txt='Weiter so! Merke dir: Nomen schreibt man gro\u00df.'; }
+  document.getElementById('rBig').textContent=big;
+  document.getElementById('rTxt').innerHTML=txt;
+}
+
+/* ===== Init ===== */
+buildTopicGrid();
+
+/* ===== PWA ===== */
+var manifest={name:'Gro\u00df- und Kleinschreibung',short_name:'Gro\u00df/Klein',start_url:'.',display:'standalone',background_color:'#fef2f2',theme_color:'#b91c1c',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23b91c1c'/%3E%3Ctext x='256' y='360' text-anchor='middle' font-size='300' font-family='sans-serif' fill='white'%3EA%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+var mlink=document.createElement('link');mlink.rel='manifest';mlink.href=URL.createObjectURL(mblob);document.head.appendChild(mlink);
+
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+
+</script>
+<script src="ads.js"></script>
+</body>
+</html>
