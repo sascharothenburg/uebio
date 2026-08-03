@@ -12,8 +12,8 @@
      fonts/nunito-v32-latin-800.woff2          fonts/nunito-v32-latin-800italic.woff2
      fonts/nunito-v32-latin-900.woff2          fonts/nunito-v32-latin-900italic.woff2
 
-   Hinweis: Die Gewichte 200 und 300 werden von den Apps nicht verwendet und
-   sind hier bewusst NICHT eingebunden (können gelöscht werden).
+   Es liegen genau diese 10 Dateien im Ordner fonts/ - die von den Apps nicht
+   verwendeten Gewichte 200, 300 und 500 wurden entfernt.
 
    font-display:swap  -> Text bleibt sofort sichtbar (System-Font), bis Nunito
    geladen ist; kein Layout-Sprung, keine leere Fläche.
