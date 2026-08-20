@@ -57,7 +57,8 @@
   const MIN_SHRINK = 0.8;      // ab hier lieber umbrechen statt weiter schrumpfen
   const SENTENCE_MIN_SCALE = 0.7; // harte Untergrenze, auch nach Umbruch auf 2 Zeilen
   const LINE_GAP = LIN.band * 0.35; // Abstand zwischen zwei umgebrochenen Satz-Zeilen
-  const LETTER_SINGLE_GAP = 0.85 * MM; // Abstand zwischen Buchstaben im 1-Zeilen-Modus (kompakter als rowGap, damit 12 Buchstaben auf eine Seite passen)
+  const LETTER_SINGLE_GAP = 0.85 * MM;
+  const LETTER_ROW_GAP = LIN.rowGap * 0.4; // Abstand Vorschreib-Zeile -> zusätzliche Übungszeile // Abstand zwischen Buchstaben im 1-Zeilen-Modus (kompakter als rowGap, damit 12 Buchstaben auf eine Seite passen)
 
   // ---- Farben (Deutsch-Rot) ------------------------------------------
   const C = {
@@ -76,6 +77,17 @@
   };
   function rgb01(r, g, b) { return { r: r / 255, g: g / 255, b: b / 255 }; }
   function col(c) { return c ? global.PDFLib.rgb(c.r, c.g, c.b) : undefined; }
+
+  // ---- Lineatur-Varianten --------------------------------------------
+  // '3' (Standard) = Oberlinie + Hilfslinie + Grundlinie + Unterlinie
+  // '2'            = Hilfslinie + Grundlinie
+  // '1'            = nur Grundlinie
+  // Die ZEILENHÖHE bleibt in allen Varianten identisch (Ober-/Unterzone
+  // werden weiterhin freigehalten), damit die Schriftgröße konstant bleibt.
+  function normStyle(v) {
+    v = String(v == null ? '3' : v);
+    return (v === '1' || v === '2') ? v : '3';
+  }
 
   // ---- Zeichen-Kontext (Top-Left-Koordinaten -> pdf-lib) -------------
   function makePageCtx(page, fonts) {
@@ -269,7 +281,8 @@
   }
 
 
-  function drawRow4(ctx, xLeft, yTop, width, oberH, unterH) {
+  function drawRow4(ctx, xLeft, yTop, width, oberH, unterH, style) {
+    style = normStyle(style);
     const band = LIN.band;
     const total = oberH + band + unterH;
     const right = xLeft + width;
@@ -279,12 +292,18 @@
     const hilfsY = yTop + oberH;      // Hilfslinie (oben, Ende Oberzone)
     const grundY = yTop + oberH + band; // Grundlinie (Basislinie)
 
-    ctx.rect(xLeft, hilfsY, width, band, { fill: C.bandBg, opacity: 0.7 });
+    if (style !== '1') {
+      ctx.rect(xLeft, hilfsY, width, band, { fill: C.bandBg, opacity: 0.7 });
+    }
 
-    ctx.line(xLeft, yTop, right, yTop, { color: C.help, w: 1 });                 // Oberlinie
-    ctx.line(xLeft, hilfsY, right, hilfsY, { color: C.dash, w: 1, dash: [3, 2] }); // Hilfslinie
+    if (style === '3') {
+      ctx.line(xLeft, yTop, right, yTop, { color: C.help, w: 1 });                 // Oberlinie
+      ctx.line(xLeft, yTop + total, right, yTop + total, { color: C.help, w: 1 }); // Unterlinie
+    }
+    if (style !== '1') {
+      ctx.line(xLeft, hilfsY, right, hilfsY, { color: C.dash, w: 1, dash: [3, 2] }); // Hilfslinie
+    }
     ctx.line(xLeft, grundY, right, grundY, { color: C.grund, w: 2 });            // Grundlinie
-    ctx.line(xLeft, yTop + total, right, yTop + total, { color: C.help, w: 1 }); // Unterlinie
 
     const cl = LIN.corner;
     const mark = (cx, cy, dx, dy) => {
@@ -299,8 +318,8 @@
     return grundY;
   }
 
-  function drawWordRow(ctx, xLeft, yTop, width, text, showV, fontReg, fontIta) {
-    const grundY = drawRow4(ctx, xLeft, yTop, width, LIN.oberWord, LIN.unter);
+  function drawWordRow(ctx, xLeft, yTop, width, text, showV, fontReg, fontIta, style) {
+    const grundY = drawRow4(ctx, xLeft, yTop, width, LIN.oberWord, LIN.unter, style);
     if (showV && text) {
       const runs = composePhrase(text);
       let size = LIN.vfont;
@@ -352,18 +371,20 @@
 
   // Zeichnet einen Satz als 1 oder 2 gestapelte Lineatur-Zeilen (siehe planSentenceLines).
   // Gibt die Anzahl gezeichneter Zeilen zurueck.
-  function drawSentenceRows(ctx, xLeft, yTop, width, text, showV, fontReg, fontIta) {
+  function drawSentenceRows(ctx, xLeft, yTop, width, text, showV, fontReg, fontIta, style, extraRow) {
     const avail = width - LIN.textInset * 2;
     const plan = (showV && text) ? planSentenceLines(text, fontReg, fontIta, avail) : { lines: [''], size: LIN.vfont };
     let rowTop = yTop;
     plan.lines.forEach(line => {
-      const grundY = drawRow4(ctx, xLeft, rowTop, width, LIN.oberWord, LIN.unter);
+      const grundY = drawRow4(ctx, xLeft, rowTop, width, LIN.oberWord, LIN.unter, style);
       if (showV && line) {
         const runs = composePhrase(line);
         drawRuns(ctx, runs, xLeft + LIN.textInset, grundY - LIN.LIFT, plan.size, fontReg, fontIta, C.vtext, 0.40);
       }
       rowTop += LIN.totalWord + LINE_GAP;
     });
+    // Zusätzliche Übungszeile: leere Lineatur zum eigenständigen Abschreiben
+    if (extraRow) drawRow4(ctx, xLeft, rowTop, width, LIN.oberWord, LIN.unter, style);
     return plan.lines.length;
   }
 
@@ -380,8 +401,9 @@
   const LETTER_STEP_MULT = { z: 2.16, m: 1.53, n: 1.58, r: 1.6, a: 2.32, ä: 2.32, u: 1.9, ü: 1.84, v: 1.8, w: 1.73, x: 2.28 };
   const LETTER_INK_RATIO = { z: 1.5, m: 1.06, n: 1.1, r: 1.11, a: 1.61, ä: 1.61, u: 1.32, ü: 1.28, v: 1.25, w: 1.2, x: 1.58 };
 
-  function drawLetterRepeatRow(ctx, xLeft, yTop, width, letter, fontReg, fontIta) {
-    const grundY = drawRow4(ctx, xLeft, yTop, width, LIN.oberLetter, LIN.unter);
+  function drawLetterRepeatRow(ctx, xLeft, yTop, width, letter, fontReg, fontIta, style, showV) {
+    const grundY = drawRow4(ctx, xLeft, yTop, width, LIN.oberLetter, LIN.unter, style);
+    if (showV === false) return;
     const size = LIN.vfont;
     const runs = composeStandaloneLetter(letter);
     const unitW = measureRuns(ctx, runs, fontReg, fontIta, size);
@@ -396,8 +418,9 @@
     }
   }
 
-  function drawLetterModelRow(ctx, xLeft, yTop, width, letter, fontReg, fontIta) {
-    const grundY = drawRow4(ctx, xLeft, yTop, width, LIN.oberLetter, LIN.unter);
+  function drawLetterModelRow(ctx, xLeft, yTop, width, letter, fontReg, fontIta, style, showV) {
+    const grundY = drawRow4(ctx, xLeft, yTop, width, LIN.oberLetter, LIN.unter, style);
+    if (showV === false) return;
     const size = LIN.vfont;
     const runs = composeStandaloneLetter(letter);
     drawRuns(ctx, runs, xLeft + LIN.textInset, grundY - LIN.LIFT, size, fontReg, fontIta, C.vtext, 0.40);
@@ -446,22 +469,23 @@
   // =================================================================
   //  ITEM-HÖHEN
   // =================================================================
-  function letterItemHeight(mode) {
-    mode = mode || 'both';
-    if (mode === 'both') {
-      return LIN.labelH + (LIN.totalLetter * 2) + (LIN.rowGap * 0.4) + LIN.rowGap;
-    }
-    return LIN.labelH + LIN.totalLetter + LETTER_SINGLE_GAP;
+  // extraRow (bool): zusätzliche leere Übungszeile unter der Vorschreib-Zeile.
+  function letterItemHeight(extraRow) {
+    const rows = extraRow ? 2 : 1;
+    return LIN.labelH + (LIN.totalLetter * rows) + (LETTER_ROW_GAP * (rows - 1)) + LETTER_SINGLE_GAP;
   }
-  function wordItemHeight(lines) {
+  function wordItemHeight(lines, extraRow) {
     lines = lines || 1;
-    return LIN.labelH + (LIN.totalWord * lines) + (LINE_GAP * (lines - 1)) + LIN.rowGap;
+    const rows = lines + (extraRow ? 1 : 0);
+    return LIN.labelH + (LIN.totalWord * rows) + (LINE_GAP * (rows - 1)) + LIN.rowGap;
   }
 
   // =================================================================
   //  HAUPTFUNKTION: kombiniertes Arbeitsblatt
   //  letters: string[]  words: string[]  sentences: string[]
-  //  opts: {showV, showName, showDate, showKl}
+  //  opts: {showV, showName, showDate, showKl, lineStyle, extraRow}
+  //  lineStyle: '1' | '2' | '3' (Anzahl der Lineatur-Linien, Standard '3')
+  //  extraRow:  true = zusätzliche leere Übungszeile unter jedem Eintrag
   //  fontRegularBytes: Bienchen SAS Regular (Wörter/Sätze)
   //  fontItalicBytes:  Bienchen SAS Italic  (Einzelbuchstaben)
   // =================================================================
@@ -493,17 +517,18 @@
 
     opts = opts || {};
     const showV = opts.showV !== false;
-    const letterMode = opts.letterMode || 'both'; // 'repeat' | 'model' | 'both'
+    const style = normStyle(opts.lineStyle);
+    const extraRow = !!opts.extraRow;
 
     letters = letters || []; words = words || []; sentences = sentences || [];
 
     const sentenceAvail = PT.contentW - LIN.textInset * 2;
     const sections = [
-      { key: 'buchstaben', title: 'Buchstaben üben', items: letters.map(ch => ({ type: 'letter', val: ch, h: letterItemHeight(letterMode) })) },
-      { key: 'woerter',    title: 'Wörter abschreiben', items: words.map(w => ({ type: 'word', val: w, h: wordItemHeight() })) },
+      { key: 'buchstaben', title: 'Buchstaben üben', items: letters.map(ch => ({ type: 'letter', val: ch, h: letterItemHeight(extraRow) })) },
+      { key: 'woerter',    title: 'Wörter abschreiben', items: words.map(w => ({ type: 'word', val: w, h: wordItemHeight(1, extraRow) })) },
       { key: 'saetze',     title: 'Sätze abschreiben', items: sentences.map(s => {
           const lineCount = showV ? planSentenceLines(s, fonts.bienR, fonts.bienI, sentenceAvail).lines.length : 1;
-          return { type: 'sentence', val: s, h: wordItemHeight(lineCount) };
+          return { type: 'sentence', val: s, h: wordItemHeight(lineCount, extraRow) };
         }) },
     ].filter(s => s.items.length);
 
@@ -521,7 +546,7 @@
     let ctx = makePageCtx(page, fonts);
     let y = drawHeader(ctx, opts);
     if (fontFallbackActive) {
-      ctx.text('⚠ Schreibschrift-Font nicht geladen - Ersatzschrift aktiv', PT.marginX, y - 4,
+      ctx.text('! Schreibschrift-Font nicht geladen - Ersatzschrift aktiv', PT.marginX, y - 4,
         { font: fonts.heavy, size: 8, color: C.red });
       y += 4;
     }
@@ -546,23 +571,19 @@
         if (item.type === 'letter') {
           ctx.text(item.val, PT.marginX, y, { font: fonts.heavy, size: 10, color: C.red });
           const row1Top = y + LIN.labelH;
-          if (letterMode === 'both') {
-            drawLetterRepeatRow(ctx, PT.marginX, row1Top, PT.contentW, item.val, fonts.bienR, fonts.bienI);
-            const row2Top = row1Top + LIN.totalLetter + (LIN.rowGap * 0.4);
-            drawLetterModelRow(ctx, PT.marginX, row2Top, PT.contentW, item.val, fonts.bienR, fonts.bienI);
-          } else if (letterMode === 'model') {
-            drawLetterModelRow(ctx, PT.marginX, row1Top, PT.contentW, item.val, fonts.bienR, fonts.bienI);
-          } else {
-            drawLetterRepeatRow(ctx, PT.marginX, row1Top, PT.contentW, item.val, fonts.bienR, fonts.bienI);
+          drawLetterRepeatRow(ctx, PT.marginX, row1Top, PT.contentW, item.val, fonts.bienR, fonts.bienI, style, showV);
+          if (extraRow) {
+            drawRow4(ctx, PT.marginX, row1Top + LIN.totalLetter + LETTER_ROW_GAP, PT.contentW, LIN.oberLetter, LIN.unter, style);
           }
         } else if (item.type === 'sentence') {
           ctx.text(item.val, PT.marginX, y, { font: fonts.heavy, size: 10, color: C.red });
           const rowTop = y + LIN.labelH;
-          drawSentenceRows(ctx, PT.marginX, rowTop, PT.contentW, item.val, showV, fonts.bienR, fonts.bienI);
+          drawSentenceRows(ctx, PT.marginX, rowTop, PT.contentW, item.val, showV, fonts.bienR, fonts.bienI, style, extraRow);
         } else {
           ctx.text(item.val, PT.marginX, y, { font: fonts.heavy, size: 10, color: C.red });
           const rowTop = y + LIN.labelH;
-          drawWordRow(ctx, PT.marginX, rowTop, PT.contentW, item.val, showV, fonts.bienR, fonts.bienI);
+          drawWordRow(ctx, PT.marginX, rowTop, PT.contentW, item.val, showV, fonts.bienR, fonts.bienI, style);
+          if (extraRow) drawRow4(ctx, PT.marginX, rowTop + LIN.totalWord + LINE_GAP, PT.contentW, LIN.oberWord, LIN.unter, style);
         }
         y += item.h;
       });
@@ -573,7 +594,7 @@
 
   // ---- Export ---------------------------------------------------------
   global.SchreibschriftPDF = {
-    PT, LIN,
+    PT, LIN, normStyle,
     letterItemHeight, wordItemHeight,
     composeWord, composeStandaloneLetter, composePhrase,
     planSentenceLines,

@@ -74,6 +74,10 @@ input{-webkit-user-select:text;user-select:text}
 .live-preview{margin-top:12px}
 .live-preview-label{font-size:.7rem;font-weight:800;color:#b91c1c;margin-bottom:6px}
 .lineatur{border-radius:6px;overflow:hidden}
+.lineatur.l2 .ln-ob,.lineatur.l2 .ln-un{display:none}
+.lineatur.l1 .ln-ob,.lineatur.l1 .ln-un,.lineatur.l1 .ln-hi,.lineatur.l1 .zone{display:none}
+.btn-row{display:flex;gap:8px;margin-top:10px}
+.btn-row .btn{margin-top:0}
 .lrow{position:relative;height:19.5mm;background:#fef9c3;border:1.5px solid #444;border-radius:2px;overflow:visible}
 .ln-ob{position:absolute;left:0;right:0;top:0;border-top:1px solid #60a5fa}
 .ln-hi{position:absolute;left:0;right:0;top:6.5mm;border-top:1px dashed #93c5fd}
@@ -128,7 +132,23 @@ input{-webkit-user-select:text;user-select:text}
     </div>
     <div class="chips" id="letterChips" style="margin-top:10px"></div>
     <div class="word-list" id="letterList"></div>
-    <div class="hint">Tippe Buchstaben an. Wie viel passt, richtet sich danach, wie viele Zeilen jeder Buchstabe bekommt (nur &Uuml;bungszeile, nur Vorschreib-Zeile, oder beide) &#x2013; einstellbar unter &#x2699; Einstellungen &#x2192; "Zeilen pro Buchstabe". Die Anzeige oben zeigt live, ob's noch auf eine Seite passt.</div>
+    <button class="btn bs btn-sm" onclick="clearLetters()" style="margin-top:10px">&#x1F5D1;&#xFE0F; Alle Buchstaben l&ouml;schen</button>
+    <div class="hint">Tippe Buchstaben an. Jeder Buchstabe bekommt eine Zeile zum Nachspuren &#x2013; mit "Zus&auml;tzliche &Uuml;bungszeile" kommt eine leere Zeile darunter. Die Anzeige oben zeigt live, ob's noch auf eine Seite passt.</div>
+  </div>
+  <div class="card">
+    <h2>&#x1F4CF; Lineatur &amp; Zeilen</h2>
+    <div class="sr" style="border-bottom:none;padding:6px 0 4px">
+      <div><div class="sl">Anzahl der Linien</div><div class="ss">Standard: 3 Linien (Klasse 1/2)</div></div>
+    </div>
+    <div class="chips linChips">
+      <div class="chip" data-lin="1">1 Linie</div>
+      <div class="chip" data-lin="2">2 Linien</div>
+      <div class="chip sel" data-lin="3">3 Linien</div>
+    </div>
+    <div class="sr" style="margin-top:8px;border-top:1px solid #e2e8f0">
+      <div><div class="sl">Zus&auml;tzliche &Uuml;bungszeile</div><div class="ss">Leere Zeile darunter zum selbst Schreiben &#x2013; braucht doppelt so viel Platz</div></div>
+      <label class="tgl"><input type="checkbox" class="extraRowChk"><span class="tgl-s"></span></label>
+    </div>
   </div>
 </div>
 
@@ -139,7 +159,23 @@ input{-webkit-user-select:text;user-select:text}
     <button class="btn bs btn-sm" style="margin-top:10px" onclick="reshuffle()">&#x1F504; Andere W&ouml;rter zeigen</button>
     <div class="word-list" id="wordList"></div>
     <button class="btn bs btn-sm" onclick="addEmptyWord()" style="margin-top:8px">+ Eigenes Wort eingeben</button>
+    <button class="btn bs btn-sm" onclick="clearWords()" style="margin-top:8px">&#x1F5D1;&#xFE0F; Alle W&ouml;rter l&ouml;schen</button>
     <div class="hint">Tippe W&ouml;rter an oder gib eigene ein. Die Anzeige oben zeigt live, ob alles zusammen mit Buchstaben/S&auml;tzen noch auf eine Seite passt.</div>
+  </div>
+  <div class="card">
+    <h2>&#x1F4CF; Lineatur &amp; Zeilen</h2>
+    <div class="sr" style="border-bottom:none;padding:6px 0 4px">
+      <div><div class="sl">Anzahl der Linien</div><div class="ss">Standard: 3 Linien (Klasse 1/2)</div></div>
+    </div>
+    <div class="chips linChips">
+      <div class="chip" data-lin="1">1 Linie</div>
+      <div class="chip" data-lin="2">2 Linien</div>
+      <div class="chip sel" data-lin="3">3 Linien</div>
+    </div>
+    <div class="sr" style="margin-top:8px;border-top:1px solid #e2e8f0">
+      <div><div class="sl">Zus&auml;tzliche &Uuml;bungszeile</div><div class="ss">Leere Zeile darunter zum selbst Schreiben &#x2013; braucht doppelt so viel Platz</div></div>
+      <label class="tgl"><input type="checkbox" class="extraRowChk"><span class="tgl-s"></span></label>
+    </div>
   </div>
 </div>
 
@@ -150,7 +186,23 @@ input{-webkit-user-select:text;user-select:text}
     <button class="btn bs btn-sm" style="margin-top:10px" onclick="reshuffleSent()">&#x1F504; Andere S&auml;tze zeigen</button>
     <div class="word-list" id="sentList"></div>
     <button class="btn bs btn-sm" onclick="addEmptySent()" style="margin-top:8px">+ Eigenen Satz eingeben</button>
+    <button class="btn bs btn-sm" onclick="clearSents()" style="margin-top:8px">&#x1F5D1;&#xFE0F; Alle S&auml;tze l&ouml;schen</button>
     <div class="hint">Tippe S&auml;tze an oder gib eigene ein. Lange S&auml;tze werden bei Bedarf leicht verkleinert oder auf 2 Zeilen umgebrochen &#x2013; deshalb passt mal mehr, mal weniger drauf. Die Anzeige oben zeigt live, ob alles zusammen noch auf eine Seite passt.</div>
+  </div>
+  <div class="card">
+    <h2>&#x1F4CF; Lineatur &amp; Zeilen</h2>
+    <div class="sr" style="border-bottom:none;padding:6px 0 4px">
+      <div><div class="sl">Anzahl der Linien</div><div class="ss">Standard: 3 Linien (Klasse 1/2)</div></div>
+    </div>
+    <div class="chips linChips">
+      <div class="chip" data-lin="1">1 Linie</div>
+      <div class="chip" data-lin="2">2 Linien</div>
+      <div class="chip sel" data-lin="3">3 Linien</div>
+    </div>
+    <div class="sr" style="margin-top:8px;border-top:1px solid #e2e8f0">
+      <div><div class="sl">Zus&auml;tzliche &Uuml;bungszeile</div><div class="ss">Leere Zeile darunter zum selbst Schreiben &#x2013; braucht doppelt so viel Platz</div></div>
+      <label class="tgl"><input type="checkbox" class="extraRowChk"><span class="tgl-s"></span></label>
+    </div>
   </div>
 </div>
 
@@ -167,7 +219,7 @@ input{-webkit-user-select:text;user-select:text}
     </div>
     <div class="live-preview">
       <div class="live-preview-label">&#x1F50D; Live-Vorschau</div>
-      <div class="lineatur">
+      <div class="lineatur" id="livePrevLin">
         <div class="lrow">
           <div class="zone"></div>
           <div class="ln-ob"></div><div class="ln-hi"></div>
@@ -180,17 +232,6 @@ input{-webkit-user-select:text;user-select:text}
         </div>
       </div>
       <p style="font-size:.72rem;color:#6b7280;margin-top:6px">Gro&szlig;buchstaben oben, Kleinbuchstaben in der Mitte. Buchstaben mit Unterl&auml;nge (g, p, j, y) h&auml;ngen nach unten.</p>
-    </div>
-  </div>
-  <div class="card">
-    <h2>&#x1F4DD; Buchstaben-&Uuml;bung</h2>
-    <div class="sr">
-      <div><div class="sl">Zeilen pro Buchstabe</div><div class="ss">Weniger Zeilen = mehr Buchstaben passen auf eine Seite</div></div>
-    </div>
-    <div class="chips" id="letterModeChips" style="margin-top:8px">
-      <div class="chip" data-mode="repeat">Nur &Uuml;bungszeile (mehrfach)</div>
-      <div class="chip" data-mode="model">Nur Vorschreib-Zeile (einzeln)</div>
-      <div class="chip sel" data-mode="both">Beide Zeilen</div>
     </div>
   </div>
   <div class="card">
@@ -249,11 +290,11 @@ function computeUsage(extraLetters,extraWords,extraSentText){
   var sentTexts=(typeof getAllSent==='function')?getAllSent().slice():[];
   if(extraSentText!==undefined&&extraSentText!==null) sentTexts.push(extraSentText);
   var used=0;
-  if(letters>0) used+=sectionTitleH+letters*S.letterItemHeight(letterMode);
-  if(words>0) used+=sectionTitleH+words*S.wordItemHeight(1);
+  if(letters>0) used+=sectionTitleH+letters*S.letterItemHeight(extraRow);
+  if(words>0) used+=sectionTitleH+words*S.wordItemHeight(1,extraRow);
   if(sentTexts.length>0){
     used+=sectionTitleH;
-    sentTexts.forEach(function(t){ used+=S.wordItemHeight((t&&t.length>28)?2:1); });
+    sentTexts.forEach(function(t){ used+=S.wordItemHeight((t&&t.length>28)?2:1,extraRow); });
   }
   var available=PT.contentH-headerH;
   return {used:used,available:available};
@@ -314,14 +355,29 @@ document.getElementById('caseChips').addEventListener('click',function(e){
   var el=e.target.closest('.chip');if(!el)return;setLetterCase(el.dataset.case);
 });
 
-/* ===== Buchstaben-Zeilenmodus ===== */
-var letterMode='both';
-document.getElementById('letterModeChips').addEventListener('click',function(e){
-  var el=e.target.closest('.chip');if(!el)return;
-  letterMode=el.dataset.mode;
-  document.querySelectorAll('#letterModeChips .chip').forEach(function(c){c.classList.toggle('sel',c===el);});
+/* ===== Lineatur + zusaetzliche Uebungszeile (auf allen drei Tabs gespiegelt) ===== */
+var lineStyle='3', extraRow=false;
+function syncOpts(){
+  document.querySelectorAll('.linChips .chip').forEach(function(c){c.classList.toggle('sel',c.dataset.lin===lineStyle);});
+  document.querySelectorAll('.extraRowChk').forEach(function(c){c.checked=extraRow;});
+  var lp=document.getElementById('livePrevLin');
+  if(lp){lp.classList.remove('l1','l2');if(lineStyle!=='3'){lp.classList.add('l'+lineStyle);}}
   updateCapacity();
+}
+document.querySelectorAll('.linChips').forEach(function(box){
+  box.addEventListener('click',function(e){
+    var el=e.target.closest('.chip');if(!el)return;
+    lineStyle=el.dataset.lin;syncOpts();
+  });
 });
+document.querySelectorAll('.extraRowChk').forEach(function(c){
+  c.addEventListener('change',function(){extraRow=c.checked;syncOpts();});
+});
+
+/* ===== Komplette Auswahl eines Tabs loeschen ===== */
+function clearLetters(){selectedLetters=[];initLetterChips();renderLetterList();updateLive();}
+function clearWords(){selectedWords=[];customWords=[];initChips();renderWordList();updateLive();}
+function clearSents(){selectedSent=[];customSent=[];initSentChips();renderSentList();updateLive();}
 
 /* ===== Live-Platzbedarf-Schaetzung (Buchstaben+Woerter+Saetze zusammen auf 1 Seite?) ===== */
 function updateCapacity(){
@@ -336,13 +392,13 @@ function updateCapacity(){
 
   var headerH=44, sectionTitleH=16;
   var used=0;
-  if(letters>0){used+=sectionTitleH+letters*S.letterItemHeight(letterMode);}
-  if(words>0){used+=sectionTitleH+words*S.wordItemHeight(1);}
+  if(letters>0){used+=sectionTitleH+letters*S.letterItemHeight(extraRow);}
+  if(words>0){used+=sectionTitleH+words*S.wordItemHeight(1,extraRow);}
   if(sentTexts.length>0){
     used+=sectionTitleH;
     sentTexts.forEach(function(t){
       var lines=(t.length>28)?2:1;
-      used+=S.wordItemHeight(lines);
+      used+=S.wordItemHeight(lines,extraRow);
     });
   }
   var available=PT.contentH-headerH;
@@ -353,7 +409,7 @@ function updateCapacity(){
     bar.textContent='\u2713 Passt auf 1 Seite ('+pct+'% belegt)';
   }else{
     bar.style.background='#fee2e2';bar.style.color='#991b1b';
-    bar.textContent='\u26A0 Reicht nicht auf 1 Seite (~'+pct+'% - bitte etwas weniger ausw\u00e4hlen oder Buchstaben-Zeilenmodus auf "Nur \u00dcbungszeile" stellen)';
+    bar.textContent='\u26A0 Reicht nicht auf 1 Seite (~'+pct+'% - bitte etwas weniger ausw\u00e4hlen'+(extraRow?' oder die zus\u00e4tzliche \u00dcbungszeile ausschalten':'')+')';
   }
 }
 
@@ -516,7 +572,8 @@ function pdfOpts(){
     showName:document.getElementById('showName').checked,
     showDate:document.getElementById('showDate').checked,
     showKl:document.getElementById('showKl').checked,
-    letterMode:letterMode
+    lineStyle:lineStyle,
+    extraRow:extraRow
   };
 }
 async function makePDFBytes(){
@@ -572,6 +629,7 @@ async function doPrint(){
 }
 
 /* ===== Init ===== */
+syncOpts();
 initLetterChips();
 renderLetterList();
 initChips();
