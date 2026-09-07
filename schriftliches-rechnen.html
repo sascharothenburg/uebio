@@ -76,7 +76,7 @@ input{-webkit-user-select:text;user-select:text}
 <script src="fontkit.umd.min.js"></script>
 <script src="pdf.min.js"></script>
 <script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
-<script src="schriftliches-rechnen-pdf.js"></script>
+<script src="schriftliches-rechnen-pdf.js?v=2"></script>
 <script src="print-bridge.js"></script>
 <script src="back-button.js"></script>
 </head>
@@ -108,6 +108,15 @@ input{-webkit-user-select:text;user-select:text}
         <button class="opt-btn" data-v="div">Geteilt &divide;</button>
       </div>
       <div class="ss" style="margin-top:6px">Plus und Minus lassen sich mischen. Mal und Geteilt brauchen mehr Platz und werden je allein gestellt.</div>
+    </div>
+    <div style="margin-bottom:12px" id="sumBlock">
+      <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Zahlen pro Aufgabe (Plus &amp; Minus)</label>
+      <div class="opt-row" id="sumOpts">
+        <button class="opt-btn sel" data-v="2">2 Zahlen</button>
+        <button class="opt-btn" data-v="3">3 Zahlen</button>
+        <button class="opt-btn" data-v="4">4 Zahlen</button>
+      </div>
+      <div class="ss" style="margin-top:6px">Mehrere Zahlen untereinander &ndash; erst dabei entstehen &Uuml;bertr&auml;ge gr&ouml;&szlig;er als 1. Gilt f&uuml;r Plus und Minus; Mal und Geteilt bleiben zweigliedrig.</div>
     </div>
     <div style="margin-bottom:12px">
       <label style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:6px">Zahlenl&auml;nge</label>
@@ -188,10 +197,40 @@ function curMode(){
   if(ops.indexOf('mul')>=0) return 'mul';
   return 'addsub';
 }
+/* Gliederzahl fuer Addition und Subtraktion (2, 3 oder 4). Ein Blatt bleibt homogen. */
+var numSummands=2;
+function setupSummands(){
+  var btns=document.querySelectorAll('#sumOpts .opt-btn');
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      numSummands=parseInt(b.dataset.v,10)||2;
+      btns.forEach(function(o){o.classList.toggle('sel',o===b);});
+      optsDirty=true;
+    });
+  });
+}
+/* Die Auswahl wirkt nur bei Plus/Minus -> bei Mal und Geteilt ausgrauen. */
+function syncSummandUI(){
+  var ops=getMultiStr('opOpts');
+  var active=(ops.indexOf('add')>=0 || ops.indexOf('sub')>=0);
+  var blk=document.getElementById('sumBlock');
+  if(blk) blk.style.opacity=active?'1':'.45';
+  document.querySelectorAll('#sumOpts .opt-btn').forEach(function(b){ b.disabled=!active; });
+}
+/* Werte aus der echten PDF-Geometrie gemessen (Aufgabenhoehe + Spaltenpackung),
+   nicht geschaetzt: sonst erzeugt der Generator mehr Aufgaben als aufs Blatt
+   passen und das PDF laesst sie stillschweigend weg. */
 var PER_PAGE={
-  addsub:{p1:18,p2:39},
-  mul:   {p1:12,p2:27},
+  addsub:{p1:14,p2:30},
+  mul:   {p1:10,p2:20},
   div:   {p1:6, p2:12}
+};
+/* Mehr Glieder = hoehere Aufgaben = weniger pro Seite. Werte aus der echten
+   PDF-Geometrie gemessen. Gilt gleichermassen fuer Plus und Minus. */
+var ADDSUB_PER_PAGE={
+  2:{p1:14,p2:30},
+  3:{p1:12,p2:24},
+  4:{p1:10,p2:20}
 };
 // Division-Kapazität hängt stark von der Stellenzahl ab (höhere Zahlen = mehr
 // Rechenzeilen = höhere Aufgaben). Daher nach größtem gewählten Längenraum staffeln.
@@ -208,7 +247,14 @@ function divPageCfg(){
   if(lens.indexOf('m')>=0) return DIV_PER_PAGE.m;
   return DIV_PER_PAGE.s;
 }
-function pageCfg(){ var m=curMode(); if(m==='div') return divPageCfg(); return PER_PAGE[m]||PER_PAGE.addsub; }
+function pageCfg(){
+  var m=curMode();
+  if(m==='div') return divPageCfg();
+  if(m==='addsub' && numSummands>2){
+    return ADDSUB_PER_PAGE[numSummands]||ADDSUB_PER_PAGE[2];
+  }
+  return PER_PAGE[m]||PER_PAGE.addsub;
+}
 function totalCount(){ var c=pageCfg(); return numPages<=1?c.p1:(c.p2!=null?c.p2:c.p1*2); }
 function pageSplits(){ var c=pageCfg(); if(numPages<=1)return [c.p1]; var t=(c.p2!=null?c.p2:c.p1*2); return [c.p1,t-c.p1]; }
 function initPageChips(){
@@ -243,7 +289,9 @@ function setupOps(){
   });
 }
 function getMultiStr(id){return Array.from(document.querySelectorAll('#'+id+' .opt-btn.sel')).map(function(b){return b.dataset.v;});}
-setupOps();setupMulti('lenOpts');setupMulti('divOpts');
+setupOps();setupMulti('lenOpts');setupMulti('divOpts');setupSummands();
+document.querySelectorAll('#opOpts .opt-btn').forEach(function(b){ b.addEventListener('click',syncSummandUI); });
+syncSummandUI();
 
 function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=ri(0,i);var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr;}
@@ -265,12 +313,26 @@ function makeOneTask(op, lc, divs){
   var d=lenToDigits(lc);
   var t={op:op};
   if(op==='add'){
-    var a=numByDigits(d), b=numByDigits(d);
-    t.a=a; t.b=b; t.res=a+b;
+    var n=Math.max(2,Math.min(4,numSummands||2));
+    var terms=[], sum=0;
+    for(var si=0;si<n;si++){ var v=numByDigits(d); terms.push(v); sum+=v; }
+    t.terms=terms; t.a=terms[0]; t.b=terms[1]; t.res=sum;
   }else if(op==='sub'){
-    var a2=numByDigits(d), b2=numByDigits(d);
-    if(b2>a2){var tmp=a2;a2=b2;b2=tmp;}
-    t.a=a2; t.b=b2; t.res=a2-b2;
+    var ns=Math.max(2,Math.min(4,numSummands||2));
+    if(ns<=2){
+      var a2=numByDigits(d), b2=numByDigits(d);
+      if(b2>a2){var tmp=a2;a2=b2;b2=tmp;}
+      t.a=a2; t.b=b2; t.res=a2-b2;
+    }else{
+      /* Von unten aufgebaut: Subtrahenden und Ergebnis wuerfeln, Minuend ist
+         die Summe. So bleibt jedes Zwischenergebnis positiv - beim schrittweisen
+         Abziehen darf nie ein negativer Wert entstehen. */
+      var subs=[], sum=0;
+      for(var k=0;k<ns-1;k++){ var v2=numByDigits(d); subs.push(v2); sum+=v2; }
+      var rest2=numByDigits(d);
+      var minu=sum+rest2;
+      t.terms=[minu].concat(subs); t.a=minu; t.b=subs[0]; t.res=rest2;
+    }
   }else if(op==='mul'){
     var f1=numByDigits(Math.min(d,4));
     var f2=ri(2,99);
@@ -309,7 +371,7 @@ function generate(){
 
   // ----- 3) Aufgaben je Sorte erzeugen (mit Wiederholungs-Vermeidung) -----
   var usedSig={};
-  function taskSig(t){ return t.op+':'+t.a+':'+t.b; }
+  function taskSig(t){ return t.op+':'+(t.terms?t.terms.join(','):t.a+','+t.b); }
   function freshTask(op, lc){
     var best=null;
     for(var attempt=0; attempt<30; attempt++){
@@ -344,14 +406,18 @@ function generate(){
 var OPSYM={add:'+',sub:'\u2212',mul:'\u00d7',div:':'};
 // Lineatur 8F: Kästchen 5mm breit x 7mm hoch (echte Schulheft-Maße)
 var CELL_W=5, CELL_H=7;
+function termsOf(t){ return (t.terms&&t.terms.length)?t.terms:[t.a,t.b]; }
 function maxLen(t){
-  return Math.max((''+t.a).length,(''+t.b).length,(''+t.res).length);
+  var m=(''+t.res).length;
+  termsOf(t).forEach(function(v){ m=Math.max(m,(''+v).length); });
+  return m;
 }
 /* HTML-Tabelle für +,-,×: rechtsbündig, Zeichen, Linie, Ergebnis(zeile leer oder gefüllt) */
 function vertCalc(t,showSol,cell,withCells){
   var w=maxLen(t)+1; // +1 Spalte für Operator/Übertrag
   var rows=[];
-  var aStr=(''+t.a), bStr=(''+t.b);
+  var termStrs=termsOf(t).map(function(v){return ''+v;});
+  var bStr=(''+t.b);
   function rowCells(str,opSym,fill){
     var cells=[];
     // rechtsbündig
@@ -367,8 +433,13 @@ function vertCalc(t,showSol,cell,withCells){
     }
     return cells;
   }
-  var r1=rowCells(aStr,'',true);
-  var r2=rowCells(bStr,OPSYM[t.op],true);
+  // Plus: Zeichen nur vor dem letzten Summanden. Minus: vor jedem Subtrahenden.
+  var termRows=termStrs.map(function(str,i){
+    var sym='';
+    if(t.op==='sub'){ if(i>0) sym=OPSYM.sub; }
+    else if(i===termStrs.length-1){ sym=OPSYM[t.op]; }
+    return rowCells(str,sym,true);
+  });
   var resStr=(''+t.res);
   var r3=rowCells(resStr,'',showSol);
   // bauen: Kästchen 5mm breit x 7mm hoch (Schulheft-Lineatur 8F)
@@ -386,8 +457,7 @@ function vertCalc(t,showSol,cell,withCells){
     return s;
   }
   var h='<table style="border-collapse:collapse;margin:0 auto">';
-  h+=tr(r1);
-  h+=tr(r2);
+  termRows.forEach(function(rw){ h+=tr(rw); });
   // Linie
   h+='<tr><td colspan="'+w+'" style="border-bottom:2.2pt solid #1e1b4b;padding:0;height:2pt"></td></tr>';
   if(t.op==='mul'){
@@ -544,7 +614,15 @@ function pdfHeaderOpts(){
     showKl:document.getElementById('showKl').checked
   };
 }
+/* Sicherung gegen ein veraltetes PDF-Modul (Browser-Cache, Teil-Deployment):
+   ohne diese Pruefung druckt das alte Modul bei mehrgliedrigen Aufgaben Muell. */
+function checkPDFModule(){
+  if(!window.SchriftlichesRechnenPDF || !(SchriftlichesRechnenPDF.API>=2)){
+    throw new Error('Veraltetes schriftliches-rechnen-pdf.js geladen. Bitte die aktuelle Datei deployen und den Cache leeren.');
+  }
+}
 async function makePDFBytes(){
+  checkPDFModule();
   if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
   return await SchriftlichesRechnenPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
 }

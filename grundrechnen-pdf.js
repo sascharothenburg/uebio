@@ -136,11 +136,22 @@
   function isBox(s){ return s === '\u00a7' || s === '#'; }
   function digits(s){ return isBox(s) ? 0 : String(s).replace('-','').length; }
 
-  // Eine Aufgabe zeichnen, rechtsbündig in festen Spaltenbreiten.
-  // layout = { dw, opw, mL, mR, mRes, fs, slotGap }
-  function drawProblem(ctx, p, idx, x, yTop, layout) {
+  // Aufgaben-Normalform: { terms:[t1,t2,(t3)], ops:['+','-'], result }
+  // Akzeptiert weiterhin das alte Format { left, op, right, result }.
+  function normalize(p) {
+    if (p && p.terms && p.terms.length) {
+      return { terms: p.terms.slice(), ops: (p.ops || []).slice(), result: p.result };
+    }
+    return { terms: [p.left, p.right], ops: [p.op], result: p.result };
+  }
+
+  // Eine Aufgabe zeichnen, rechtsbuendig in festen Spaltenbreiten.
+  // Funktioniert fuer 2 Glieder (5 + 12 = _) und fuer Kettenaufgaben (5 + 3 - 2 = _).
+  // layout = { dw, opw, mT:[maxStellen je Glied], mRes, fs }
+  function drawProblem(ctx, p0, idx, x, yTop, layout) {
     const F = ctx.fonts;
-    const { dw, opw, mL, mR, mRes, fs } = layout;
+    const { dw, opw, mT, mRes, fs } = layout;
+    const p = normalize(p0);
     // Nummer
     ctx.text((idx + 1) + '.', x, yTop + (fs - 9) * 0.5, { font: F.heavy, size: 9, color: C.blue });
     const numW = ctx.textWidth('00.', F.heavy, 9) + 6;
@@ -155,7 +166,7 @@
         const ly = yTop + fs * 0.96;
         ctx.line(cx, ly, cx + w, ly, { color: C.box, w: 1.6 });
       } else {
-        // rechtsbündig
+        // rechtsbuendig
         ctx.textRight(String(val), cx + w, yTop, { font: F.bold, size: fs, color: C.ink });
       }
       cx += w;
@@ -166,9 +177,10 @@
       cx += opw + gap;
     }
 
-    slot(p.left, mL);
-    op(p.op);
-    slot(p.right, mR);
+    for (let i = 0; i < p.terms.length; i++) {
+      slot(p.terms[i], mT[i] || 2);
+      if (i < p.terms.length - 1) op(p.ops[i] || '+');
+    }
     op('=');
     slot(p.result, mRes);
   }
@@ -216,24 +228,37 @@
     const dw = fonts.bold.widthOfTextAtSize('0', fs);     // Ziffernbreite
     const opw = fonts.bold.widthOfTextAtSize('+', fs);    // Operatorbreite
 
-    // maximale Stellen je Position über alle Aufgaben (min. 2 für Boxen)
-    let mL = 1, mR = 1, mRes = 2;
-    tasks.forEach(p => {
-      mL = Math.max(mL, isBox(p.left) ? 2 : digits(p.left));
-      mR = Math.max(mR, isBox(p.right) ? 2 : digits(p.right));
-      mRes = Math.max(mRes, isBox(p.result) ? 2 : digits(p.result));
+    // maximale Stellen je Glied über alle Aufgaben (min. 2 für Boxen)
+    const norm = tasks.map(normalize);
+    const maxTerms = norm.reduce((m, p) => Math.max(m, p.terms.length), 2);
+    const mT = new Array(maxTerms).fill(1);
+    let mRes = 2;
+    // Bei einer Lücke wird die Slotbreite aus dem tatsächlichen Lösungswert
+    // abgeleitet (min. 2). Sonst wäre die Schreiblinie z.B. bei Ketten mit
+    // dreistelligem Ergebnis zu kurz.
+    function boxDigits(p, val) {
+      const v = chainSolve(p);
+      const d = (isFinite(v) && !isNaN(v)) ? String(Math.abs(v)).length : 0;
+      return Math.max(2, d);
+    }
+    norm.forEach(p => {
+      for (let i = 0; i < p.terms.length; i++) {
+        const v = p.terms[i];
+        mT[i] = Math.max(mT[i], isBox(v) ? boxDigits(p, v) : digits(v));
+      }
+      mRes = Math.max(mRes, isBox(p.result) ? boxDigits(p, p.result) : digits(p.result));
     });
-    const layout = { dw, opw, mL, mR, mRes, fs };
+    const layout = { dw, opw, mT, mRes, fs };
 
     // ---- Seiten-Aufteilung (kapazitätsgenau) ----
     const cap1 = capPage1();
 
     const pageSlices = [];
     if (numPages <= 1) {
-      pageSlices.push(tasks);
+      pageSlices.push(norm);
     } else {
-      pageSlices.push(tasks.slice(0, cap1));
-      pageSlices.push(tasks.slice(cap1));
+      pageSlices.push(norm.slice(0, cap1));
+      pageSlices.push(norm.slice(cap1));
     }
 
     let firstTopAfterHeader = 0;
@@ -275,16 +300,23 @@
       const yAfter = lastTopY + lastRows * rowH + 8;
 
       // Lösung = vollständige Gleichung mit ausgefüllter Lücke
-      const solStrings = tasks.map((p, i) => {
-        const L = isBox(p.left) ? solveFor(p, 'left') : p.left;
-        const R = isBox(p.right) ? solveFor(p, 'right') : p.right;
-        const Res = isBox(p.result) ? solveFor(p, 'result') : p.result;
-        return (i+1) + '. ' + L + ' ' + p.op + ' ' + R + ' = ' + Res;
+      const solStrings = norm.map((p, i) => {
+        const val = chainSolve(p);
+        const parts = [];
+        for (let k = 0; k < p.terms.length; k++) {
+          if (k > 0) parts.push(p.ops[k-1] || '+');
+          parts.push(isBox(p.terms[k]) ? val : p.terms[k]);
+        }
+        parts.push('=');
+        parts.push(isBox(p.result) ? val : p.result);
+        return (i+1) + '. ' + parts.join(' ');
       });
 
+      // Kettenaufgaben sind länger -> weniger Lösungsspalten
+      const solCols = (maxTerms >= 3) ? 3 : 4;
       const solLineH = 11;
-      const solColW = PT.contentW / 4;
-      const solRows = Math.ceil(solStrings.length / 4);
+      const solColW = PT.contentW / solCols;
+      const solRows = Math.ceil(solStrings.length / solCols);
       const needed = 20 + solRows * solLineH;
       const remaining = (PT.pageH - PT.marginY - 16) - yAfter;
 
@@ -302,7 +334,7 @@
       ctx.text('L\u00d6SUNGEN', PT.marginX, y, { font: fonts.heavy, size: 8, color: C.blue });
       y += 12;
       for (let i = 0; i < solStrings.length; i++) {
-        const r = Math.floor(i / 4), c = i % 4;
+        const r = Math.floor(i / solCols), c = i % solCols;
         const x = PT.marginX + c * solColW;
         ctx.text(solStrings[i], x, y + r * solLineH, { font: fonts.regular, size: 7.5, color: C.sol });
       }
@@ -311,15 +343,28 @@
     return await pdf.save();
   }
 
-  // Lücke ausrechnen (für Lösungsblock)
-  function solveFor(p, which) {
-    const a = parseFloat(p.left), b = parseFloat(p.right), res = parseFloat(p.result);
-    if (which === 'result') return (p.op === '+') ? (a + b) : (a - b);
-    if (which === 'left')   return (p.op === '+') ? (res - b) : (res + b);
-    if (which === 'right')  return (p.op === '+') ? (res - a) : (a - res);
-    return '?';
+  // Lücke ausrechnen (für Lösungsblock).
+  // Gilt fuer beliebig viele Glieder: jedes Glied hat ein Vorzeichen (+1/-1),
+  // die Summe aller vorzeichenbehafteten Glieder ergibt das Ergebnis.
+  function chainSolve(p) {
+    const signs = [1];
+    for (let i = 0; i < p.ops.length; i++) signs.push(p.ops[i] === '-' ? -1 : 1);
+    let boxIdx = -1;
+    for (let i = 0; i < p.terms.length; i++) if (isBox(p.terms[i])) boxIdx = i;
+    if (boxIdx < 0) {
+      let s = 0;
+      for (let i = 0; i < p.terms.length; i++) s += signs[i] * parseFloat(p.terms[i]);
+      return s;
+    }
+    let rest = 0;
+    for (let i = 0; i < p.terms.length; i++) {
+      if (i !== boxIdx) rest += signs[i] * parseFloat(p.terms[i]);
+    }
+    return (parseFloat(p.result) - rest) / signs[boxIdx];
   }
 
-  global.GrundrechnenPDF = { PT, GEO, capacityForPages, buildWorksheetPDF };
+  // API 2 = versteht Kettenaufgaben ({terms,ops,result}). Die HTML prueft das,
+  // damit ein veraltet gecachtes Modul nicht stillschweigend "undefined" druckt.
+  global.GrundrechnenPDF = { API: 2, PT, GEO, capacityForPages, buildWorksheetPDF };
 
 })(typeof window !== 'undefined' ? window : this);

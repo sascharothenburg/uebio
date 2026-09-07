@@ -79,7 +79,7 @@ input{-webkit-user-select:text;user-select:text}
 <script src="fontkit.umd.min.js"></script>
 <script src="pdf.min.js"></script>
 <script>if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
-<script src="grundrechnen-pdf.js"></script>
+<script src="grundrechnen-pdf.js?v=2"></script>
 <script src="print-bridge.js"></script>
 <script src="back-button.js"></script>
 </head>
@@ -105,7 +105,8 @@ input{-webkit-user-select:text;user-select:text}
     <div class="hint-box">
       Schreibe Aufgaben wie: <code>5 + 12 = &#167;</code><br>
       <code>&#167;</code> = langer Unterstrich &nbsp;|&nbsp; <code>#</code> = kurzer Unterstrich<br>
-      Beispiele: <code>17 - 9 = &#167;</code> &nbsp; <code>2 + &#167; = 14</code>
+      Beispiele: <code>17 - 9 = &#167;</code> &nbsp; <code>2 + &#167; = 14</code><br>
+      Kettenaufgabe: <code>5 + 3 - 2 = &#167;</code>
     </div>
     <div class="prob-list" id="probList"></div>
     <button class="btn bs btn-sm" onclick="addEmptyProb()" style="margin-top:8px">+ Aufgabe hinzuf&#252;gen</button>
@@ -116,6 +117,11 @@ input{-webkit-user-select:text;user-select:text}
     <h2>&#x26A1; Automatisch generieren</h2>
     <div class="chips" id="genChips"></div>
     <div style="margin-top:14px">
+      <label class="blk" style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;margin-bottom:6px;display:block">Zahlen pro Aufgabe</label>
+      <div class="chips" id="termChips"></div>
+      <p style="font-size:.7rem;color:#6b7280;margin-top:6px">Bei 3 Zahlen entstehen Kettenaufgaben wie <code>5 + 3 &minus; 2 = ___</code>. Alle Aufgaben eines Blattes haben dann gleich viele Zahlen.</p>
+    </div>
+    <div style="margin-top:14px" id="boxPosBlock">
       <label class="blk" style="font-size:.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;margin-bottom:6px;display:block">K&#228;stchen f&#252;r</label>
       <div style="display:flex;gap:8px">
         <label style="display:flex;align-items:center;gap:5px;font-size:.85rem;font-weight:600;cursor:pointer"><input type="radio" name="boxPos" value="result" checked style="accent-color:#0369a1"> Ergebnis</label>
@@ -151,12 +157,20 @@ input{-webkit-user-select:text;user-select:text}
 
 
 // Problem parsing
+/* Aufgaben-Parser: akzeptiert 2 Glieder (5 + 12 = \u00a7) und Ketten mit 3 Gliedern
+   (5 + 3 - 2 = \u00a7). Rueckgabe in Normalform {terms,ops,result}; left/op/right
+   bleiben fuer 2 Glieder zusaetzlich gesetzt (Abwaertskompatibilitaet). */
+var RE_N='([0-9]+|\u00a7|#)';
+var RE_CHAIN3=new RegExp('^'+RE_N+'\\s*([+\\-])\\s*'+RE_N+'\\s*([+\\-])\\s*'+RE_N+'\\s*=\\s*'+RE_N+'$');
+var RE_CHAIN2=new RegExp('^'+RE_N+'\\s*([+\\-])\\s*'+RE_N+'\\s*=\\s*'+RE_N+'$');
 function parseProb(text){
   if(!text||!text.trim())return null;
   const t=text.trim();
-  const m=t.match(/^(\S+)\s*([\+\-])\s*(\S+)\s*=\s*(\S+)$/);
-  if(!m)return null;
-  return {left:m[1],op:m[2],right:m[3],result:m[4]};
+  let m=t.match(RE_CHAIN3);
+  if(m) return {terms:[m[1],m[3],m[5]],ops:[m[2],m[4]],result:m[6]};
+  m=t.match(RE_CHAIN2);
+  if(m) return {terms:[m[1],m[3]],ops:[m[2]],result:m[4],left:m[1],op:m[2],right:m[3]};
+  return null;
 }
 function isBox(s){return s==='\u00a7'||s==='#';}
 function numDigits(s){return isBox(s)?0:String(s).replace('-','').length;}
@@ -240,6 +254,90 @@ const GEN_TYPES=[
   {label:'Gemischt \u00b1100',id:'mix100',op:'mix',max:100}
 ];
 let selectedGenType=GEN_TYPES[2];
+
+/* ===== Zahlen pro Aufgabe (2 = klassisch, 3 = Kettenaufgabe) =====
+   Ein Blatt ist immer homogen: entweder alle Aufgaben 2-gliedrig oder alle
+   3-gliedrig. Sonst fluchten die Spalten nicht und der Aufgabentyp wechselt
+   mitten auf dem Blatt. */
+var numTerms=2;
+function initTermChips(){
+  var c=document.getElementById('termChips'); if(!c)return; c.innerHTML='';
+  [{n:2,l:'2 Zahlen'},{n:3,l:'3 Zahlen'}].forEach(function(o){
+    var el=document.createElement('div');
+    el.className='chip'+(o.n===numTerms?' sel':'');
+    el.textContent=o.l;
+    el.onclick=function(){
+      numTerms=o.n; manualEdited=false;
+      document.querySelectorAll('#termChips .chip').forEach(function(x){x.classList.remove('sel');});
+      el.classList.add('sel');
+      syncBoxPosUI();
+    };
+    c.appendChild(el);
+  });
+}
+/* Bei Kettenaufgaben ist nur die Luecke am Ergebnis sinnvoll -> "Gemischt" sperren. */
+function syncBoxPosUI(){
+  var chain=(numTerms>=3);
+  var blk=document.getElementById('boxPosBlock');
+  document.querySelectorAll('input[name=boxPos]').forEach(function(r){
+    if(chain){
+      r.disabled=true;
+      if(r.value==='result') r.checked=true;
+    }else{
+      r.disabled=false;
+    }
+  });
+  if(blk){ blk.style.opacity=chain?'.45':'1'; }
+}
+
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+/* Eine Kettenaufgabe bauen. Zwingt jedes Zwischenergebnis in den Zahlenraum
+   (nie negativ, nie ueber max) - sonst waere die Aufgabe fuer die Grundschule
+   nicht loesbar. opMode: '+', '-' oder 'mix'. */
+function makeChain(max, opMode, n){
+  for(var tries=0;tries<200;tries++){
+    var ops=[];
+    for(var i=0;i<n-1;i++){
+      if(opMode==='+')ops.push('+');
+      else if(opMode==='-')ops.push('-');
+      else ops.push(Math.random()<0.5?'+':'-');
+    }
+    var terms=[], cur, ok=true;
+    if(ops[0]==='+'){
+      var hi=max-(n-1); if(hi<1){ok=false;}
+      cur=ok?ri(1,hi):0;
+    }else{
+      var lo=n; if(lo>max){ok=false;}
+      cur=ok?ri(lo,max):0;
+    }
+    if(!ok) continue;
+    terms.push(cur);
+    for(var k=0;k<ops.length;k++){
+      if(ops[k]==='+'){
+        var room=max-cur; if(room<1){ok=false;break;}
+        var v=ri(1,room); terms.push(v); cur+=v;
+      }else{
+        if(cur<2){ok=false;break;}
+        var v2=ri(1,cur-1); terms.push(v2); cur-=v2;
+      }
+    }
+    if(!ok) continue;
+    // triviale Ketten vermeiden: "+x -x" oder "-x +x" hebt sich auf
+    var trivial=false;
+    for(var j=0;j<ops.length-1;j++){
+      if(ops[j]!==ops[j+1] && terms[j+1]===terms[j+2]) trivial=true;
+    }
+    if(trivial) continue;
+    return {terms:terms, ops:ops, result:cur};
+  }
+  return null;
+}
+function chainToString(ch){
+  var s2=''+ch.terms[0];
+  for(var i=0;i<ch.ops.length;i++) s2+=' '+ch.ops[i]+' '+ch.terms[i+1];
+  return s2+' = \u00a7';
+}
+
 function initGenChips(){
   const c=document.getElementById('genChips'); c.innerHTML='';
   GEN_TYPES.forEach(gt=>{
@@ -256,8 +354,35 @@ function generateProblems(){
   const count=(window.GrundrechnenPDF&&GrundrechnenPDF.capacityForPages)
     ? GrundrechnenPDF.capacityForPages(numPages)
     : totalCount();
-  const boxPos=document.querySelector('input[name=boxPos]:checked').value;
+  const boxPos=(numTerms>=3)?'result':document.querySelector('input[name=boxPos]:checked').value;
   const max=gt.max;
+
+  // ----- Kettenaufgaben (3 Glieder) -----
+  if(numTerms>=3){
+    var opMode=(gt.op==='mix')?'mix':gt.op;
+    var chains=[], seenChain={}, guard=0;
+    // Phase 1: nur verschiedene Aufgaben
+    while(chains.length<count && guard<count*40){
+      guard++;
+      var ch=makeChain(max,opMode,numTerms);
+      if(!ch)continue;
+      var sig=chainToString(ch);
+      if(seenChain[sig])continue;
+      seenChain[sig]=true; chains.push(sig);
+    }
+    // Phase 2: kleiner Zahlenraum -> Pool erschoepft, Wiederholungen zulassen
+    var guard2=0;
+    while(chains.length<count && guard2<count*40){
+      guard2++;
+      var ch2=makeChain(max,opMode,numTerms);
+      if(!ch2)continue;
+      chains.push(chainToString(ch2));
+    }
+    customProbs=chains;
+    renderProbList();
+    manualEdited=false;
+    return;
+  }
 
   // 1) Pool aller verschiedenen Aufgaben aufbauen (ohne Lücken-Position)
   var pool=[]; var seen=new Set();
@@ -375,7 +500,15 @@ function pdfHeaderOpts(){
     showKl:document.getElementById('showKl').checked
   };
 }
+/* Sicherung gegen ein veraltetes PDF-Modul (Browser-Cache, Teil-Deployment):
+   ohne diese Pruefung druckt das alte Modul bei Kettenaufgaben "undefined". */
+function checkPDFModule(){
+  if(!window.GrundrechnenPDF || !(GrundrechnenPDF.API>=2)){
+    throw new Error('Veraltetes grundrechnen-pdf.js geladen. Bitte die aktuelle Datei deployen und den Cache leeren.');
+  }
+}
 async function makePDFBytes(){
+  checkPDFModule();
   if(!window.fontkit && window.PDFLib && window.PDFLib.fontkit){window.fontkit=window.PDFLib.fontkit;}
   return await GrundrechnenPDF.buildWorksheetPDF(pdfSpec(), pdfHeaderOpts(), null);
 }
@@ -439,6 +572,8 @@ document.addEventListener('selectstart',function(e){if(e.target.tagName==='INPUT
 
 // Init
 initGenChips();
+initTermChips();
+syncBoxPosUI();
 initPageChips();
 document.querySelectorAll('input[name=boxPos]').forEach(function(r){
   r.addEventListener('change',function(){ manualEdited=false; });

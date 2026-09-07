@@ -66,7 +66,16 @@
   }
 
   const OPSYM = { add:'+', sub:'-', mul:'\u00d7', div:':' };
-  function maxLen(t){ return Math.max((''+t.a).length,(''+t.b).length,(''+t.res).length); }
+
+  // Aufgaben koennen mehr als zwei Glieder haben (Addition mit 3 oder 4
+  // Summanden). t.terms ist die Quelle der Wahrheit; a/b bleiben als
+  // Kurzform fuer zweigliedrige Aufgaben erhalten.
+  function termsOf(t){ return (t.terms && t.terms.length) ? t.terms : [t.a, t.b]; }
+  function maxLen(t){
+    let m = (''+t.res).length;
+    termsOf(t).forEach(function(v){ m = Math.max(m, (''+v).length); });
+    return m;
+  }
 
   // Höhe einer Aufgabe (Anzahl Gitterzeilen * CH + Label)
   function taskGridRows(t) {
@@ -74,7 +83,7 @@
       const cols = (''+t.a).length;
       return 1 + (cols + 2); // Dividendzeile + Rechenzeilen
     }
-    let rows = 2 + 1; // a, b, ergebnis
+    let rows = termsOf(t).length + 1; // Summanden + Ergebnis
     if (t.op === 'mul' && (''+t.b).length >= 2) rows += (''+t.b).length; // Teilprodukte
     return rows;
   }
@@ -89,7 +98,8 @@
     const gridW = w * CW;
     const gx = x + (cellW - gridW)/2;    // zentriert in der Zelle
     const fs = 13;
-    const aStr = ''+t.a, bStr = ''+t.b, resStr = ''+t.res;
+    const terms = termsOf(t).map(function(v){ return ''+v; });
+    const bStr = ''+t.b, resStr = ''+t.res;
 
     function rowCells(str, opSym, fill, y, valCol) {
       const pad = w - str.length;
@@ -103,8 +113,15 @@
       }
     }
     let y = yTop;
-    rowCells(aStr, '', true, y, C.ink); y += CH;
-    rowCells(bStr, OPSYM[t.op], true, y, C.ink); y += CH;
+    // Rechenzeichen: bei Plus wie im Heft nur vor dem letzten Summanden.
+    // Bei Minus vor JEDEM Subtrahenden - sonst liest ein Kind die mittleren
+    // Zahlen als Summanden.
+    for (let i = 0; i < terms.length; i++) {
+      let sym = '';
+      if (t.op === 'sub') { if (i > 0) sym = OPSYM.sub; }
+      else if (i === terms.length - 1) { sym = OPSYM[t.op]; }
+      rowCells(terms[i], sym, true, y, C.ink); y += CH;
+    }
     // Strich
     ctx.line(gx, y+1, gx + gridW, y+1, { color: C.rule, w: 1.8 }); y += 3;
     // Multiplikation mit 2-stelligem Faktor: Teilprodukt-Leerzeilen
@@ -228,7 +245,7 @@
     if (showSol && used.length) {
       const yAfter = Math.max(colY[0], colY[1]) + 4;
       const solStrings = used.map((t,i) => {
-        let r = (i+1)+'. '+t.a+' '+OPSYM[t.op]+' '+t.b+' = '+t.res;
+        let r = (i+1)+'. '+termsOf(t).join(' '+OPSYM[t.op]+' ')+' = '+t.res;
         if (t.op === 'div' && t.rest > 0) r += ' R'+t.rest;
         return r;
       });
@@ -246,6 +263,7 @@
     return await pdf.save();
   }
 
-  global.SchriftlichesRechnenPDF = { PT, GEO, buildWorksheetPDF };
+  // API 2 = versteht mehrgliedrige Plus-/Minus-Aufgaben (t.terms).
+  global.SchriftlichesRechnenPDF = { API: 2, PT, GEO, buildWorksheetPDF };
 
 })(typeof window !== 'undefined' ? window : this);

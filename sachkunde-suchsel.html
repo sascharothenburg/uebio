@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#15803d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Suchsel">
+<title>Suchsel Sachkunde – Wortsuchrätsel zum Ausdrucken | Übio</title>
+<meta name="description" content="Suchsel-Generator für den Sachunterricht: 11 Themenpakete, drei Schwierigkeitsstufen für Klasse 1 bis 4, mit Wörterliste und Lösungsblatt. Kostenlos als PDF ausdrucken.">
+<link rel="canonical" href="https://uebio.de/sachkunde-suchsel.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://uebio.de/sachkunde-suchsel.html">
+<meta property="og:title" content="Suchsel Sachkunde – Wortsuchrätsel zum Ausdrucken">
+<meta property="og:description" content="11 Themenpakete, drei Schwierigkeitsstufen, Lösungsblatt – kostenlos als PDF.">
+<meta property="og:image" content="https://uebio.de/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Suchsel","short_name":"Suchsel","start_url":".","display":"standalone","background_color":"%23f4faf6","theme_color":"%2315803d"}'>
+<link rel="stylesheet" href="fonts.css">
+<style>
+/* ---------------------------------------------------------------
+   ÜBIO App-Shell v2 · Vorlage für die Migration der übrigen Apps
+   Struktur: .app (flex column, 100% Höhe)
+             > header.app-hdr  (fix, reserviert Platz für --ad-top)
+             > .tabbar         (fix)
+             > .screens        (flex:1, overflow hidden)
+               > .screen       (absolut, eigener Scroll)
+             + .sbar           (fixiert am unteren Rand)
+--------------------------------------------------------------- */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --acc:#15803d; --acc2:#22c55e;
+  --acc-soft:#dcfce7; --acc-line:#86efac;
+  --ink:#14312a; --muted:#5b6b64;
+  --bg:#f4faf6; --card:#fff; --line:#dbe7e0;
+  --radius:16px;
+  --shell:760px;
+}
+html,body{height:100%}
+body{
+  font-family:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg); color:var(--ink);
+  -webkit-text-size-adjust:100%;
+  -webkit-user-select:none; user-select:none;
+  overscroll-behavior:none;
+}
+input,textarea{-webkit-user-select:text;user-select:text}
+
+.app{display:flex;flex-direction:column;height:100%;max-width:var(--shell);margin:0 auto;
+     background:var(--bg);box-shadow:0 0 40px rgba(0,0,0,.08)}
+
+header.app-hdr{
+  background:linear-gradient(135deg,var(--acc) 0%,var(--acc2) 100%);
+  color:#fff;flex-shrink:0;padding:14px 16px 14px;
+  padding-top:calc(14px + env(safe-area-inset-top,0px) + var(--ad-top,0px));
+}
+header.app-hdr h1{margin:0;font-size:21px;font-weight:900;letter-spacing:-.2px}
+header.app-hdr .sub{margin:3px 0 0;font-size:13px;opacity:.94;font-weight:600}
+.hdr-btns{display:flex;gap:8px;margin-top:9px}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;
+  background:rgba(255,255,255,.22);border-radius:999px;color:#fff;
+  font:inherit;font-size:12.5px;font-weight:800;text-decoration:none;border:0;cursor:pointer}
+
+.tabbar{flex-shrink:0;padding:10px 14px 0;background:var(--bg)}
+nav.tabs{display:flex;gap:6px;background:#fff;padding:5px;border-radius:14px;border:1px solid var(--line)}
+nav.tabs button{flex:1;border:0;background:transparent;color:var(--muted);
+  font:inherit;font-weight:800;font-size:14px;padding:9px 4px;border-radius:10px;cursor:pointer}
+nav.tabs button.on{background:var(--acc);color:#fff}
+
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding:12px 14px calc(88px + env(safe-area-inset-bottom,0px));display:none}
+.screen.active{display:block}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.card h2{margin:0 0 4px;font-size:15px;font-weight:900;color:var(--acc)}
+.card p.hint{margin:0 0 10px;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.45}
+
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px}
+.theme{display:flex;align-items:center;gap:8px;text-align:left;
+  border:2px solid var(--line);background:#fff;border-radius:12px;padding:9px 10px;
+  font:inherit;font-weight:800;font-size:13.5px;color:var(--ink);cursor:pointer;line-height:1.2}
+.theme .em{font-size:19px;line-height:1}
+.theme small{display:block;font-weight:700;font-size:11px;color:var(--muted);margin-top:2px}
+.theme.on{border-color:var(--acc);background:var(--acc-soft)}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;
+  font:inherit;font-weight:800;font-size:13.5px;color:var(--ink);cursor:pointer}
+.chip.on{border-color:var(--acc);background:var(--acc);color:#fff}
+
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row .lbl{font-weight:800;font-size:14px}
+.row .lbl small{display:block;font-weight:700;font-size:11.5px;color:var(--muted);margin-top:2px}
+
+.sw{position:relative;width:50px;height:29px;flex:0 0 auto}
+.sw input{position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2}
+.sw span{position:absolute;inset:0;background:#cbd5cf;border-radius:999px;transition:background .15s}
+.sw span::after{content:"";position:absolute;top:3px;left:3px;width:23px;height:23px;background:#fff;border-radius:50%;transition:transform .15s}
+.sw input:checked + span{background:var(--acc)}
+.sw input:checked + span::after{transform:translateX(21px)}
+
+input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
+.rangeval{font-weight:900;color:var(--acc);font-size:14px}
+
+.btn{border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:900;font-size:15px;
+  background:var(--acc);color:#fff;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:#fff;color:var(--acc);border:2px solid var(--acc-line)}
+.btn.dice{padding:12px 15px;font-size:18px;line-height:1}
+
+.sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:var(--shell);background:rgba(255,255,255,.97);
+  border-top:1px solid var(--line);z-index:100;display:flex;gap:8px;
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}
+.sbar .btn{flex:1}
+.sbar .btn.dice{flex:0 0 auto}
+
+#preview{background:#e8efea;border-radius:12px;padding:10px;display:flex;flex-direction:column;
+  align-items:center;gap:10px;min-height:120px}
+#preview canvas{width:100%;max-width:688px;height:auto;background:#fff;
+  box-shadow:0 2px 10px rgba(0,0,0,.12);border-radius:4px;display:block}
+.pstate{font-weight:800;color:var(--muted);font-size:13.5px;padding:26px 0}
+.err{color:#b91c1c}
+
+@media print{
+  .app,.sbar{display:none!important}
+  html,body{height:auto;overflow:visible;background:#fff}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4 portrait;margin:12mm 14mm}
+}
+</style>
+<script src="pdf-lib.min.js"></script>
+<script src="fontkit.umd.min.js"></script>
+<script src="pdf.min.js"></script>
+<script>if(window.pdfjsLib&&window.pdfjsLib.GlobalWorkerOptions){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
+<script src="print-bridge.js"></script>
+</head>
+<body>
+
+<div class="app">
+
+<header class="app-hdr">
+  <h1>&#127808; Suchsel</h1>
+  <p class="sub">Wortsuchr&auml;tsel f&uuml;r den Sachunterricht &middot; Klasse 1&ndash;4</p>
+  <div class="hdr-btns">
+    <a class="hdr-btn" href="sachkunde.html">&#8592; Zur&uuml;ck</a>
+    <a class="hdr-btn" href="index.html">&#127968; Hauptmen&uuml;</a>
+  </div>
+</header>
+
+<div class="tabbar">
+  <nav class="tabs">
+    <button id="tb-thema" class="on" onclick="showTab('thema')">Thema</button>
+    <button id="tb-opts" onclick="showTab('opts')">Einstellungen</button>
+    <button id="tb-prev" onclick="showTab('prev')">Vorschau</button>
+  </nav>
+</div>
+
+<div class="screens">
+
+  <!-- ============ THEMA ============ -->
+    <section id="tab-thema" class="screen active">
+    <div class="card">
+      <h2>Themenpaket</h2>
+      <p class="hint">W&auml;hle ein Thema aus dem Sachunterricht. Die W&ouml;rter werden bei jedem W&uuml;rfeln neu gemischt.</p>
+      <div class="themes" id="themeGrid"></div>
+    </div>
+    <div class="card">
+      <h2>W&ouml;rter in diesem Paket</h2>
+      <p class="hint" id="poolInfo">&nbsp;</p>
+    </div>
+  </section>
+
+  <!-- ============ EINSTELLUNGEN ============ -->
+    <section id="tab-opts" class="screen">
+    <div class="card">
+      <h2>Schwierigkeit</h2>
+      <p class="hint" id="stufeInfo">&nbsp;</p>
+      <div class="chips" id="stufeChips"></div>
+    </div>
+
+    <div class="card">
+      <h2>Umfang</h2>
+      <div class="row">
+        <div class="lbl" style="flex:1">Anzahl W&ouml;rter <small>je Suchsel</small></div>
+        <div class="rangeval" id="wcVal">8</div>
+      </div>
+      <input type="range" id="wcRange" min="5" max="10" value="8" oninput="setWordCount(this.value)">
+      <div class="row">
+        <div class="lbl">Seiten <small>ein oder zwei verschiedene Suchsel</small></div>
+        <div class="chips">
+          <button class="chip on" id="pg1" onclick="setPages(1)">1 Seite</button>
+          <button class="chip" id="pg2" onclick="setPages(2)">2 Seiten</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Arbeitsblatt</h2>
+      <div class="row">
+        <div class="lbl">Kopfzeile Name / Datum</div>
+        <label class="sw"><input type="checkbox" id="cbHeader" checked onchange="setOpt('header',this.checked)"><span></span></label>
+      </div>
+      <div class="row">
+        <div class="lbl">W&ouml;rterliste unter dem Gitter <small>ohne Liste wird es deutlich schwerer</small></div>
+        <label class="sw"><input type="checkbox" id="cbList" checked onchange="setOpt('list',this.checked)"><span></span></label>
+      </div>
+      <div class="row">
+        <div class="lbl">L&ouml;sungsblatt <small>als zus&auml;tzliche Seite am Ende</small></div>
+        <label class="sw"><input type="checkbox" id="cbSol" checked onchange="setOpt('sol',this.checked)"><span></span></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VORSCHAU ============ -->
+    <section id="tab-prev" class="screen">
+    <div class="card">
+      <h2>Vorschau</h2>
+      <p class="hint" style="margin:0" id="prevInfo">&nbsp;</p>
+    </div>
+    <div id="preview"><div class="pstate">Vorschau wird erstellt&nbsp;&hellip;</div></div>
+  </section>
+
+</div><!-- /.screens -->
+
+<div class="sbar">
+  <button class="btn" id="btnGoPre" onclick="showTab('prev')">&#128065; Vorschau &amp; Drucken</button>
+  <button class="btn" id="btnPrint" onclick="doPrint()" hidden>Drucken / PDF</button>
+  <button class="btn ghost dice" id="btnRoll" onclick="reroll()" hidden title="Neu w&uuml;rfeln">&#127922;</button>
+</div>
+
+</div><!-- /.app -->
+
+<script>
+/* =====================================================================
+   ÜBIO · Suchsel-Generator Sachkunde
+   ===================================================================== */
+
+/* ---------------- Themenpakete ---------------------------------------
+   Wörter: nur A–Z plus Ä/Ö/Ü, kein ß (ß wird im Deutschen als SS
+   großgeschrieben). minLen ist pro Paket überschreibbar.
+--------------------------------------------------------------------- */
+var DEFAULT_MIN_LEN = 4;
+var MAX_GRID = 16;                 // harte Obergrenze (Druckbreite)
+
+var PAKETE = [
+ {id:'haustiere', name:'Haustiere', emoji:'\uD83D\uDC15', minLen:4, words:[
+   'HUND','KATZE','MAUS','HAMSTER','KANINCHEN','PFERD','PONY','FISCH','VOGEL',
+   'PAPAGEI','SCHILDKR\u00D6TE','WELLENSITTICH','FRETTCHEN','KORB','LEINE','NAPF',
+   'FUTTER','HALSBAND','K\u00C4FIG','STALL','TIERARZT','STREICHELN','B\u00DCRSTE','WASSER','SPIELZEUG']},
+
+ {id:'bauernhof', name:'Bauernhof', emoji:'\uD83D\uDC04', minLen:3, words:[
+   'KUH','SCHWEIN','HUHN','HAHN','SCHAF','ZIEGE','PFERD','ENTE','GANS','K\u00DCKEN',
+   'TRAKTOR','STALL','SCHEUNE','HEU','STROH','MILCH','FELD','WIESE','ACKER','BAUER',
+   'M\u00C4HDRESCHER','FUTTER','WEIDE','MIST','ERNTE','SCHUBKARRE','ZAUN']},
+
+ {id:'wald', name:'Wald & B\u00E4ume', emoji:'\uD83C\uDF32', minLen:4, words:[
+   'EICHE','BUCHE','BIRKE','TANNE','FICHTE','AHORN','KASTANIE','LINDE','WEIDE','ULME',
+   'ESCHE','BLATT','NADEL','RINDE','WURZEL','ZAPFEN','MOOS','PILZ','FARN','EICHEL',
+   'BUCHECKER','LAUB','STAMM','KRONE','F\u00D6RSTER','HOLZ','LICHTUNG','WALDBODEN']},
+
+ {id:'waldtiere', name:'Tiere im Wald', emoji:'\uD83E\uDD8C', minLen:3, words:[
+   'REH','HIRSCH','FUCHS','WILDSCHWEIN','DACHS','HASE','EICHH\u00D6RNCHEN','MARDER','IGEL',
+   'SPECHT','EULE','WALDKAUZ','MAUS','AMEISE','K\u00C4FER','WOLF','LUCHS','FLEDERMAUS',
+   'KR\u00D6TE','SALAMANDER','RABE','EICHELH\u00C4HER','WILDKATZE','SCHNECKE']},
+
+ {id:'obstgemuese', name:'Obst & Gem\u00FCse', emoji:'\uD83C\uDF4E', minLen:4, words:[
+   'APFEL','BIRNE','BANANE','ERDBEERE','KIRSCHE','PFLAUME','TRAUBE','ZITRONE','ORANGE',
+   'MELONE','M\u00D6HRE','GURKE','TOMATE','KARTOFFEL','SALAT','ZWIEBEL','PAPRIKA','KOHL',
+   'ERBSE','BOHNE','SPINAT','RADIESCHEN','K\u00DCRBIS','LAUCH','BROKKOLI','SELLERIE']},
+
+ {id:'koerper', name:'Der K\u00F6rper', emoji:'\uD83E\uDDB4', minLen:3, words:[
+   'KOPF','ARM','BEIN','HAND','FUSS','FINGER','NASE','MUND','AUGE','OHR','HAAR','ZAHN',
+   'ZUNGE','HERZ','LUNGE','MAGEN','KNOCHEN','MUSKEL','HAUT','BLUT','GEHIRN','RIPPE',
+   'SCHULTER','KNIE','ELLBOGEN','NIERE','LEBER','SKELETT','R\u00DCCKEN','BAUCH']},
+
+ {id:'wetter', name:'Wetter & Jahreszeiten', emoji:'\u26C5', minLen:4, words:[
+   'SONNE','REGEN','SCHNEE','WIND','STURM','WOLKE','NEBEL','HAGEL','BLITZ','DONNER',
+   'GEWITTER','REGENBOGEN','FR\u00DCHLING','SOMMER','HERBST','WINTER','FROST','HITZE',
+   'K\u00C4LTE','THERMOMETER','SCHAUER','GLATTEIS','TEMPERATUR','SONNENSCHEIN','ZUGVOGEL']},
+
+ {id:'verkehr', name:'Verkehr & Sicherheit', emoji:'\uD83D\uDEA6', minLen:4, words:[
+   'AMPEL','ZEBRASTREIFEN','GEHWEG','STRASSE','FAHRRAD','HELM','AUTO','ROLLER','SCHILD',
+   'KREUZUNG','RADWEG','BREMSE','KLINGEL','LICHT','REFLEKTOR','WARNWESTE','FUSSG\u00C4NGER',
+   'VORFAHRT','HALTESTELLE','GURT','KINDERSITZ','SCHULWEG','POLIZEI','R\u00DCCKSPIEGEL']},
+
+ {id:'wasser', name:'Wasser & Gew\u00E4sser', emoji:'\uD83D\uDCA7', minLen:3, words:[
+   'FLUSS','BACH','SEE','MEER','TEICH','QUELLE','OZEAN','WELLE','UFER','INSEL','K\u00DCSTE',
+   'EBBE','FLUT','TROPFEN','REGEN','WOLKE','DAMPF','BRUNNEN','KANAL','WASSERFALL',
+   'M\u00DCNDUNG','SUMPF','GRUNDWASSER','KREISLAUF','VERDUNSTEN','SCHILF']},
+
+ {id:'feuer', name:'Feuer & Feuerwehr', emoji:'\uD83D\uDE92', minLen:4, words:[
+   'FEUER','FLAMME','RAUCH','L\u00D6SCHEN','WASSER','SCHLAUCH','LEITER','HELM','NOTRUF',
+   'SIRENE','FUNKEN','HITZE','BRAND','MELDER','RAUCHMELDER','FEUERWEHR','L\u00D6SCHZUG',
+   'ATEMSCHUTZ','HYDRANT','GLUT','ASCHE','STREICHHOLZ','KERZE','BRANDSCHUTZ','FLUCHTWEG']},
+
+ {id:'weltraum', name:'Weltraum & Planeten', emoji:'\uD83D\uDE80', minLen:4, words:[
+   'ERDE','MOND','SONNE','MARS','VENUS','MERKUR','JUPITER','SATURN','URANUS','NEPTUN',
+   'STERN','KOMET','RAKETE','PLANET','GALAXIE','ASTRONAUT','TELESKOP','KRATER',
+   'UMLAUFBAHN','SCHWERKRAFT','MILCHSTRASSE','SATELLIT','STERNBILD','WELTALL','ASTEROID']}
+];
+
+/* ---------------- Schwierigkeitsstufen ------------------------------ */
+var STUFEN = [
+ {id:'k12', label:'Klasse 1/2', grid:10, minLen:3, dirs:['h','v'],
+  wDef:8,  wMin:5, wMax:10,
+  hinweis:'Die W\u00F6rter stehen waagerecht und senkrecht.'},
+ {id:'k3',  label:'Klasse 3',   grid:12, minLen:4, dirs:['h','v','d'],
+  wDef:10, wMin:6, wMax:12,
+  hinweis:'Die W\u00F6rter stehen waagerecht, senkrecht und diagonal.'},
+ {id:'k4',  label:'Klasse 4',   grid:14, minLen:4, dirs:['h','v','d','r'],
+  wDef:12, wMin:8, wMax:14,
+  hinweis:'Die W\u00F6rter stehen waagerecht, senkrecht und diagonal \u2013 auch r\u00FCckw\u00E4rts.'}
+];
+
+var DIRVEC = { h:[[1,0,3]], v:[[0,1,3]], d:[[1,1,1.4],[1,-1,1.4]] };
+function dirsFor(st){
+  var v=[];
+  st.dirs.forEach(function(k){ if(DIRVEC[k]) v=v.concat(DIRVEC[k]); });
+  if(st.dirs.indexOf('r')>=0){
+    v=v.concat(v.map(function(d){ return [-d[0],-d[1],d[2]*0.55]; }));
+  }
+  return v;
+}
+
+/* Füllbuchstaben: deutsche Häufigkeit, Umlaute selten, kein ß */
+var FILL_BASE='EEEEEEEEEEEENNNNNNNNNIIIIIIISSSSSSRRRRRRAAAAATTTTTDDDDHHHHUUUULLLLCCCGGGMMMOOOBBWWFFKKZZPVJYXQ\u00C4\u00D6\u00DC';
+
+/* ---------------- Seitenanzahl (PER_PAGE-Muster) --------------------
+   Ein Suchsel pro Seite: p1 = Suchsel auf Seite 1,
+   p2 = Suchsel *insgesamt* bei zwei Seiten (kein Zuwachs-Wert).
+--------------------------------------------------------------------- */
+var PER_PAGE = {p1:1, p2:2};
+function totalCount(){ return numPages<=1 ? PER_PAGE.p1 : PER_PAGE.p2; }
+function pageSplits(){ return numPages<=1 ? [PER_PAGE.p1] : [PER_PAGE.p1, PER_PAGE.p2-PER_PAGE.p1]; }
+
+/* ---------------- Zustand ------------------------------------------- */
+var selPkg   = PAKETE[0];
+var selStufe = STUFEN[0];
+var wordCount= STUFEN[0].wDef;
+var numPages = 1;
+var optHeader= true, optList = true, optSol = true;
+var seed     = (Math.random()*1e9)|0;
+var optsDirty= true;
+
+var puzzleCache=null, puzzleKey='';
+
+/* ---------------- Zufall (seeded) ----------------------------------- */
+function mulberry32(a){
+  return function(){
+    a|=0; a=a+0x6D2B79F5|0;
+    var t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t;
+    return ((t^t>>>14)>>>0)/4294967296;
+  };
+}
+function shuffle(arr,rnd){
+  for(var i=arr.length-1;i>0;i--){
+    var j=Math.floor(rnd()*(i+1)); var t=arr[i]; arr[i]=arr[j]; arr[j]=t;
+  }
+  return arr;
+}
+
+/* ---------------- Wortauswahl --------------------------------------- */
+function effMinLen(pkg,st){
+  return Math.max(pkg.minLen||DEFAULT_MIN_LEN, st.minLen);
+}
+function poolFor(pkg,st){
+  var min=effMinLen(pkg,st);
+  return pkg.words.filter(function(w){ return w.length>=min && w.length<=MAX_GRID; });
+}
+function gridSizeFor(st,words){
+  var longest=0;
+  words.forEach(function(w){ if(w.length>longest) longest=w.length; });
+  return Math.min(MAX_GRID, Math.max(st.grid, longest+1));
+}
+
+/* ---------------- Gitter bauen -------------------------------------- */
+function placeWords(words,size,dirs,rnd){
+  for(var attempt=0;attempt<80;attempt++){
+    var g=[],y,x;
+    for(y=0;y<size;y++){ g.push(new Array(size).fill('')); }
+    var sol=[], ok=true;
+    for(var wi=0;wi<words.length;wi++){
+      var w=words[wi], byDir=[], wsum=0;
+      for(var di=0;di<dirs.length;di++){
+        var dx=dirs[di][0], dy=dirs[di][1], spots=[];
+        for(y=0;y<size;y++) for(x=0;x<size;x++){
+          var ex=x+dx*(w.length-1), ey=y+dy*(w.length-1);
+          if(ex<0||ex>=size||ey<0||ey>=size) continue;
+          var fit=true;
+          for(var i=0;i<w.length;i++){
+            var c=g[y+dy*i][x+dx*i];
+            if(c==='') continue;
+            if(c!==w.charAt(i)){ fit=false; break; }
+          }
+          if(fit) spots.push([x,y,dx,dy]);
+        }
+        if(spots.length){ byDir.push([spots,dirs[di][2]]); wsum+=dirs[di][2]; }
+      }
+      if(!byDir.length){ ok=false; break; }
+      var pick=rnd()*wsum, grp=byDir[byDir.length-1];
+      for(var gi=0;gi<byDir.length;gi++){ pick-=byDir[gi][1]; if(pick<=0){ grp=byDir[gi]; break; } }
+      var s=grp[0][Math.floor(rnd()*grp[0].length)];
+      for(var k=0;k<w.length;k++) g[s[1]+s[3]*k][s[0]+s[2]*k]=w.charAt(k);
+      sol.push({word:w,x:s[0],y:s[1],dx:s[2],dy:s[3]});
+    }
+    if(ok) return {grid:g,sol:sol};
+  }
+  return null;
+}
+function fillGrid(g,words,rnd){
+  var pool=(FILL_BASE+words.join('')+words.join('')).split('');
+  for(var y=0;y<g.length;y++) for(var x=0;x<g.length;x++){
+    if(g[y][x]==='') g[y][x]=pool[Math.floor(rnd()*pool.length)];
+  }
+}
+function buildOne(words,st,rnd){
+  var list=words.slice();
+  while(list.length){
+    var size=gridSizeFor(st,list);
+    var res=placeWords(list.slice().sort(function(a,b){return b.length-a.length;}),size,dirsFor(st),rnd);
+    if(res){
+      fillGrid(res.grid,list,rnd);
+      var shown=list.slice().sort(function(a,b){ return a.localeCompare(b,'de'); });
+      return {grid:res.grid,sol:res.sol,size:size,words:shown};
+    }
+    list.pop();                       // ein Wort weniger, erneut versuchen
+  }
+  return null;
+}
+
+/* ---------------- Cache (Vorschau == Druck) ------------------------- */
+function settingsKey(){
+  return [selPkg.id,selStufe.id,wordCount,numPages,seed].join('|');
+}
+function ensurePuzzles(){
+  var key=settingsKey();
+  if(puzzleCache && puzzleKey===key) return puzzleCache;
+  var rnd=mulberry32(seed ^ (selPkg.id.length*7919) ^ (selStufe.grid*104729));
+  var pool=shuffle(poolFor(selPkg,selStufe).slice(),rnd);
+  var n=totalCount(), out=[], cursor=0;
+  for(var p=0;p<n;p++){
+    // pro Blatt nur verschiedene Wörter; der Cursor läuft über die Blätter
+    // weiter, damit Blatt 2 möglichst andere Wörter bekommt
+    var take=[], guard=0;
+    while(take.length<wordCount && guard<pool.length*3){
+      if(cursor>=pool.length){ shuffle(pool,rnd); cursor=0; }
+      var w=pool[cursor++]; guard++;
+      if(take.indexOf(w)<0) take.push(w);
+    }
+    var pz=buildOne(take,selStufe,rnd);
+    if(pz) out.push(pz);
+  }
+  puzzleKey=key; puzzleCache=out;
+  return out;
+}
+
+/* =====================================================================
+   PDF
+   ===================================================================== */
+var MM=2.834645669, PW=595.28, PH=841.89, MX=14*MM, MY=12*MM;
+var CONTENT_W=PW-2*MX;
+
+function hex(h){
+  return PDFLib.rgb(parseInt(h.substr(1,2),16)/255,parseInt(h.substr(3,2),16)/255,parseInt(h.substr(5,2),16)/255);
+}
+var C={};
+function initColors(){
+  C.acc=hex('#15803d'); C.acc2=hex('#22c55e'); C.line=hex('#86efac');
+  C.ink=hex('#14312a');  C.muted=hex('#6b7c74'); C.grey=hex('#b6c2bb');
+  C.sol=hex('#15803d');  C.white=PDFLib.rgb(1,1,1);
+}
+
+/* --- Schrift: echte .ttf nötig. WOFF2 lässt sich zwar einbetten,
+       rendert im PDF aber leer -> wird bewusst abgelehnt. --------- */
+var FONT_REG =['fonts/nunito-400.ttf','fonts/Nunito-Regular.ttf'];
+var FONT_BOLD=['fonts/nunito-700.ttf','fonts/Nunito-Bold.ttf','fonts/nunito-800.ttf'];
+var fontCache={};
+function looksLikeWoff(buf){
+  var t=new Uint8Array(buf,0,4);
+  return t[0]===0x77 && t[1]===0x4F && t[2]===0x46;   // "wOFF" / "wOF2"
+}
+async function loadFontBytes(list,tag){
+  if(fontCache[tag]) return fontCache[tag];
+  for(var i=0;i<list.length;i++){
+    try{
+      var r=await fetch(list[i]);
+      if(!r.ok) continue;
+      var b=await r.arrayBuffer();
+      if(b.byteLength<5000||looksLikeWoff(b)) continue;
+      fontCache[tag]=b; return b;
+    }catch(e){}
+  }
+  throw new Error('Nunito-TTF nicht gefunden');
+}
+
+function ascentOf(font,size){ return font.heightAtSize(size,{descender:false}); }
+
+/* Text mit Oberkante bei yTop (Koordinaten von oben) */
+function textTop(page,txt,x,yTop,size,font,color){
+  var a=ascentOf(font,size);
+  page.drawText(txt,{x:x,y:PH-yTop-a,size:size,font:font,color:color});
+  return a;
+}
+function centerText(page,txt,cx,yTop,size,font,color){
+  var w=font.widthOfTextAtSize(txt,size);
+  return textTop(page,txt,cx-w/2,yTop,size,font,color);
+}
+
+function drawHeader(page,F,title,hint){
+  var y=MY;
+  if(optHeader){
+    var s=10.5, lw=CONTENT_W/2-52;
+    textTop(page,'Name:',MX,y,s,F.reg,C.muted);
+    page.drawLine({start:{x:MX+36,y:PH-y-11},end:{x:MX+36+lw,y:PH-y-11},thickness:.8,color:C.grey});
+    var dx=MX+CONTENT_W/2+18;
+    textTop(page,'Datum:',dx,y,s,F.reg,C.muted);
+    page.drawLine({start:{x:dx+42,y:PH-y-11},end:{x:MX+CONTENT_W,y:PH-y-11},thickness:.8,color:C.grey});
+    y+=26;
+  }
+  textTop(page,title,MX,y,17,F.bold,C.acc);
+  y+=24;
+  if(hint){ textTop(page,hint,MX,y,10,F.reg,C.muted); y+=16; }
+  return y+6;
+}
+
+/* Wörterliste; gibt die benötigte Höhe zurück (measure:true zeichnet nicht) */
+function wordListBlock(page,F,words,yTop,measure,solved){
+  var n=words.length;
+  var cols = n>12 ? 4 : (n>6 ? 3 : 2);
+  var rows = Math.ceil(n/cols);
+  var colW = CONTENT_W/cols;
+  var lh   = 17, s=11.5;
+  var h    = 18 + rows*lh;
+  if(measure) return h;
+  textTop(page,'Suchw\u00F6rter:',MX,yTop,11,F.bold,C.ink);
+  for(var i=0;i<n;i++){
+    var c=i%cols, r=Math.floor(i/cols);
+    var x=MX+c*colW, yy=yTop+18+r*lh;
+    if(!solved){
+      page.drawRectangle({x:x,y:PH-yy-11,width:9,height:9,borderColor:C.line,borderWidth:1.1,color:C.white});
+    }else{
+      page.drawCircle({x:x+4.5,y:PH-yy-6.5,size:3.2,color:C.acc2});
+    }
+    textTop(page,words[i],x+15,yy,s,F.bold,solved?C.acc:C.ink);
+  }
+  return h;
+}
+
+function drawGrid(page,F,pz,gx,gy,cell,solved){
+  var size=pz.size, i, x, y;
+  var gw=cell*size;
+  // Lösungs-Kapseln zuerst (liegen hinter den Buchstaben)
+  if(solved){
+    for(i=0;i<pz.sol.length;i++){
+      var s=pz.sol[i], L=s.word.length;
+      var x1=gx+(s.x+.5)*cell, y1=gy+(s.y+.5)*cell;
+      var x2=gx+(s.x+s.dx*(L-1)+.5)*cell, y2=gy+(s.y+s.dy*(L-1)+.5)*cell;
+      page.drawLine({
+        start:{x:x1,y:PH-y1}, end:{x:x2,y:PH-y2},
+        thickness:cell*0.80, color:C.acc2, opacity:0.30,
+        lineCap:PDFLib.LineCapStyle.Round
+      });
+    }
+  }
+  // Innenlinien
+  for(i=1;i<size;i++){
+    page.drawLine({start:{x:gx+i*cell,y:PH-gy},end:{x:gx+i*cell,y:PH-gy-gw},thickness:.6,color:C.line});
+    page.drawLine({start:{x:gx,y:PH-gy-i*cell},end:{x:gx+gw,y:PH-gy-i*cell},thickness:.6,color:C.line});
+  }
+  // Rahmen
+  page.drawRectangle({x:gx,y:PH-gy-gw,width:gw,height:gw,borderColor:C.acc,borderWidth:1.6});
+  // Buchstaben
+  var fs=cell*0.56, cap=fs*0.71;
+  var inSol={};
+  if(solved){
+    for(i=0;i<pz.sol.length;i++){
+      var q=pz.sol[i];
+      for(var k=0;k<q.word.length;k++) inSol[(q.y+q.dy*k)+','+(q.x+q.dx*k)]=1;
+    }
+  }
+  for(y=0;y<size;y++) for(x=0;x<size;x++){
+    var ch=pz.grid[y][x];
+    var col=solved ? (inSol[y+','+x]?C.sol:C.grey) : C.ink;
+    var fnt=(!solved||inSol[y+','+x]) ? F.bold : F.reg;
+    var w=fnt.widthOfTextAtSize(ch,fs);
+    page.drawText(ch,{
+      x:gx+x*cell+(cell-w)/2,
+      y:PH-(gy+(y+1)*cell)+(cell-cap)/2,
+      size:fs, font:fnt, color:col
+    });
+  }
+  return gw;
+}
+
+function drawSheet(pdf,F,pz,idx,solved){
+  var page=pdf.addPage([PW,PH]);
+  var title=(solved?'L\u00F6sung: ':'')+selPkg.name;
+  if(totalCount()>1) title+=' \u00B7 Blatt '+(idx+1);
+  var hint=solved
+    ? 'Alle '+pz.words.length+' W\u00F6rter sind markiert.'
+    : 'Finde die '+pz.words.length+' W\u00F6rter im Gitter. '+selStufe.hinweis;
+  var y=drawHeader(page,F,title,hint);
+
+  var withList=(optList||solved);
+  var listH=withList ? wordListBlock(page,F,pz.words,0,true,solved) : 0;
+  var availTotal=(PH-MY)-y;
+  var availH=availTotal-listH-14;
+  var cell=Math.min(40, CONTENT_W/pz.size, availH/pz.size);
+  var gw=cell*pz.size;
+  var gx=MX+(CONTENT_W-gw)/2;
+  // Block (Gitter + Liste) im Restraum vertikal ausbalancieren
+  var blockH=gw+(withList?18+listH:0);
+  y+=Math.max(0,Math.min((availTotal-blockH)/2,70));
+
+  drawGrid(page,F,pz,gx,y,cell,solved);
+  if(withList) wordListBlock(page,F,pz.words,y+gw+18,false,solved);
+}
+
+function withTimeout(p,ms,msg){
+  return Promise.race([p,new Promise(function(_,rej){
+    setTimeout(function(){rej(new Error(msg||'Zeit\u00FCberschreitung'));},ms);
+  })]);
+}
+
+async function makePDFBytes(){
+  initColors();
+  var pdf=await PDFLib.PDFDocument.create();
+  var F={};
+  try{
+    var fk=window.fontkit||(PDFLib&&PDFLib.fontkit);
+    if(!fk) throw new Error('fontkit fehlt');
+    pdf.registerFontkit(fk);
+    var br=await loadFontBytes(FONT_REG,'reg');
+    var bb=await loadFontBytes(FONT_BOLD,'bold');
+    F.reg =await pdf.embedFont(br,{subset:false});
+    F.bold=await pdf.embedFont(bb,{subset:false});
+  }catch(e){
+    console.warn('Nunito nicht verf\u00FCgbar \u2013 Fallback Helvetica:',e.message);
+    F.reg =await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
+    F.bold=await pdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
+  }
+  var list=ensurePuzzles();
+  var i;
+  for(i=0;i<list.length;i++) drawSheet(pdf,F,list[i],i,false);
+  if(optSol) for(i=0;i<list.length;i++) drawSheet(pdf,F,list[i],i,true);
+  return await pdf.save();
+}
+
+/* =====================================================================
+   UI
+   ===================================================================== */
+function $(id){ return document.getElementById(id); }
+
+function renderThemes(){
+  var g=$('themeGrid'); g.innerHTML='';
+  PAKETE.forEach(function(p){
+    var b=document.createElement('button');
+    b.className='theme'+(p.id===selPkg.id?' on':'');
+    b.innerHTML='<span class="em">'+p.emoji+'</span><span>'+p.name+
+                '<small>'+poolFor(p,selStufe).length+' W\u00F6rter</small></span>';
+    b.onclick=function(){ selPkg=p; optsDirty=true; renderThemes(); renderPool(); };
+    g.appendChild(b);
+  });
+}
+function renderPool(){
+  var pool=poolFor(selPkg,selStufe);
+  $('poolInfo').textContent=pool.length+' W\u00F6rter ab '+effMinLen(selPkg,selStufe)+
+    ' Buchstaben: '+pool.slice().sort().join(' \u00B7 ');
+}
+function renderStufen(){
+  var c=$('stufeChips'); c.innerHTML='';
+  STUFEN.forEach(function(s){
+    var b=document.createElement('button');
+    b.className='chip'+(s.id===selStufe.id?' on':'');
+    b.textContent=s.label;
+    b.onclick=function(){
+      selStufe=s;
+      wordCount=Math.min(Math.max(wordCount,s.wMin),s.wMax);
+      optsDirty=true;
+      renderStufen(); renderPool(); renderThemes(); syncRange();
+    };
+    c.appendChild(b);
+  });
+  $('stufeInfo').textContent=selStufe.hinweis+' Gitter '+selStufe.grid+'\u00D7'+selStufe.grid+
+    ' (w\u00E4chst automatisch, wenn ein Wort l\u00E4nger ist).';
+}
+function syncRange(){
+  var r=$('wcRange');
+  r.min=selStufe.wMin; r.max=selStufe.wMax; r.value=wordCount;
+  $('wcVal').textContent=wordCount;
+}
+function setWordCount(v){ wordCount=parseInt(v,10); $('wcVal').textContent=wordCount; optsDirty=true; }
+function setPages(n){
+  numPages=n; optsDirty=true;
+  $('pg1').className='chip'+(n===1?' on':''); $('pg2').className='chip'+(n===2?' on':'');
+}
+function setOpt(k,v){
+  if(k==='header') optHeader=v; else if(k==='list') optList=v; else if(k==='sol') optSol=v;
+  optsDirty=true;
+}
+function reroll(){ seed=(Math.random()*1e9)|0; optsDirty=true; buildPreview(); }
+
+function showTab(id){
+  ['thema','opts','prev'].forEach(function(t){
+    $('tab-'+t).className='screen'+(t===id?' active':'');
+    $('tb-'+t).className=(t===id?'on':'');
+  });
+  var pre=(id==='prev');
+  $('btnGoPre').hidden=pre; $('btnPrint').hidden=!pre; $('btnRoll').hidden=!pre;
+  var sc=$('tab-'+id); if(sc) sc.scrollTop=0;
+  if(pre && optsDirty) buildPreview();
+}
+window.showTab=showTab;
+
+async function buildPreview(){
+  var box=$('preview');
+  box.innerHTML='<div class="pstate">Vorschau wird erstellt&nbsp;&hellip;</div>';
+  $('btnPrint').disabled=true; $('btnRoll').disabled=true;
+  try{
+    var bytes=await withTimeout(makePDFBytes(),25000,'PDF-Erzeugung dauert zu lange');
+    optsDirty=false;
+    var list=ensurePuzzles();
+    var pgs=list.length+(optSol?list.length:0);
+    $('prevInfo').textContent=list.length+' Suchsel \u00B7 '+list[0].size+'\u00D7'+list[0].size+
+      ' \u00B7 '+list[0].words.length+' W\u00F6rter'+(optSol?' \u00B7 mit L\u00F6sungsblatt':'')+
+      ' \u00B7 '+pgs+' Seite'+(pgs>1?'n':'');
+    if(!window.pdfjsLib){
+      box.innerHTML='<div class="pstate">Vorschau nicht verf\u00FCgbar \u2013 bitte direkt drucken.</div>';
+    }else{
+      var doc=await window.pdfjsLib.getDocument({data:bytes.slice(0)}).promise;
+      box.innerHTML='';
+      for(var p=1;p<=doc.numPages;p++){
+        var pg=await doc.getPage(p);
+        var vp=pg.getViewport({scale:1});
+        var scale=(688*2)/vp.width;
+        var v2=pg.getViewport({scale:scale});
+        var cv=document.createElement('canvas');
+        cv.width=Math.round(v2.width); cv.height=Math.round(v2.height);
+        box.appendChild(cv);
+        await pg.render({canvasContext:cv.getContext('2d'),viewport:v2}).promise;
+      }
+    }
+  }catch(e){
+    console.error(e);
+    box.innerHTML='<div class="pstate err">Fehler: '+(e.message||e)+'</div>';
+  }
+  $('btnPrint').disabled=false; $('btnRoll').disabled=false;
+}
+
+async function doPrint(){
+  $('btnPrint').disabled=true;
+  try{
+    var bytes=await withTimeout(makePDFBytes(),25000,'PDF-Erzeugung dauert zu lange');
+    optsDirty=false;
+    var name='Suchsel-'+selPkg.id+'.pdf';
+    if(window.PrintBridge&&window.PrintBridge.printPDF){
+      await window.PrintBridge.printPDF(bytes,name);
+    }else{
+      var url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
+      window.open(url,'_blank');
+      setTimeout(function(){URL.revokeObjectURL(url);},60000);
+    }
+  }catch(e){ alert('Druck fehlgeschlagen: '+(e.message||e)); }
+  $('btnPrint').disabled=false;
+}
+
+/* Start */
+renderStufen(); renderThemes(); renderPool(); syncRange(); setPages(1);
+</script>
+<script src="app-back.js"></script>
+<script src="ads.js"></script>
+</body>
+</html>
