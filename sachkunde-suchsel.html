@@ -17,120 +17,16 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href='data:application/manifest+json,{"name":"Suchsel","short_name":"Suchsel","start_url":".","display":"standalone","background_color":"%23f4faf6","theme_color":"%2315803d"}'>
 <link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="app-shell.css">
 <style>
-/* ---------------------------------------------------------------
-   ÜBIO App-Shell v2 · Vorlage für die Migration der übrigen Apps
-   Struktur: .app (flex column, 100% Höhe)
-             > header.app-hdr  (fix, reserviert Platz für --ad-top)
-             > .tabbar         (fix)
-             > .screens        (flex:1, overflow hidden)
-               > .screen       (absolut, eigener Scroll)
-             + .sbar           (fixiert am unteren Rand)
---------------------------------------------------------------- */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --acc:#15803d; --acc2:#22c55e;
-  --acc-soft:#dcfce7; --acc-line:#86efac;
-  --ink:#14312a; --muted:#5b6b64;
-  --bg:#f4faf6; --card:#fff; --line:#dbe7e0;
-  --radius:16px;
-  --shell:760px;
-}
-html,body{height:100%}
-body{
-  font-family:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
-  background:var(--bg); color:var(--ink);
-  -webkit-text-size-adjust:100%;
-  -webkit-user-select:none; user-select:none;
-  overscroll-behavior:none;
-}
-input,textarea{-webkit-user-select:text;user-select:text}
-
-.app{display:flex;flex-direction:column;height:100%;max-width:var(--shell);margin:0 auto;
-     background:var(--bg);box-shadow:0 0 40px rgba(0,0,0,.08)}
-
-header.app-hdr{
-  background:linear-gradient(135deg,var(--acc) 0%,var(--acc2) 100%);
-  color:#fff;flex-shrink:0;padding:14px 16px 14px;
-  padding-top:calc(14px + env(safe-area-inset-top,0px) + var(--ad-top,0px));
-}
-header.app-hdr h1{margin:0;font-size:21px;font-weight:900;letter-spacing:-.2px}
-header.app-hdr .sub{margin:3px 0 0;font-size:13px;opacity:.94;font-weight:600}
-.hdr-btns{display:flex;gap:8px;margin-top:9px}
-.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;
-  background:rgba(255,255,255,.22);border-radius:999px;color:#fff;
-  font:inherit;font-size:12.5px;font-weight:800;text-decoration:none;border:0;cursor:pointer}
-
-.tabbar{flex-shrink:0;padding:10px 14px 0;background:var(--bg)}
-nav.tabs{display:flex;gap:6px;background:#fff;padding:5px;border-radius:14px;border:1px solid var(--line)}
-nav.tabs button{flex:1;border:0;background:transparent;color:var(--muted);
-  font:inherit;font-weight:800;font-size:14px;padding:9px 4px;border-radius:10px;cursor:pointer}
-nav.tabs button.on{background:var(--acc);color:#fff}
-
-.screens{flex:1;overflow:hidden;position:relative}
-.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;
-  padding:12px 14px calc(88px + env(safe-area-inset-bottom,0px));display:none}
-.screen.active{display:block}
-
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px}
-.card h2{margin:0 0 4px;font-size:15px;font-weight:900;color:var(--acc)}
-.card p.hint{margin:0 0 10px;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.45}
-
-.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px}
-.theme{display:flex;align-items:center;gap:8px;text-align:left;
-  border:2px solid var(--line);background:#fff;border-radius:12px;padding:9px 10px;
-  font:inherit;font-weight:800;font-size:13.5px;color:var(--ink);cursor:pointer;line-height:1.2}
-.theme .em{font-size:19px;line-height:1}
-.theme small{display:block;font-weight:700;font-size:11px;color:var(--muted);margin-top:2px}
-.theme.on{border-color:var(--acc);background:var(--acc-soft)}
-
-.chips{display:flex;flex-wrap:wrap;gap:7px}
-.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;
-  font:inherit;font-weight:800;font-size:13.5px;color:var(--ink);cursor:pointer}
-.chip.on{border-color:var(--acc);background:var(--acc);color:#fff}
-
-.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
-.row:first-of-type{border-top:0}
-.row .lbl{font-weight:800;font-size:14px}
-.row .lbl small{display:block;font-weight:700;font-size:11.5px;color:var(--muted);margin-top:2px}
-
-.sw{position:relative;width:50px;height:29px;flex:0 0 auto}
-.sw input{position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2}
-.sw span{position:absolute;inset:0;background:#cbd5cf;border-radius:999px;transition:background .15s}
-.sw span::after{content:"";position:absolute;top:3px;left:3px;width:23px;height:23px;background:#fff;border-radius:50%;transition:transform .15s}
-.sw input:checked + span{background:var(--acc)}
-.sw input:checked + span::after{transform:translateX(21px)}
-
-input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
-.rangeval{font-weight:900;color:var(--acc);font-size:14px}
-
-.btn{border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:900;font-size:15px;
-  background:var(--acc);color:#fff;cursor:pointer}
-.btn:disabled{opacity:.5;cursor:default}
-.btn.ghost{background:#fff;color:var(--acc);border:2px solid var(--acc-line)}
-.btn.dice{padding:12px 15px;font-size:18px;line-height:1}
-
-.sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:var(--shell);background:rgba(255,255,255,.97);
-  border-top:1px solid var(--line);z-index:100;display:flex;gap:8px;
-  padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}
-.sbar .btn{flex:1}
-.sbar .btn.dice{flex:0 0 auto}
-
+/* nur für diese App --------------------------------------------------- */
 #preview{background:#e8efea;border-radius:12px;padding:10px;display:flex;flex-direction:column;
   align-items:center;gap:10px;min-height:120px}
 #preview canvas{width:100%;max-width:688px;height:auto;background:#fff;
   box-shadow:0 2px 10px rgba(0,0,0,.12);border-radius:4px;display:block}
-.pstate{font-weight:800;color:var(--muted);font-size:13.5px;padding:26px 0}
+.pstate{font-weight:800;color:var(--muted);font-size:.84rem;padding:26px 0}
 .err{color:#b91c1c}
-
-@media print{
-  .app,.sbar{display:none!important}
-  html,body{height:auto;overflow:visible;background:#fff}
-  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  @page{size:A4 portrait;margin:12mm 14mm}
-}
+#btnRoll{width:auto;flex:0 0 auto;padding:12px 16px;font-size:1.1rem;line-height:1}
 </style>
 <script src="pdf-lib.min.js"></script>
 <script src="fontkit.umd.min.js"></script>
@@ -138,25 +34,23 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
 <script>if(window.pdfjsLib&&window.pdfjsLib.GlobalWorkerOptions){window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}</script>
 <script src="print-bridge.js"></script>
 </head>
-<body>
+<body class="s-sachkunde">
 
 <div class="app">
 
-<header class="app-hdr">
+<div class="hdr">
   <h1>&#127808; Suchsel</h1>
-  <p class="sub">Wortsuchr&auml;tsel f&uuml;r den Sachunterricht &middot; Klasse 1&ndash;4</p>
+  <p>Wortsuchr&auml;tsel f&uuml;r den Sachunterricht &middot; Klasse 1&ndash;4</p>
   <div class="hdr-btns">
-    <a class="hdr-btn" href="sachkunde.html">&#8592; Zur&uuml;ck</a>
+    <a class="hdr-btn" href="sachkunde.html#acc-themen">&#8592; Zur&uuml;ck</a>
     <a class="hdr-btn" href="index.html">&#127968; Hauptmen&uuml;</a>
   </div>
-</header>
+</div>
 
-<div class="tabbar">
-  <nav class="tabs">
-    <button id="tb-thema" class="on" onclick="showTab('thema')">Thema</button>
-    <button id="tb-opts" onclick="showTab('opts')">Einstellungen</button>
-    <button id="tb-prev" onclick="showTab('prev')">Vorschau</button>
-  </nav>
+<div class="tabs">
+  <button id="tb-thema" class="tab active" onclick="showTab('thema')"><span class="ti">&#127808;</span>Thema</button>
+  <button id="tb-opts" class="tab" onclick="showTab('opts')"><span class="ti">&#9881;&#65039;</span>Einstellungen</button>
+  <button id="tb-prev" class="tab" onclick="showTab('prev')"><span class="ti">&#128065;&#65039;</span>Vorschau</button>
 </div>
 
 <div class="screens">
@@ -166,7 +60,7 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
     <div class="card">
       <h2>Themenpaket</h2>
       <p class="hint">W&auml;hle ein Thema aus dem Sachunterricht. Die W&ouml;rter werden bei jedem W&uuml;rfeln neu gemischt.</p>
-      <div class="themes" id="themeGrid"></div>
+      <div class="picker" id="themeGrid"></div>
     </div>
     <div class="card">
       <h2>W&ouml;rter in diesem Paket</h2>
@@ -184,15 +78,15 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
 
     <div class="card">
       <h2>Umfang</h2>
-      <div class="row">
-        <div class="lbl" style="flex:1">Anzahl W&ouml;rter <small>je Suchsel</small></div>
+      <div class="sr">
+        <div style="flex:1"><div class="sl">Anzahl W&ouml;rter</div><div class="ss">je Suchsel</div></div>
         <div class="rangeval" id="wcVal">8</div>
       </div>
       <input type="range" id="wcRange" min="5" max="10" value="8" oninput="setWordCount(this.value)">
-      <div class="row">
-        <div class="lbl">Seiten <small>ein oder zwei verschiedene Suchsel</small></div>
+      <div class="sr">
+        <div><div class="sl">Seiten</div><div class="ss">ein oder zwei verschiedene Suchsel</div></div>
         <div class="chips">
-          <button class="chip on" id="pg1" onclick="setPages(1)">1 Seite</button>
+          <button class="chip sel" id="pg1" onclick="setPages(1)">1 Seite</button>
           <button class="chip" id="pg2" onclick="setPages(2)">2 Seiten</button>
         </div>
       </div>
@@ -200,17 +94,17 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
 
     <div class="card">
       <h2>Arbeitsblatt</h2>
-      <div class="row">
-        <div class="lbl">Kopfzeile Name / Datum</div>
-        <label class="sw"><input type="checkbox" id="cbHeader" checked onchange="setOpt('header',this.checked)"><span></span></label>
+      <div class="sr">
+        <div><div class="sl">Kopfzeile Name / Datum</div></div>
+        <label class="tgl"><input type="checkbox" id="cbHeader" checked onchange="setOpt('header',this.checked)"><span class="tgl-s"></span></label>
       </div>
-      <div class="row">
-        <div class="lbl">W&ouml;rterliste unter dem Gitter <small>ohne Liste wird es deutlich schwerer</small></div>
-        <label class="sw"><input type="checkbox" id="cbList" checked onchange="setOpt('list',this.checked)"><span></span></label>
+      <div class="sr">
+        <div><div class="sl">W&ouml;rterliste unter dem Gitter</div><div class="ss">ohne Liste wird es deutlich schwerer</div></div>
+        <label class="tgl"><input type="checkbox" id="cbList" checked onchange="setOpt('list',this.checked)"><span class="tgl-s"></span></label>
       </div>
-      <div class="row">
-        <div class="lbl">L&ouml;sungsblatt <small>als zus&auml;tzliche Seite am Ende</small></div>
-        <label class="sw"><input type="checkbox" id="cbSol" checked onchange="setOpt('sol',this.checked)"><span></span></label>
+      <div class="sr">
+        <div><div class="sl">L&ouml;sungsblatt</div><div class="ss">als zus&auml;tzliche Seite am Ende</div></div>
+        <label class="tgl"><input type="checkbox" id="cbSol" checked onchange="setOpt('sol',this.checked)"><span class="tgl-s"></span></label>
       </div>
     </div>
   </section>
@@ -227,9 +121,9 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
 </div><!-- /.screens -->
 
 <div class="sbar">
-  <button class="btn" id="btnGoPre" onclick="showTab('prev')">&#128065; Vorschau &amp; Drucken</button>
-  <button class="btn" id="btnPrint" onclick="doPrint()" hidden>Drucken / PDF</button>
-  <button class="btn ghost dice" id="btnRoll" onclick="reroll()" hidden title="Neu w&uuml;rfeln">&#127922;</button>
+  <button class="btn bp" id="btnGoPre" onclick="showTab('prev')">&#128065; Vorschau &amp; Drucken</button>
+  <button class="btn bp" id="btnPrint" onclick="doPrint()" hidden>Drucken / PDF</button>
+  <button class="btn bs" id="btnRoll" onclick="reroll()" hidden title="Neu w&uuml;rfeln">&#127922;</button>
 </div>
 
 </div><!-- /.app -->
@@ -660,7 +554,7 @@ function renderThemes(){
   var g=$('themeGrid'); g.innerHTML='';
   PAKETE.forEach(function(p){
     var b=document.createElement('button');
-    b.className='theme'+(p.id===selPkg.id?' on':'');
+    b.className='pick'+(p.id===selPkg.id?' sel':'');
     b.innerHTML='<span class="em">'+p.emoji+'</span><span>'+p.name+
                 '<small>'+poolFor(p,selStufe).length+' W\u00F6rter</small></span>';
     b.onclick=function(){ selPkg=p; optsDirty=true; renderThemes(); renderPool(); };
@@ -676,7 +570,7 @@ function renderStufen(){
   var c=$('stufeChips'); c.innerHTML='';
   STUFEN.forEach(function(s){
     var b=document.createElement('button');
-    b.className='chip'+(s.id===selStufe.id?' on':'');
+    b.className='chip'+(s.id===selStufe.id?' sel':'');
     b.textContent=s.label;
     b.onclick=function(){
       selStufe=s;
@@ -697,7 +591,7 @@ function syncRange(){
 function setWordCount(v){ wordCount=parseInt(v,10); $('wcVal').textContent=wordCount; optsDirty=true; }
 function setPages(n){
   numPages=n; optsDirty=true;
-  $('pg1').className='chip'+(n===1?' on':''); $('pg2').className='chip'+(n===2?' on':'');
+  $('pg1').className='chip'+(n===1?' sel':''); $('pg2').className='chip'+(n===2?' sel':'');
 }
 function setOpt(k,v){
   if(k==='header') optHeader=v; else if(k==='list') optList=v; else if(k==='sol') optSol=v;
@@ -708,7 +602,7 @@ function reroll(){ seed=(Math.random()*1e9)|0; optsDirty=true; buildPreview(); }
 function showTab(id){
   ['thema','opts','prev'].forEach(function(t){
     $('tab-'+t).className='screen'+(t===id?' active':'');
-    $('tb-'+t).className=(t===id?'on':'');
+    $('tb-'+t).className='tab'+(t===id?' active':'');
   });
   var pre=(id==='prev');
   $('btnGoPre').hidden=pre; $('btnPrint').hidden=!pre; $('btnRoll').hidden=!pre;

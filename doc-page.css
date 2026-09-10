@@ -1,0 +1,168 @@
+/* ===========================================================================
+   ÜBIO · doc-page.css  ·  gemeinsames Layout der Textseiten
+   © 2026 Sascha Rothenburg
+
+   Für: impressum.html, datenschutz.html, datenschutz-app.html, hilfe.html
+   Einbinden im <head>, immer nach fonts.css:
+       <link rel="stylesheet" href="fonts.css">
+       <link rel="stylesheet" href="doc-page.css">
+
+   Varianten über eine Klasse am <body>:
+       <body class="doc">        Standard, grau, 760px  (Impressum, Datenschutz)
+       <body class="doc wide">   breiter, 860px          (Hilfe)
+
+   BEWUSST NICHT wie app-shell.css: hier steht kein user-select:none und
+   kein overscroll-behavior:none. Rechtstexte müssen markier- und kopierbar
+   bleiben, und die Seiten scrollen normal als Dokument statt in einer Shell.
+   =========================================================================== */
+
+body.doc{
+  --accent:#737373;
+  --accent-d:#525252;
+  --accent-l:#a3a3a3;
+  --bg:#fafafa;
+  --card:#ffffff;
+  --line:#e5e5e5;
+  --ink:#2b2b2b;
+  --muted:#6b6b6b;
+  --soft:#f3f3f3;
+  --doc-w:760px;    /* Textbreite */
+  --doc-dt:200px;   /* Spaltenbreite der Definitionslisten */
+  --doc-h2:1.15rem;
+}
+body.doc.wide{--doc-w:860px;--doc-dt:160px;--doc-h2:1.2rem}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body.doc{font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+body.doc{background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ---------- Kopfzeile ---------- */
+body.doc header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-d) 100%);
+  color:#fff;
+  padding:14px 20px;
+  padding-top:calc(14px + env(safe-area-inset-top,0px) + var(--ad-top,0px));
+  box-shadow:0 2px 12px rgba(0,0,0,.12);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+body.doc header .h-title{
+  font-weight:800;font-size:1.25rem;letter-spacing:.2px;
+  display:flex;align-items:center;gap:10px;
+}
+body.doc header .h-title svg{flex:none}
+.h-spacer{flex:1 1 auto}
+.h-back{
+  color:#fff;text-decoration:none;font-weight:700;font-size:.95rem;
+  padding:7px 14px;border-radius:9px;background:rgba(255,255,255,.16);
+  transition:background .15s;white-space:nowrap;
+}
+.h-back:hover{background:rgba(255,255,255,.28)}
+
+/* ---------- Inhalt ---------- */
+body.doc .wrap{max-width:var(--doc-w);margin:0 auto;padding:32px 20px 80px}
+
+.intro{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:26px 28px;margin-bottom:26px;box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.intro h1{font-size:1.6rem;font-weight:800;color:var(--accent-d);margin-bottom:8px}
+.intro p{color:var(--muted);font-size:1.02rem}
+
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:24px 28px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.card h2{
+  font-size:var(--doc-h2);font-weight:800;color:var(--accent-d);
+  margin-bottom:14px;display:flex;align-items:center;gap:10px;
+}
+.card h2 .dot{width:11px;height:11px;border-radius:50%;background:var(--accent);flex:none}
+.card h3{font-size:1rem;font-weight:800;color:var(--ink);margin:16px 0 6px}
+.card p{color:var(--muted);font-size:.97rem;margin-bottom:10px}
+.card p:last-child{margin-bottom:0}
+.card ul{margin:6px 0 10px 20px;color:var(--muted);font-size:.97rem}
+.card ul li{margin-bottom:5px}
+.card a{color:var(--accent-d);font-weight:700;word-break:break-word}
+.card b{color:var(--ink)}
+
+/* Definitionslisten (Impressum, Hilfe) */
+dl{margin:0}
+dl .row{
+  padding:13px 0;border-bottom:1px solid var(--soft);
+  display:grid;grid-template-columns:var(--doc-dt) 1fr;gap:6px 18px;align-items:start;
+}
+dl .row:last-child{border-bottom:none}
+dl dt{font-weight:800;color:var(--ink);font-size:.98rem}
+dl dd{color:var(--muted);font-size:.97rem}
+dl dd a{color:var(--accent-d);font-weight:700}
+
+/* Inhaltsverzeichnis (Datenschutz) */
+.toc{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:20px 26px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.toc h2{font-size:1rem;font-weight:800;color:var(--accent-d);margin-bottom:10px}
+.toc ol{margin-left:20px;color:var(--muted);font-size:.96rem}
+.toc ol li{margin-bottom:4px}
+.toc a{color:var(--accent-d);font-weight:700;text-decoration:none}
+.toc a:hover{text-decoration:underline}
+
+/* Nummerierte Anleitungen (Hilfe) */
+.steps{counter-reset:s;list-style:none}
+.steps li{position:relative;padding:10px 0 10px 44px;border-bottom:1px solid var(--soft)}
+.steps li:last-child{border-bottom:none}
+.steps li::before{
+  counter-increment:s;content:counter(s);
+  position:absolute;left:0;top:9px;width:28px;height:28px;border-radius:50%;
+  background:var(--accent);color:#fff;font-weight:800;font-size:.9rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.steps li b{color:var(--ink)}
+
+/* Frage-Antwort-Block (Hilfe) */
+.faq dt{margin-top:14px;font-weight:800;color:var(--ink);font-size:1rem}
+.faq dt:first-child{margin-top:0}
+.faq dd{margin-top:4px;color:var(--muted);font-size:.97rem}
+
+/* Hinweiskästen */
+.note,.tip{
+  background:var(--soft);border-left:4px solid var(--accent-l);border-radius:8px;
+  padding:13px 16px;margin-top:14px;font-size:.95rem;color:var(--muted);
+}
+.note b,.tip b{color:var(--accent-d)}
+
+/* Noch auszufüllende Platzhalter */
+.ph{
+  background:#fff6d6;border:1px dashed #d8b400;border-radius:6px;
+  padding:1px 7px;font-weight:700;color:#7a5c00;font-size:.93rem;
+}
+
+body.doc footer{text-align:center;color:var(--muted);font-size:.88rem;padding:0 20px 40px}
+body.doc footer a{color:var(--accent-d);font-weight:700}
+
+/* ---------- schmale Displays ---------- */
+@media(max-width:560px){
+  body.doc .wrap{padding:22px 14px 60px}
+  .card,.intro,.toc{padding:20px 18px}
+  body.doc header{padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));gap:10px}
+  body.doc header .h-title{font-size:1.1rem}
+  .h-back{font-size:.88rem;padding:7px 11px}
+  dl .row{grid-template-columns:1fr;gap:2px}
+}
+
+/* ---------- Druck ---------- */
+@media print{
+  @page{size:A4;margin:16mm}
+  body.doc header{position:static;background:none;color:#000;box-shadow:none;
+    padding:0 0 10px;border-bottom:2px solid #999}
+  .h-back{display:none}
+  body.doc header .h-title{color:#000}
+  body.doc{background:#fff;color:#000}
+  body.doc .wrap{max-width:none;padding:0}
+  .toc{display:none}
+  .card,.intro{box-shadow:none;border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid}
+  .card h2,.card h3,.intro h1,.card h2 .dot{color:#000}
+  .ph{background:none;border:none;padding:0;color:#000}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
