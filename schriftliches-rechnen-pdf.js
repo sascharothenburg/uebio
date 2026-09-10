@@ -65,7 +65,9 @@
     return lineY+12;
   }
 
-  const OPSYM = { add:'+', sub:'-', mul:'\u00d7', div:':' };
+  // Malzeichen: Standard ist der Malpunkt (Schulheft-Konvention), per
+  // spec.mulSym umschaltbar. Beides ist in WinAnsi/Helvetica darstellbar.
+  const OPSYM = { add:'+', sub:'-', mul:'\u00b7', div:':' };
 
   // Aufgaben koennen mehr als zwei Glieder haben (Addition mit 3 oder 4
   // Summanden). t.terms ist die Quelle der Wahrheit; a/b bleiben als
@@ -83,9 +85,12 @@
       const cols = (''+t.a).length;
       return 1 + (cols + 2); // Dividendzeile + Rechenzeilen
     }
-    let rows = termsOf(t).length + 1; // Summanden + Ergebnis
-    if (t.op === 'mul' && (''+t.b).length >= 2) rows += (''+t.b).length; // Teilprodukte
-    return rows;
+    if (t.op === 'mul') {
+      // Aufgabenzeile (a x b nebeneinander) + Teilprodukte + Ergebnis
+      const bl = (''+t.b).length;
+      return 1 + (bl >= 2 ? bl : 0) + 1;
+    }
+    return termsOf(t).length + 1; // Summanden/Subtrahenden + Ergebnis
   }
   function taskHeight(t, showNr) {
     return (showNr?14:0) + taskGridRows(t)*CH + 12;
@@ -124,15 +129,54 @@
     }
     // Strich
     ctx.line(gx, y+1, gx + gridW, y+1, { color: C.rule, w: 1.8 }); y += 3;
-    // Multiplikation mit 2-stelligem Faktor: Teilprodukt-Leerzeilen
-    if (t.op === 'mul' && bStr.length >= 2) {
-      for (let p = 0; p < bStr.length; p++) {
-        for (let c = 0; c < w; c++) ctx.rect(gx + c*CW, y, CW, CH, { stroke: C.cellBd, strokeWidth: 0.8 });
-        y += CH;
-      }
+    rowCells(resStr, '', showSol, y, showSol ? C.green : C.ink);
+  }
+
+  /* Schriftliche Multiplikation: die beiden Faktoren stehen NEBENEINANDER in
+     einer Zeile (234 x 56). Nur so kann das Kind die Teilprodukte an der
+     richtigen Stelle darunter ansetzen - das erste Teilprodukt endet unter der
+     ersten Ziffer des zweiten Faktors, das zweite eine Spalte weiter rechts.
+     Gitterbreite = Stellen(a) + 1 Operatorspalte + Stellen(b). */
+  function drawMul(ctx, t, x, yTop, cellW, showSol) {
+    const F = ctx.fonts;
+    const aStr = ''+t.a, bStr = ''+t.b, resStr = ''+t.res;
+    const w = aStr.length + 1 + bStr.length;
+    const gridW = w * CW;
+    const gx = x + (cellW - gridW)/2;
+    const fs = 13;
+
+    function cell(c, y, ch, color) {
+      const cx = gx + c*CW;
+      ctx.rect(cx, y, CW, CH, { stroke: C.cellBd, strokeWidth: 0.8 });
+      if (ch) ctx.textCentered(ch, cx + CW/2, y + (CH-fs)/2, { font: F.bold, size: fs, color: color || C.ink });
+    }
+    function emptyRow(y) { for (let c = 0; c < w; c++) cell(c, y, ''); }
+
+    let y = yTop;
+    // Aufgabenzeile: a, Malzeichen, b
+    for (let c = 0; c < w; c++) {
+      let ch = '';
+      if (c < aStr.length) ch = aStr[c];
+      else if (c === aStr.length) ch = OPSYM.mul;
+      else ch = bStr[c - aStr.length - 1];
+      cell(c, y, ch, C.ink);
+    }
+    y += CH;
+    ctx.line(gx, y+1, gx + gridW, y+1, { color: C.rule, w: 1.8 }); y += 3;
+
+    // Teilprodukte nur bei mehrstelligem zweiten Faktor
+    if (bStr.length >= 2) {
+      for (let r = 0; r < bStr.length; r++) { emptyRow(y); y += CH; }
       ctx.line(gx, y+1, gx + gridW, y+1, { color: C.rule, w: 1.8 }); y += 3;
     }
-    rowCells(resStr, '', showSol, y, showSol ? C.green : C.ink);
+
+    // Ergebnis rechtsbuendig in der letzten Spalte
+    const pad = w - resStr.length;
+    for (let c = 0; c < w; c++) {
+      const idx = c - pad;
+      const ch = (showSol && idx >= 0 && idx < resStr.length) ? resStr[idx] : '';
+      cell(c, y, ch, showSol ? C.green : C.ink);
+    }
   }
 
   // Division zeichnen
@@ -187,6 +231,7 @@
       y += 14;
     }
     if (t.op === 'div') drawDiv(ctx, t, x, y, cellW, showSol);
+    else if (t.op === 'mul') drawMul(ctx, t, x, y, cellW, showSol);
     else drawVert(ctx, t, x, y, cellW, showSol);
   }
 
@@ -199,6 +244,7 @@
       heavy:   await pdf.embedFont(StandardFonts.HelveticaBold),
     };
     opts = opts || {}; spec = spec || {};
+    OPSYM.mul = spec.mulSym || '\u00b7';
     const tasks = (spec.tasks || []).filter(Boolean);
     const numPages = spec.numPages || 1;
     const showNr = spec.showNr !== false;

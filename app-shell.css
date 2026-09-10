@@ -1,0 +1,383 @@
+/* ===========================================================================
+   ÜBIO · app-shell.css  ·  gemeinsames Layout für alle Seiten und Apps
+   © 2026 Sascha Rothenburg
+
+   Einbinden im <head>, IMMER nach fonts.css:
+       <link rel="stylesheet" href="fonts.css">
+       <link rel="stylesheet" href="app-shell.css">
+
+   Fachfarbe über eine Klasse am <body> setzen:
+       <body class="s-mathe">      blau
+       <body class="s-deutsch">    rot
+       <body class="s-englisch">   violett
+       <body class="s-sachkunde">  grün
+       <body class="s-interaktiv"> Verlauf orange→pink→violett
+       <body class="s-uebio">      Startseite (blau→grün)
+
+   Der Kopfverlauf wird aus --acc/--acc2 gebildet. Nur wo ein mehrfarbiger
+   Verlauf nötig ist (Interaktiv, Startseite), setzt die Fachklasse --hdr
+   direkt mit festen Farben. WICHTIG: --hdr niemals in :root mit var(--acc)
+   definieren - Custom Properties werden dort ersetzt, wo sie deklariert
+   sind, der Wert wäre dann auf die Standardfarbe eingefroren.
+
+   Zwei Seitentypen:
+   A) NAVIGATIONSSEITE  (index.html, Fachseiten)
+      .wrap > .hero|.hdr + .body
+   B) ARBEITSBLATT-APP  (alle Generatoren)
+      .app > .hdr + .tabs + .screens > .screen  ...  + .sbar
+
+   Breiten: --shell (Standard 760px). Auf dem Handy füllt die Shell die
+   volle Breite, ab 640px wird zusätzlich zweispaltig umbrochen.
+   =========================================================================== */
+
+/* --------------------------------------------------------------- 1 Basis */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --acc:#0369a1; --acc2:#0ea5e9;
+  --acc-soft:#e0f2fe; --acc-line:#7dd3fc;
+  --ink:#1e293b; --muted:#64748b; --faint:#94a3b8;
+  --bg:#f1f5f9; --card:#fff; --line:#e2e8f0; --line-soft:#eef2f7;
+  --radius:16px;
+  --shell:760px;
+  --ad-top:0px;
+}
+body.s-mathe     {--acc:#0369a1;--acc2:#0ea5e9;--acc-soft:#e0f2fe;--acc-line:#7dd3fc;--bg:#f0f9ff}
+body.s-deutsch   {--acc:#b91c1c;--acc2:#dc2626;--acc-soft:#fee2e2;--acc-line:#fca5a5;--bg:#fef2f2}
+body.s-englisch  {--acc:#6d28d9;--acc2:#7c3aed;--acc-soft:#ede9fe;--acc-line:#c4b5fd;--bg:#f5f3ff}
+body.s-sachkunde {--acc:#15803d;--acc2:#22c55e;--acc-soft:#dcfce7;--acc-line:#86efac;--bg:#f0fdf4}
+body.s-interaktiv{--acc:#7c3aed;--acc2:#a78bfa;--acc-soft:#f3e8ff;--acc-line:#c4b5fd;--bg:#faf5ff;
+                  --hdr:linear-gradient(135deg,#f59e0b 0%,#ec4899 45%,#8b5cf6 100%)}
+body.s-uebio     {--acc:#0369a1;--acc2:#0ea5e9;--acc-soft:#e0f2fe;--acc-line:#7dd3fc;--bg:#f1f5f9;
+                  --hdr:linear-gradient(150deg,#0369a1 0%,#0ea5e9 45%,#22c55e 100%)}
+
+html,body{height:100%}
+body{
+  font-family:Nunito,system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg); color:var(--ink);
+  -webkit-text-size-adjust:100%;
+  -webkit-user-select:none; user-select:none;
+  overscroll-behavior:none;
+  -webkit-tap-highlight-color:transparent;
+}
+input,textarea{-webkit-user-select:text;user-select:text}
+
+/* ---------------------------------------------- 2 Shell (beide Seitentypen)
+   .wrap  = Navigationsseite (Inhalt scrollt in .body)
+   .app   = Arbeitsblatt-App (Inhalt scrollt je Screen)                     */
+.wrap,.app{
+  height:100%;max-width:var(--shell);margin:0 auto;
+  background:#fff;box-shadow:0 0 40px rgba(0,0,0,.1);
+  display:flex;flex-direction:column;
+}
+.wrap.grow{height:auto;min-height:100%}   /* Startseite: darf mitwachsen */
+
+/* Kopfbereiche. --ad-top wird von ads.js auf <html> gesetzt und hält
+   den Platz für das AdMob-Banner frei; im Browser bleibt der Wert 0. */
+.wrap .hdr{
+  background:var(--hdr,linear-gradient(140deg,var(--acc),var(--acc2)));color:#fff;flex-shrink:0;position:relative;z-index:10;
+  padding:14px 18px 16px;
+  padding-top:calc(14px + env(safe-area-inset-top,0px) + var(--ad-top,0px));
+}
+.hero{
+  background:var(--hdr,linear-gradient(140deg,var(--acc),var(--acc2)));color:#fff;flex-shrink:0;position:relative;overflow:hidden;
+  padding:26px 22px;
+  padding-top:calc(26px + env(safe-area-inset-top,0px) + var(--ad-top,0px));
+}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;
+  border-radius:50%;background:rgba(255,255,255,.12)}
+.hero::before{content:"";position:absolute;left:-30px;bottom:-50px;width:120px;height:120px;
+  border-radius:50%;background:rgba(255,255,255,.10)}
+.hero h1{font-size:1.7rem;font-weight:900;letter-spacing:-.5px;position:relative;z-index:1}
+.hero h1 .sub{font-size:1.15rem;font-weight:600;letter-spacing:0;opacity:.85}
+.hero p{font-size:.86rem;opacity:.9;margin-top:5px;position:relative;z-index:1}
+
+.wrap .hdr h1{font-size:1.5rem;font-weight:900;display:flex;align-items:center;gap:10px}
+.wrap .hdr .ic{font-size:1.6rem}
+.wrap .hdr .title-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wrap .hdr .brand{font-size:1.5rem;font-weight:900;letter-spacing:-.3px;opacity:.85;flex-shrink:0}
+.wrap .hdr .sub{font-size:.78rem;opacity:.9;margin-top:4px;font-weight:600}
+
+.wrap .hdr-btns{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap}
+.back,.hdr-btn{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 13px;
+  background:rgba(255,255,255,.22);border-radius:20px;color:#fff;
+  font:inherit;font-size:.76rem;font-weight:800;text-decoration:none;border:0;cursor:pointer;
+}
+.back:active,.hdr-btn:active{background:rgba(255,255,255,.34)}
+
+/* Scrollbereich Navigationsseite */
+.body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding:6px 16px calc(24px + env(safe-area-inset-bottom,0px))}
+
+/* Tabs + Screens (Arbeitsblatt-App) */
+
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding:14px 14px calc(80px + env(safe-area-inset-bottom,0px));display:none}
+.screen.active{display:block}
+
+/* Fixierte Aktionsleiste unten */
+.sbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:var(--shell);background:rgba(255,255,255,.97);
+  border-top:1px solid var(--line);z-index:100;display:flex;gap:8px;
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}
+
+/* ------------------------------------------------------- 3 Bedienelemente */
+.card p.hint{margin:0 0 10px;font-size:.78rem;color:var(--muted);font-weight:600;line-height:1.45}
+
+/* Auswahlkacheln (Themen, Aufgabentypen …) */
+.picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px}
+.pick{display:flex;align-items:center;gap:8px;text-align:left;
+  border:2px solid var(--line);background:#fff;border-radius:12px;padding:9px 10px;
+  font:inherit;font-weight:800;font-size:.84rem;color:var(--ink);cursor:pointer;line-height:1.2}
+.pick .em{font-size:1.2rem;line-height:1}
+.pick small{display:block;font-weight:700;font-size:.69rem;color:var(--muted);margin-top:2px}
+.pick.sel{border-color:var(--acc);background:var(--acc-soft)}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;
+  font:inherit;font-weight:800;font-size:.84rem;color:var(--ink);cursor:pointer}
+.chip.sel{border-color:var(--acc);background:var(--acc);color:#fff}
+
+
+input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
+.rangeval{font-weight:900;color:var(--acc);font-size:.88rem}
+
+.btn:disabled{opacity:.5;cursor:default}
+.btn:active{filter:brightness(.94)}
+
+/* --------------------------------------------- 4 Navigationsseiten-Bausteine */
+.lead{padding:22px 22px 6px;font-size:.78rem;font-weight:800;letter-spacing:.6px;
+  text-transform:uppercase;color:var(--muted)}
+
+/* Fach-Kacheln der Startseite */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:12px 18px 18px}
+.tile{position:relative;border:none;border-radius:20px;padding:18px 16px 16px;text-align:left;
+  color:#fff;cursor:pointer;text-decoration:none;display:flex;flex-direction:column;gap:6px;
+  min-height:142px;overflow:hidden;font-family:inherit;box-shadow:0 6px 18px rgba(0,0,0,.13);
+  transition:transform .12s ease,box-shadow .12s ease}
+.tile:active{transform:scale(.97);box-shadow:0 3px 10px rgba(0,0,0,.16)}
+.tile .ic{font-size:2.3rem;line-height:1}
+.tile .nm{font-size:1.18rem;font-weight:900;letter-spacing:-.3px}
+.tile .ct{font-size:.74rem;font-weight:700;opacity:.92;margin-top:auto}
+.tile .bubble{position:absolute;right:-22px;top:-22px;width:84px;height:84px;
+  border-radius:50%;background:rgba(255,255,255,.16)}
+.tile.mathe     {background:linear-gradient(140deg,#0369a1,#0ea5e9)}
+.tile.deutsch   {background:linear-gradient(140deg,#b91c1c,#ef4444)}
+.tile.englisch  {background:linear-gradient(140deg,#6d28d9,#8b5cf6)}
+.tile.sachkunde {background:linear-gradient(140deg,#15803d,#22c55e)}
+.tile.interaktiv{background:linear-gradient(140deg,#f59e0b,#ec4899 55%,#8b5cf6)}
+.tile.schulmaterial{background:linear-gradient(140deg,#ea580c,#f59e0b);order:99}
+/* breite Kacheln über die volle Zeile */
+.tile.wide,.tile.interaktiv,.tile.schulmaterial{grid-column:1 / -1;min-height:0;flex-direction:row;align-items:center;gap:14px;padding:16px 18px}
+.tile.wide .ic,.tile.interaktiv .ic,.tile.schulmaterial .ic{font-size:2rem}
+.tile.wide .txt,.tile.interaktiv .txt,.tile.schulmaterial .txt{display:flex;flex-direction:column;gap:3px}
+.tile.wide .nm,.tile.interaktiv .nm,.tile.schulmaterial .nm{font-size:1.18rem}
+.tile.wide .ct,.tile.interaktiv .ct,.tile.schulmaterial .ct{margin-top:0;opacity:.92;display:flex;align-items:center;gap:6px}
+.tile.wide .bubble,.tile.interaktiv .bubble,.tile.schulmaterial .bubble{width:96px;height:96px;right:-26px;top:-26px}
+.ad-tag{display:inline-block;background:rgba(255,255,255,.28);font-size:.62rem;font-weight:800;
+  letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:5px}
+
+/* App-Listenzeilen der Fachseiten */
+.group{margin-top:14px}
+.group h2{font-size:.74rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--faint);padding:0 4px 8px}
+.app-row{display:flex;align-items:center;gap:13px;padding:13px 14px;background:#fff;
+  border:1.5px solid var(--line-soft);border-radius:14px;margin-bottom:9px;text-decoration:none;
+  color:inherit;box-shadow:0 1px 4px rgba(0,0,0,.04);
+  transition:transform .1s ease,box-shadow .1s ease,border-color .1s ease}
+.app-row:active{transform:scale(.985);box-shadow:0 1px 3px rgba(0,0,0,.08);border-color:var(--acc2)}
+.app-row .ai{width:42px;height:42px;flex-shrink:0;border-radius:11px;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;font-size:1.35rem}
+.app-row .at{flex:1;min-width:0;display:flex;flex-direction:column}
+.app-row .an{display:block;font-size:.98rem;font-weight:800;color:var(--ink)}
+.app-row .ad{display:block;font-size:.76rem;color:var(--muted);margin-top:1px}
+.app-row .ar{color:var(--acc2);font-size:1.1rem;font-weight:900;flex-shrink:0}
+.acc-head .hi{width:34px;height:34px;flex-shrink:0;border-radius:9px;display:flex;
+  align-items:center;justify-content:center;font-size:1.15rem;background:var(--acc-soft)}
+/* feste Fachfarben, wenn eine Seite mehrere Fächer mischt (Interaktiv) */
+.app-row .ai.m{background:#f0f9ff}  .acc-head .hi.m{background:#e0f2fe}
+.app-row .ai.d{background:#fef2f2}  .acc-head .hi.d{background:#fee2e2}
+.app-row .ai.e{background:#f5f3ff}  .acc-head .hi.e{background:#ede9fe}
+.app-row .ai.s{background:#f0fdf4}  .acc-head .hi.s{background:#dcfce7}
+.empty{text-align:center;color:var(--faint);font-size:.85rem;padding:40px 20px;line-height:1.7}
+
+/* Akkordeon */
+.acc-head{display:flex;align-items:center;gap:10px;width:100%;background:#fff;cursor:pointer;
+  font-family:inherit;padding:13px 14px;border:1.5px solid var(--line-soft);border-radius:14px;
+  box-shadow:0 1px 4px rgba(0,0,0,.04);transition:border-color .12s ease,box-shadow .12s ease}
+.acc-head:active{transform:scale(.99)}
+.acc-head .ht{flex:1;text-align:left;font-size:.92rem;font-weight:900;color:var(--ink)}
+.acc-head .hc{font-size:.72rem;font-weight:800;color:var(--faint);background:#f1f5f9;
+  border-radius:20px;padding:2px 9px}
+.acc-head .hv{color:var(--acc2);font-size:1rem;font-weight:900;transition:transform .18s ease;flex-shrink:0}
+.acc-head[aria-expanded="true"]{border-color:var(--acc2)}
+.acc-head[aria-expanded="true"] .hv{transform:rotate(90deg)}
+.acc-panel{overflow:hidden;max-height:0;transition:max-height .26s ease}
+.acc-panel.open{max-height:3000px}
+.acc-inner{padding:9px 0 2px}
+.acc-inner .app-row:last-child{margin-bottom:2px}
+
+/* Play-Store-Karte (nur Web) */
+.playcard{margin:4px 18px;padding:16px;border-radius:20px;
+  background:linear-gradient(140deg,#0f172a,#1e293b);display:flex;align-items:center;gap:14px;
+  text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.13)}
+.playcard:active{transform:scale(.98)}
+.playcard .pc-txt{flex:1;color:#fff}
+.playcard .pc-txt .pt1{font-size:.98rem;font-weight:900;letter-spacing:-.2px}
+.playcard .pc-txt .pt2{font-size:.74rem;opacity:.75;margin-top:2px}
+.playcard img{height:40px;width:auto;display:block;flex-shrink:0}
+
+/* Fuß */
+.foot{padding:18px 22px calc(20px + env(safe-area-inset-bottom,0px));text-align:center;
+  color:var(--faint);font-size:.72rem;line-height:1.6}
+.foot a{color:var(--muted);text-decoration:none;font-weight:700}
+
+/* Kaffeekasse */
+.coffee-wrap{position:relative;display:inline-block;margin-bottom:14px}
+.hdr-btns .coffee-wrap{margin-bottom:0}
+.coffee{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;background:#fff;
+  border:1.5px solid var(--line);border-radius:22px;color:#475569;font-size:.8rem;font-weight:800;
+  cursor:pointer;font-family:inherit;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.hdr-btns .coffee{padding:5px 13px;background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.4);color:#fff;font-size:.76rem;box-shadow:none}
+.coffee:active{transform:scale(.97)}
+.hdr-btns .coffee:active{background:rgba(255,255,255,.3)}
+.coffee-pop{position:absolute;width:236px;background:#fff;border-radius:16px;
+  box-shadow:0 12px 32px rgba(0,0,0,.22);padding:14px;z-index:50;display:none;
+  color:var(--ink);text-align:left;
+  left:50%;transform:translateX(-50%);bottom:calc(100% + 10px)}
+.hdr-btns .coffee-pop{left:auto;right:0;transform:none;bottom:auto;top:calc(100% + 8px)}
+.coffee-pop.open{display:block}
+.coffee-pop::after{content:"";position:absolute;left:50%;bottom:-7px;width:14px;height:14px;
+  background:#fff;transform:translateX(-50%) rotate(45deg)}
+.hdr-btns .coffee-pop::after{content:none}
+.hdr-btns .coffee-pop::before{content:"";position:absolute;right:18px;top:-7px;width:14px;height:14px;
+  background:#fff;transform:rotate(45deg)}
+.coffee-pop .ct{font-size:.84rem;font-weight:900;margin-bottom:2px}
+.coffee-pop .cs{font-size:.72rem;color:var(--muted);margin-bottom:11px;line-height:1.4}
+.coffee-pop .amts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}
+.coffee-pop .amt{padding:9px 0;border:1.5px solid var(--line);border-radius:11px;background:#fff;
+  font-size:.92rem;font-weight:800;color:var(--ink);cursor:pointer;font-family:inherit;
+  text-align:center;transition:border-color .1s,background .1s}
+.coffee-pop .amt:active{transform:scale(.97)}
+.coffee-pop .amt.sel{border-color:var(--acc2);background:var(--acc2);color:#fff}
+.coffee-pop .custom{display:flex;align-items:center;gap:7px;margin-bottom:11px;
+  border:1.5px solid var(--line);border-radius:11px;padding:7px 11px}
+.coffee-pop .custom:focus-within{border-color:var(--acc2)}
+.coffee-pop .custom span{font-size:.95rem;font-weight:800;color:var(--faint)}
+.coffee-pop .custom input{flex:1;min-width:0;border:none;outline:none;font-family:inherit;
+  font-size:.95rem;font-weight:800;color:var(--ink);background:transparent}
+.coffee-pop .go{display:block;width:100%;padding:11px 0;border:none;border-radius:12px;
+  background:var(--acc2);color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;
+  font-family:inherit;text-align:center;text-decoration:none}
+.coffee-pop .go:active{filter:brightness(.93)}
+
+/* ----------------------------------------------- 5 Breite Darstellung ab 640px
+   Auf dem Handy bleibt alles einspaltig; erst wenn wirklich Platz da ist,
+   werden Listen zweispaltig, damit die Zeilen nicht auseinandergezogen
+   aussehen.                                                                */
+@media (min-width:640px){
+  .body{padding-left:22px;padding-right:22px}
+  .acc-inner,.group .app-row-list{display:grid;grid-template-columns:1fr 1fr;
+    gap:9px;align-items:start}
+  .acc-inner .app-row,.group .app-row-list .app-row{margin-bottom:0}
+  .picker{grid-template-columns:repeat(auto-fill,minmax(172px,1fr))}
+  .hero{padding-left:28px;padding-right:28px}
+  .lead{padding-left:28px;padding-right:28px}
+  .grid{padding-left:24px;padding-right:24px}
+}
+
+/* ------------------------------------------------------------------ 6 Druck */
+@media print{
+  .wrap,.app,.sbar,.hdr,.hero{display:none!important}
+  .printarea{display:block!important}
+  html,body{height:auto;overflow:visible;background:#fff}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4 portrait;margin:12mm 14mm}
+}
+
+
+/* ===========================================================================
+   7 Generator-Shell · gemeinsames Vokabular aller Arbeitsblatt-Generatoren
+   Übernommen aus dem bestehenden Bestand (nicht neu erfunden), Farben und
+   Breite über die Variablen oben. Struktur:
+       .app > .hdr + .tabs + .screens > .screen …  + .sbar
+   =========================================================================== */
+.hdr{
+  background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;
+  padding:12px 16px 10px;
+  padding-top:calc(12px + env(safe-area-inset-top,0px) + var(--ad-top,0px));
+  flex-shrink:0;
+}
+.hdr h1{font-size:1.15rem;font-weight:900}
+.hdr p{font-size:.68rem;opacity:.85;margin-top:1px}
+.hdr-btns{display:flex;gap:8px;margin-top:6px;align-items:center}
+.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;
+  background:rgba(255,255,255,.25);border-radius:20px;color:#fff;
+  font-family:Nunito,sans-serif;font-size:.72rem;font-weight:800;
+  text-decoration:none;cursor:pointer;border:none}
+
+/* Reiter mit Symbol und Unterstrich */
+.tabs{display:flex;background:#fff;border-bottom:2px solid var(--line);flex-shrink:0}
+.tab{flex:1;padding:10px 4px 8px;text-align:center;font-size:.65rem;font-weight:800;
+  color:#6b7280;cursor:pointer;border:none;background:none;
+  border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.active{color:var(--acc);border-bottom-color:var(--acc)}
+.ti{display:block;font-size:1.1rem;margin-bottom:1px}
+
+/* Karten */
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);
+  padding:14px;margin-bottom:10px;border:1px solid var(--line)}
+.card h2{font-size:.72rem;font-weight:800;color:var(--acc);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+
+/* Schaltflächen: .bp = primär, .bs = sekundär */
+.btn{width:100%;padding:12px;border:none;border-radius:12px;
+  font-family:Nunito,sans-serif;font-size:.92rem;font-weight:800;cursor:pointer}
+.bp{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff}
+.bs{background:#f0f4f8;color:#6b7280;border:2px solid var(--line)}
+.btn-sm{padding:8px;font-size:.82rem}
+
+/* Schalter */
+.tgl{position:relative;width:44px;height:24px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl-s{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.2s}
+.tgl-s::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;
+  background:#fff;border-radius:50%;transition:.2s}
+.tgl input:checked+.tgl-s{background:var(--acc)}
+.tgl input:checked+.tgl-s::before{transform:translateX(20px)}
+
+/* Einstellungszeilen */
+.sr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;
+  border-bottom:1px solid var(--line)}
+.sr:last-child{border-bottom:none}
+.sl{font-size:.88rem;font-weight:600}
+.ss{font-size:.73rem;color:#6b7280;margin-top:1px}
+
+/* Zahleneingabe */
+.ni{width:100%;padding:8px 12px;border:2px solid var(--line);border-radius:9px;
+  font-family:Nunito,sans-serif;font-size:.9rem;font-weight:600;color:var(--ink);
+  background:var(--bg);outline:none}
+.ni:focus{border-color:var(--acc)}
+
+/* Druckbereich der Generatoren */
+.blk{display:block}
+.printarea{display:none}
+.ws-title{font-size:14pt;font-weight:900;font-family:Nunito,sans-serif;color:var(--acc)}
+.ws-sub{font-size:8pt;color:#555;margin-top:1pt;font-family:Nunito,sans-serif}
+.ws-foot{margin-top:5mm;text-align:center;font-family:Nunito,sans-serif;font-size:7pt;
+  color:#bbb;border-top:1px solid #eee;padding-top:2mm}
+
+/* ===========================================================================
+   8 Interaktiv-Apps · <body class="s-<fach> iv">
+   Andere Bauart als die Generatoren: Screens liegen im Fluss statt absolut,
+   Wechsel per Einblendung. Deshalb über body.iv eingegrenzt, damit .screen
+   der Generatoren unberührt bleibt.
+   =========================================================================== */
+body.iv .app{overflow:hidden}
+body.iv .screen{display:none;flex:1;flex-direction:column;animation:fade .25s ease}
+body.iv .screen.active{display:flex}
