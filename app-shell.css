@@ -232,9 +232,9 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
 .playcard img{height:40px;width:auto;display:block;flex-shrink:0}
 
 /* Fuß */
-.foot{padding:18px 22px calc(20px + env(safe-area-inset-bottom,0px));text-align:center;
+.wrap .foot{padding:18px 22px calc(20px + env(safe-area-inset-bottom,0px));text-align:center;
   color:var(--faint);font-size:.72rem;line-height:1.6}
-.foot a{color:var(--muted);text-decoration:none;font-weight:700}
+.wrap .foot a{color:var(--muted);text-decoration:none;font-weight:700}
 
 /* Kaffeekasse */
 .coffee-wrap{position:relative;display:inline-block;margin-bottom:14px}
@@ -379,5 +379,11 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
    der Generatoren unberührt bleibt.
    =========================================================================== */
 body.iv .app{overflow:hidden}
-body.iv .screen{display:none;flex:1;flex-direction:column;animation:fade .25s ease}
+/* WICHTIG: .screen der Generatoren ist absolut positioniert. Diese Regel muss
+   deshalb JEDE dort gesetzte Eigenschaft zurücknehmen, nicht nur die eigenen -
+   sonst liegen die Interaktiv-Screens absolut übereinander. */
+body.iv .screen{
+  position:static;inset:auto;overflow:visible;-webkit-overflow-scrolling:auto;
+  overscroll-behavior:auto;padding:0;
+  display:none;flex:1;flex-direction:column;animation:fade .25s ease}
 body.iv .screen.active{display:flex}
